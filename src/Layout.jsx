@@ -46,15 +46,18 @@ import ToastProvider from './components/providers/ToastProvider';
 
 const navItems = [
   { name: 'Dashboard', icon: LayoutDashboard, path: 'Dashboard', permission: null },
+  { name: 'Orchestration', icon: Bot, path: 'OrchestrationHub', permission: 'agent.view' },
   { name: 'Agents', icon: Bot, path: 'Agents', permission: 'agent.view' },
   { name: 'Workflows', icon: GitFork, path: 'Workflows', permission: 'workflow.view' },
   { name: 'Runs', icon: PlaySquare, path: 'Runs', permission: 'workflow.view' },
   { name: 'Analytics', icon: BarChart3, path: 'Analytics', permission: 'workflow.view' },
-  { name: 'Monitoring', icon: Eye, path: 'Monitoring', permission: 'workflow.view' }, // New item added here
+  { name: 'Observability', icon: Eye, path: 'Observability', permission: 'workflow.view' },
+  { name: 'Monitoring', icon: Eye, path: 'Monitoring', permission: 'workflow.view' },
   { name: 'Approvals', icon: CheckSquare, path: 'Approvals', permission: 'workflow.run' },
   { name: 'Integrations', icon: Zap, path: 'Integrations', permission: 'workflow.edit' },
   { name: 'Governance', icon: Shield, path: 'Governance', permission: 'policy.view' },
   { name: 'Refactoring', icon: Wrench, path: 'Refactoring', permission: 'workflow.edit' },
+  { name: 'Policies', icon: Shield, path: 'RefactorPolicies', permission: 'policy.view' },
 ];
 
 const Sidebar = ({ isCollapsed, isMobileOpen, setIsMobileOpen }) => {

@@ -15,6 +15,9 @@ import UserProfile from './pages/UserProfile';
 import Templates from './pages/Templates';
 import Refactoring from './pages/Refactoring';
 import Monitoring from './pages/Monitoring';
+import OrchestrationHub from './pages/OrchestrationHub';
+import Observability from './pages/Observability';
+import RefactorPolicies from './pages/RefactorPolicies';
 import Layout from './Layout.jsx';
 
 
@@ -36,6 +39,9 @@ export const PAGES = {
     "Templates": Templates,
     "Refactoring": Refactoring,
     "Monitoring": Monitoring,
+    "OrchestrationHub": OrchestrationHub,
+    "Observability": Observability,
+    "RefactorPolicies": RefactorPolicies,
 }
 
 export const pagesConfig = {
