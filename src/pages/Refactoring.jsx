@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { RefactorSession, RefactorRecommendation } from '@/entities/all';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
@@ -6,6 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Play, RefreshCw, History, Sparkles } from 'lucide-react';
 import RefactorDashboard from '../components/refactoring/RefactorDashboard';
+import RefactorProgress from '../components/refactoring/RefactorProgress';
+import CodeReviewPanel from '../components/refactoring/CodeReviewPanel';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -96,7 +98,6 @@ export default function Refactoring() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex items-start justify-between">
         <div>
           <h1 className="text-3xl font-bold text-white mb-2">AI Refactor Recommendations</h1>
@@ -123,7 +124,6 @@ export default function Refactoring() {
         </Button>
       </div>
 
-      {/* Session History */}
       {sessions.length > 0 && (
         <Card className="bg-slate-900 border-slate-800">
           <CardHeader>
@@ -158,63 +158,68 @@ export default function Refactoring() {
         </Card>
       )}
 
-      {/* Main Dashboard */}
-      <AnimatePresence mode="wait">
-        {currentSession ? (
-          <motion.div
-            key={currentSession.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
-          >
-            <RefactorDashboard
-              session={currentSession}
-              recommendations={recommendations}
-              onRefresh={() => loadRecommendations(currentSession.id)}
-            />
-          </motion.div>
-        ) : (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <Card className="bg-slate-900 border-slate-800">
-              <CardContent className="p-12 text-center">
-                <div className="max-w-md mx-auto">
-                  <div className="w-16 h-16 bg-gradient-to-br from-purple-600 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                    <Sparkles className="w-8 h-8 text-white" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-white mb-2">No Analysis Yet</h3>
-                  <p className="text-slate-400 mb-6">
-                    Start your first codebase analysis to get AI-powered refactoring recommendations
-                  </p>
-                  <Button
-                    onClick={startAnalysis}
-                    disabled={isAnalyzing}
-                    className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
-                  >
-                    {isAnalyzing ? (
-                      <>
-                        <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
-                        Analyzing...
-                      </>
-                    ) : (
-                      <>
-                        <Play className="w-4 h-4 mr-2" />
-                        Run Analysis Now
-                      </>
-                    )}
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {currentSession && (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentSession.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+              >
+                <RefactorDashboard
+                  session={currentSession}
+                  recommendations={recommendations}
+                  onRefresh={() => loadRecommendations(currentSession.id)}
+                />
+              </motion.div>
+            </AnimatePresence>
+          </div>
 
-      {/* Info Cards */}
+          <div className="space-y-6">
+            <RefactorProgress recommendations={recommendations} />
+            <CodeReviewPanel onReviewComplete={() => loadSessions()} />
+          </div>
+        </div>
+      )}
+
+      {!currentSession && (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+          <Card className="bg-slate-900 border-slate-800">
+            <CardContent className="p-12 text-center">
+              <div className="max-w-md mx-auto">
+                <div className="w-16 h-16 bg-gradient-to-br from-purple-600 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <Sparkles className="w-8 h-8 text-white" />
+                </div>
+                <h3 className="text-xl font-semibold text-white mb-2">No Analysis Yet</h3>
+                <p className="text-slate-400 mb-6">
+                  Start your first codebase analysis to get AI-powered refactoring recommendations
+                </p>
+                <Button
+                  onClick={startAnalysis}
+                  disabled={isAnalyzing}
+                  className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+                >
+                  {isAnalyzing ? (
+                    <>
+                      <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                      Analyzing...
+                    </>
+                  ) : (
+                    <>
+                      <Play className="w-4 h-4 mr-2" />
+                      Run Analysis Now
+                    </>
+                  )}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="bg-gradient-to-br from-blue-900/20 to-blue-950/20 border-blue-800/30">
           <CardContent className="p-6">

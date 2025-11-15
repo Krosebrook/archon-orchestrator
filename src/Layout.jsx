@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import {
@@ -19,8 +19,12 @@ import {
   BarChart3,
   CheckSquare,
   Zap,
+  Users,
+  Crown,
   Wrench,
+  Eye,
   Menu,
+  Bell,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -46,6 +50,7 @@ const navItems = [
   { name: 'Workflows', icon: GitFork, path: 'Workflows', permission: 'workflow.view' },
   { name: 'Runs', icon: PlaySquare, path: 'Runs', permission: 'workflow.view' },
   { name: 'Analytics', icon: BarChart3, path: 'Analytics', permission: 'workflow.view' },
+  { name: 'Monitoring', icon: Eye, path: 'Monitoring', permission: 'workflow.view' }, // New item added here
   { name: 'Approvals', icon: CheckSquare, path: 'Approvals', permission: 'workflow.run' },
   { name: 'Integrations', icon: Zap, path: 'Integrations', permission: 'workflow.edit' },
   { name: 'Governance', icon: Shield, path: 'Governance', permission: 'policy.view' },

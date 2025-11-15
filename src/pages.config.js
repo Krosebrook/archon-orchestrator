@@ -14,6 +14,7 @@ import agents from './pages/agents';
 import UserProfile from './pages/UserProfile';
 import Templates from './pages/Templates';
 import Refactoring from './pages/Refactoring';
+import Monitoring from './pages/Monitoring';
 import Layout from './Layout.jsx';
 
 
@@ -34,6 +35,7 @@ export const PAGES = {
     "UserProfile": UserProfile,
     "Templates": Templates,
     "Refactoring": Refactoring,
+    "Monitoring": Monitoring,
 }
 
 export const pagesConfig = {
