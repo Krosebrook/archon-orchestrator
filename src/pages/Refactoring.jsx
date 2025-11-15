@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { RefactorSession, RefactorRecommendation } from '@/entities/all';
 import { base44 } from '@/api/base44Client';
@@ -10,6 +11,7 @@ import RefactorProgress from '../components/refactoring/RefactorProgress';
 import CodeReviewPanel from '../components/refactoring/CodeReviewPanel';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
+import CIPipeline from '../components/refactoring/CIPipeline';
 
 export default function Refactoring() {
   const [sessions, setSessions] = useState([]);
@@ -181,6 +183,7 @@ export default function Refactoring() {
           <div className="space-y-6">
             <RefactorProgress recommendations={recommendations} />
             <CodeReviewPanel onReviewComplete={() => loadSessions()} />
+            <CIPipeline sessionId={currentSession.id} />
           </div>
         </div>
       )}
