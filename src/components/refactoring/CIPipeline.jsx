@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -7,6 +8,7 @@ import { Play, CheckCircle2, XCircle, Clock, GitBranch, TestTube, Rocket, AlertT
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
+import CIGateManager from './CIGateManager';
 
 const STAGE_ICONS = {
   analyze: GitBranch,
@@ -42,6 +44,18 @@ export default function CIPipeline({ sessionId }) {
       setPipelines(data);
       if (!selectedPipeline && data.length > 0) {
         setSelectedPipeline(data[0]);
+      } else if (selectedPipeline) {
+        // If a pipeline is already selected, update its data if it's in the new list
+        const updatedSelected = data.find(p => p.id === selectedPipeline.id);
+        if (updatedSelected) {
+          setSelectedPipeline(updatedSelected);
+        } else if (data.length > 0) {
+          // If the previously selected pipeline is no longer available, select the first one
+          setSelectedPipeline(data[0]);
+        } else {
+          // No pipelines available
+          setSelectedPipeline(null);
+        }
       }
     } catch (error) {
       console.error('Failed to load pipelines:', error);
@@ -177,104 +191,108 @@ export default function CIPipeline({ sessionId }) {
       </Card>
 
       {selectedPipeline && (
-        <Card className="bg-slate-900 border-slate-800">
-          <CardHeader>
-            <CardTitle className="text-white">Pipeline Details</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {selectedPipeline.deployment_url && (
-              <div className="p-3 bg-blue-900/20 rounded-lg border border-blue-800/30">
-                <div className="text-sm text-blue-400 mb-1">Preview Deployment</div>
-                <a
-                  href={selectedPipeline.deployment_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-xs text-blue-300 hover:underline"
-                >
-                  {selectedPipeline.deployment_url}
-                </a>
-              </div>
-            )}
-
-            {selectedPipeline.test_results && (
-              <div className="p-3 bg-slate-950 rounded-lg border border-slate-800">
-                <div className="text-sm text-white font-medium mb-2">Test Results</div>
-                <div className="grid grid-cols-3 gap-2 text-xs">
-                  <div className="text-green-400">Passed: {selectedPipeline.test_results.passed}</div>
-                  <div className="text-red-400">Failed: {selectedPipeline.test_results.failed}</div>
-                  <div className="text-blue-400">Coverage: {selectedPipeline.test_results.coverage}%</div>
+        <div className="space-y-6">
+          <Card className="bg-slate-900 border-slate-800">
+            <CardHeader>
+              <CardTitle className="text-white">Pipeline Details</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {selectedPipeline.deployment_url && (
+                <div className="p-3 bg-blue-900/20 rounded-lg border border-blue-800/30">
+                  <div className="text-sm text-blue-400 mb-1">Preview Deployment</div>
+                  <a
+                    href={selectedPipeline.deployment_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-blue-300 hover:underline"
+                  >
+                    {selectedPipeline.deployment_url}
+                  </a>
                 </div>
-              </div>
-            )}
+              )}
 
-            {selectedPipeline.approvers && selectedPipeline.approvers.length > 0 && (
-              <div className="p-3 bg-green-900/20 rounded-lg border border-green-800/30">
-                <div className="text-sm text-green-400 mb-1">Approved By</div>
-                <div className="text-xs text-green-300">
-                  {selectedPipeline.approvers.join(', ')}
+              {selectedPipeline.test_results && (
+                <div className="p-3 bg-slate-950 rounded-lg border border-slate-800">
+                  <div className="text-sm text-white font-medium mb-2">Test Results</div>
+                  <div className="grid grid-cols-3 gap-2 text-xs">
+                    <div className="text-green-400">Passed: {selectedPipeline.test_results.passed}</div>
+                    <div className="text-red-400">Failed: {selectedPipeline.test_results.failed}</div>
+                    <div className="text-blue-400">Coverage: {selectedPipeline.test_results.coverage}%</div>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            <div className="space-y-3">
-              <div className="text-sm font-medium text-slate-300">Pipeline Stages</div>
-              {selectedPipeline.stages?.map((stage, idx) => {
-                const StageIcon = STAGE_ICONS[stage.name] || Clock;
-                const config = STATUS_CONFIG[stage.status] || STATUS_CONFIG.pending;
-                
-                return (
-                  <div key={idx} className="p-3 bg-slate-950 rounded-lg border border-slate-800">
-                    <div className="flex items-start gap-3">
-                      <StageIcon className={`w-5 h-5 ${config.color}`} />
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="text-white font-medium capitalize">{stage.name}</span>
-                          <Badge variant="outline" className={config.badge}>
-                            {stage.status}
-                          </Badge>
-                        </div>
-                        {stage.started_at && (
-                          <div className="text-xs text-slate-500 mb-2">
-                            Started: {format(new Date(stage.started_at), 'h:mm:ss a')}
-                            {stage.finished_at && (
-                              <> • Duration: {Math.round((new Date(stage.finished_at) - new Date(stage.started_at)) / 1000)}s</>
-                            )}
+              {selectedPipeline.approvers && selectedPipeline.approvers.length > 0 && (
+                <div className="p-3 bg-green-900/20 rounded-lg border border-green-800/30">
+                  <div className="text-sm text-green-400 mb-1">Approved By</div>
+                  <div className="text-xs text-green-300">
+                    {selectedPipeline.approvers.join(', ')}
+                  </div>
+                </div>
+              )}
+
+              <div className="space-y-3">
+                <div className="text-sm font-medium text-slate-300">Pipeline Stages</div>
+                {selectedPipeline.stages?.map((stage, idx) => {
+                  const StageIcon = STAGE_ICONS[stage.name] || Clock;
+                  const config = STATUS_CONFIG[stage.status] || STATUS_CONFIG.pending;
+                  
+                  return (
+                    <div key={idx} className="p-3 bg-slate-950 rounded-lg border border-slate-800">
+                      <div className="flex items-start gap-3">
+                        <StageIcon className={`w-5 h-5 ${config.color}`} />
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="text-white font-medium capitalize">{stage.name}</span>
+                            <Badge variant="outline" className={config.badge}>
+                              {stage.status}
+                            </Badge>
                           </div>
-                        )}
-                        {stage.logs && stage.logs.length > 0 && (
-                          <details className="mt-2">
-                            <summary className="text-xs text-slate-400 cursor-pointer">View logs ({stage.logs.length})</summary>
-                            <div className="mt-2 space-y-1">
-                              {stage.logs.map((log, logIdx) => (
-                                <div key={logIdx} className="text-xs text-slate-300 bg-slate-900 px-2 py-1 rounded font-mono">
-                                  {log}
-                                </div>
-                              ))}
+                          {stage.started_at && (
+                            <div className="text-xs text-slate-500 mb-2">
+                              Started: {format(new Date(stage.started_at), 'h:mm:ss a')}
+                              {stage.finished_at && (
+                                <> • Duration: {Math.round((new Date(stage.finished_at) - new Date(stage.started_at)) / 1000)}s</>
+                              )}
                             </div>
-                          </details>
-                        )}
+                          )}
+                          {stage.logs && stage.logs.length > 0 && (
+                            <details className="mt-2">
+                              <summary className="text-xs text-slate-400 cursor-pointer">View logs ({stage.logs.length})</summary>
+                              <div className="mt-2 space-y-1">
+                                {stage.logs.map((log, logIdx) => (
+                                  <div key={logIdx} className="text-xs text-slate-300 bg-slate-900 px-2 py-1 rounded font-mono">
+                                    {log}
+                                  </div>
+                                ))}
+                              </div>
+                            </details>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {selectedPipeline.rollback_commit && (
+                <div className="p-3 bg-orange-900/20 rounded-lg border border-orange-800/30">
+                  <div className="flex items-start gap-2">
+                    <AlertTriangle className="w-4 h-4 text-orange-400 mt-0.5" />
+                    <div>
+                      <div className="text-sm text-orange-400 font-medium">Rollback Available</div>
+                      <div className="text-xs text-orange-300 mt-1">
+                        Commit: <code className="bg-orange-950 px-1 py-0.5 rounded">{selectedPipeline.rollback_commit}</code>
                       </div>
                     </div>
                   </div>
-                );
-              })}
-            </div>
-
-            {selectedPipeline.rollback_commit && (
-              <div className="p-3 bg-orange-900/20 rounded-lg border border-orange-800/30">
-                <div className="flex items-start gap-2">
-                  <AlertTriangle className="w-4 h-4 text-orange-400 mt-0.5" />
-                  <div>
-                    <div className="text-sm text-orange-400 font-medium">Rollback Available</div>
-                    <div className="text-xs text-orange-300 mt-1">
-                      Commit: <code className="bg-orange-950 px-1 py-0.5 rounded">{selectedPipeline.rollback_commit}</code>
-                    </div>
-                  </div>
                 </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+              )}
+            </CardContent>
+          </Card>
+
+          <CIGateManager pipelineId={selectedPipeline.id} />
+        </div>
       )}
     </div>
   );

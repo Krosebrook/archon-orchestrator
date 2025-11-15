@@ -1,16 +1,25 @@
 
-import { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { Workflow, WorkflowVersion, Agent, Tool } from '@/entities/all';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { 
   Play, 
   Save, 
   GitBranch, 
   Settings, 
-  ArrowLeft,
+  ArrowLeft, 
+  Plus,
+  Trash2,
+  Copy,
+  Eye,
+  Code,
   Zap,
   Database,
   Mail,
@@ -21,8 +30,12 @@ import {
 } from 'lucide-react';
 import { createPageUrl } from '@/utils';
 import VisualWorkflowDesigner from '../components/workflows/VisualWorkflowDesigner';
+import WorkflowSpecEditor from '../components/workflows/WorkflowSpecEditor';
+import VersionHistory from '../components/workflows/VersionHistory';
 import { toast } from 'sonner';
 import RunMonitor from '../components/runs/RunMonitor'; // New component for live run feedback
+import CollaborationPanel from '../components/agents/CollaborationPanel';
+import OptimizationInsights from '../components/workflows/OptimizationInsights';
 
 const NODE_TYPES = {
   trigger: { icon: Zap, color: 'from-green-500 to-emerald-600', label: 'Trigger' },
@@ -258,13 +271,14 @@ export default function WorkflowDetail() {
   }
 
   return (
-    <div className="flex flex-col h-full bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
-      <div className="flex-shrink-0 p-4 lg:p-6">
-        <Link to={createPageUrl('Workflows')} className="inline-flex items-center gap-2 text-slate-400 hover:text-white mb-4">
+    <div className="space-y-6 p-4 lg:p-6 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 min-h-screen">
+      {/* Header Section */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <Link to={createPageUrl('Workflows')} className="inline-flex items-center gap-2 text-slate-400 hover:text-white">
           <ArrowLeft className="w-4 h-4" />
           Back to Workflows
         </Link>
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 w-full mt-4 sm:mt-0">
           <div>
             <Input 
               value={workflowData.name}
@@ -280,7 +294,7 @@ export default function WorkflowDetail() {
               rows={1}
             />
           </div>
-          <div className="flex items-center gap-2 flex-shrink-0">
+          <div className="flex items-center gap-2 flex-shrink-0 mt-4 sm:mt-0">
             <Button variant="outline" className="text-white border-slate-700 hover:bg-slate-800" onClick={handleSave} disabled={isSaving}>
               <Save className="w-4 h-4 mr-2" /> {isSaving ? 'Saving...' : 'Save'}
             </Button>
@@ -291,15 +305,30 @@ export default function WorkflowDetail() {
         </div>
       </div>
       
-      <div className="flex-grow min-h-0">
-        <VisualWorkflowDesigner
-          spec={workflowData.spec}
-          onSpecChange={onUpdateSpec}
-          className="h-full"
-          nodeTypes={NODE_TYPES} // Keep these props for VisualWorkflowDesigner
-          agents={agents}
-          tools={tools}
-        />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2">
+          {/* Workflow Designer */}
+          <Card className="h-[70vh] flex flex-col">
+            <CardHeader>
+              <CardTitle>Workflow Design</CardTitle>
+            </CardHeader>
+            <CardContent className="flex-grow p-0">
+              <VisualWorkflowDesigner
+                spec={workflowData.spec}
+                onSpecChange={onUpdateSpec}
+                className="h-full"
+                nodeTypes={NODE_TYPES}
+                agents={agents}
+                tools={tools}
+              />
+            </CardContent>
+          </Card>
+        </div>
+        
+        <div className="space-y-6">
+          <OptimizationInsights workflow={workflow} />
+          <CollaborationPanel workflowId={workflowId} agents={agents} />
+        </div>
       </div>
 
       <RunMonitor 
