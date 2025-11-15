@@ -1,31 +1,35 @@
-
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
-import { Download, Key, Bell, Shield } from 'lucide-react';
+import { Key, Download } from 'lucide-react';
 import TeamManagement from '../components/settings/TeamManagement';
+import SecretManager from '../components/settings/SecretManager';
 import ScheduleManager from '../components/scheduling/ScheduleManager';
-import SecretManager from '../components/settings/SecretManager'; // Import new component
+import RoleManagement from '../components/settings/RoleManagement';
+import WorkflowAutomationManager from '../components/automation/WorkflowAutomationManager';
+import RefactorScheduler from '../components/refactoring/RefactorScheduler';
 
 export default function Settings() {
   return (
     <div>
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-white">Settings</h1>
-        <p className="text-slate-400">Configure your organization and system preferences.</p>
+        <p className="text-slate-400">Manage your organization, team, security, and preferences</p>
       </div>
 
       <Tabs defaultValue="general" className="w-full">
-        <TabsList className="grid w-full grid-cols-6 bg-slate-800 text-slate-400">
-          <TabsTrigger value="general" className="data-[state=active]:bg-slate-900 data-[state=active]:text-white">General</TabsTrigger>
-          <TabsTrigger value="team" className="data-[state=active]:bg-slate-900 data-[state=active]:text-white">Team</TabsTrigger>
-          <TabsTrigger value="api" className="data-[state=active]:bg-slate-900 data-[state=active]:text-white">API Keys</TabsTrigger>
-          <TabsTrigger value="scheduling" className="data-[state=active]:bg-slate-900 data-[state=active]:text-white">Scheduling</TabsTrigger>
-          <TabsTrigger value="notifications" className="data-[state=active]:bg-slate-900 data-[state=active]:text-white">Notifications</TabsTrigger>
-          <TabsTrigger value="security" className="data-[state=active]:bg-slate-900 data-[state=active]:text-white">Security</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-7 bg-slate-800 text-slate-400">
+          <TabsTrigger value="general">General</TabsTrigger>
+          <TabsTrigger value="team">Team</TabsTrigger>
+          <TabsTrigger value="roles">Roles</TabsTrigger>
+          <TabsTrigger value="automation">Automation</TabsTrigger>
+          <TabsTrigger value="scheduling">Scheduling</TabsTrigger>
+          <TabsTrigger value="notifications">Notifications</TabsTrigger>
+          <TabsTrigger value="security">Security</TabsTrigger>
         </TabsList>
 
         <TabsContent value="general" className="mt-6">
@@ -33,20 +37,19 @@ export default function Settings() {
             <CardHeader>
               <CardTitle className="text-white">Organization Settings</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label className="text-slate-400">Organization Name</Label>
-                  <Input value="Acme Inc." className="bg-slate-800 border-slate-700 text-white mt-1" />
-                </div>
-                <div>
-                  <Label className="text-slate-400">Plan</Label>
-                  <Input value="Enterprise" disabled className="bg-slate-800 border-slate-700 text-slate-400 mt-1" />
+            <CardContent className="space-y-4">
+              <div>
+                <label className="text-sm text-slate-400 mb-2 block">Organization Name</label>
+                <Input defaultValue="Archon Enterprise" className="bg-slate-800 border-slate-700" />
+              </div>
+              <div>
+                <label className="text-sm text-slate-400 mb-2 block">Plan</label>
+                <div className="flex items-center gap-3">
+                  <Badge className="bg-purple-500/20 text-purple-400 border-purple-500/30">Enterprise</Badge>
+                  <span className="text-sm text-slate-400">Unlimited agents, workflows, and runs</span>
                 </div>
               </div>
-              <div className="flex justify-end">
-                <Button>Save Changes</Button>
-              </div>
+              <Button className="bg-blue-600 hover:bg-blue-700">Save Changes</Button>
             </CardContent>
           </Card>
         </TabsContent>
@@ -55,33 +58,17 @@ export default function Settings() {
           <TeamManagement />
         </TabsContent>
 
-        <TabsContent value="api" className="mt-6">
+        <TabsContent value="roles" className="mt-6">
+          <RoleManagement />
+        </TabsContent>
+
+        <TabsContent value="automation" className="mt-6">
           <div className="space-y-6">
-            <Card className="bg-slate-900 border-slate-800">
-              <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle className="text-white flex items-center gap-2">
-                  <Key className="w-5 h-5" />
-                  API Keys
-                </CardTitle>
-                <Button variant="outline">Generate New Key</Button>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="p-4 bg-slate-800 rounded-lg">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="font-mono text-white">ak_prod_••••••••••••••••</p>
-                        <p className="text-sm text-slate-400">Production Key - Created Dec 1, 2024</p>
-                      </div>
-                      <Button variant="destructive" size="sm">Revoke</Button>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <WorkflowAutomationManager />
+            <RefactorScheduler />
           </div>
         </TabsContent>
-        
+
         <TabsContent value="scheduling" className="mt-6">
           <ScheduleManager />
         </TabsContent>
@@ -89,60 +76,42 @@ export default function Settings() {
         <TabsContent value="notifications" className="mt-6">
           <Card className="bg-slate-900 border-slate-800">
             <CardHeader>
-              <CardTitle className="text-white flex items-center gap-2">
-                <Bell className="w-5 h-5" />
-                Notification Preferences
-              </CardTitle>
+              <CardTitle className="text-white">Notification Preferences</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
+            <CardContent className="space-y-4">
+              {[
+                { label: 'Workflow Failures', description: 'Get notified when workflows fail' },
+                { label: 'Cost Alerts', description: 'Alert when spending exceeds thresholds' },
+                { label: 'Approval Requests', description: 'Notify for pending approvals' },
+                { label: 'Weekly Reports', description: 'Receive weekly activity summaries' }
+              ].map((item) => (
+                <div key={item.label} className="flex items-center justify-between p-4 bg-slate-950 rounded-lg border border-slate-800">
                   <div>
-                    <p className="text-white font-medium">Workflow Failures</p>
-                    <p className="text-sm text-slate-400">Get notified when workflows fail</p>
+                    <div className="text-white font-medium">{item.label}</div>
+                    <div className="text-sm text-slate-400">{item.description}</div>
                   </div>
                   <Switch defaultChecked />
                 </div>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-white font-medium">Cost Alerts</p>
-                    <p className="text-sm text-slate-400">Alert when spending exceeds thresholds</p>
-                  </div>
-                  <Switch defaultChecked />
-                </div>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-white font-medium">Weekly Reports</p>
-                    <p className="text-sm text-slate-400">Receive weekly usage summaries</p>
-                  </div>
-                  <Switch />
-                </div>
-              </div>
+              ))}
             </CardContent>
           </Card>
         </TabsContent>
 
         <TabsContent value="security" className="mt-6">
           <div className="space-y-6">
-            <SecretManager /> {/* Add Secret Manager */}
+            <SecretManager />
             <Card className="bg-slate-900 border-slate-800">
               <CardHeader>
-                <CardTitle className="text-white flex items-center gap-2">
-                  <Shield className="w-5 h-5" />
-                  Export Data
-                </CardTitle>
+                <CardTitle className="text-white">Data Export</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-white font-medium">Download All Data</p>
-                    <p className="text-sm text-slate-400">Export runs, agents, workflows, and audit logs</p>
-                  </div>
-                  <Button variant="outline">
-                    <Download className="mr-2 h-4 w-4" />
-                    Export
-                  </Button>
-                </div>
+                <p className="text-sm text-slate-400 mb-4">
+                  Export all your organization data including workflows, runs, and audit logs
+                </p>
+                <Button variant="outline" className="border-slate-700">
+                  <Download className="w-4 h-4 mr-2" />
+                  Export All Data
+                </Button>
               </CardContent>
             </Card>
           </div>
