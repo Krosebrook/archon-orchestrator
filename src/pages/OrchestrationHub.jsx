@@ -13,6 +13,7 @@ import AgentProgressMonitor from '../components/orchestration/AgentProgressMonit
 import ResourceManager from '../components/orchestration/ResourceManager';
 import AgentMarketplace from '../components/orchestration/AgentMarketplace';
 import WorkflowGenerator from '../components/orchestration/WorkflowGenerator';
+import WorkflowOptimizer from '../components/orchestration/WorkflowOptimizer';
 import { toast } from 'sonner';
 
 export default function OrchestrationHub() {
@@ -20,6 +21,7 @@ export default function OrchestrationHub() {
   const [workflows, setWorkflows] = useState([]);
   const [collaborations, setCollaborations] = useState([]);
   const [selectedCollaboration, setSelectedCollaboration] = useState(null);
+  const [selectedWorkflow, setSelectedWorkflow] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -131,10 +133,14 @@ export default function OrchestrationHub() {
       </div>
 
       <Tabs defaultValue="generator" className="w-full">
-        <TabsList className="grid w-full grid-cols-6 bg-slate-800">
+        <TabsList className="grid w-full grid-cols-7 bg-slate-800">
           <TabsTrigger value="generator">
             <Sparkles className="w-4 h-4 mr-2" />
-            AI Generator
+            Generator
+          </TabsTrigger>
+          <TabsTrigger value="optimizer">
+            <Sparkles className="w-4 h-4 mr-2" />
+            Optimizer
           </TabsTrigger>
           <TabsTrigger value="registry">Agents</TabsTrigger>
           <TabsTrigger value="workflows">Workflows</TabsTrigger>
@@ -148,6 +154,43 @@ export default function OrchestrationHub() {
 
         <TabsContent value="generator" className="mt-6">
           <WorkflowGenerator />
+        </TabsContent>
+
+        <TabsContent value="optimizer" className="mt-6">
+          <div className="space-y-6">
+            <Card className="bg-slate-900 border-slate-800">
+              <CardHeader>
+                <CardTitle className="text-white">Select Workflow to Optimize</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  {workflows.map(wf => (
+                    <div
+                      key={wf.id}
+                      onClick={() => setSelectedWorkflow(wf)}
+                      className={`p-3 rounded-lg border cursor-pointer transition-all ${
+                        selectedWorkflow?.id === wf.id 
+                          ? 'bg-blue-900/20 border-blue-500/50' 
+                          : 'bg-slate-950 border-slate-800 hover:border-slate-700'
+                      }`}
+                    >
+                      <div className="text-sm font-medium text-white">{wf.name}</div>
+                      <div className="text-xs text-slate-400">{wf.description}</div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+            {selectedWorkflow && (
+              <WorkflowOptimizer 
+                workflow={selectedWorkflow} 
+                onOptimize={() => {
+                  loadData();
+                  setSelectedWorkflow(null);
+                }}
+              />
+            )}
+          </div>
         </TabsContent>
 
         <TabsContent value="registry" className="mt-6">
