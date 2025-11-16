@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Agent, Workflow, AgentCollaboration } from '@/entities/all';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Bot, GitFork, Users, Store } from 'lucide-react';
+import { Bot, GitFork, Users, Store, Sparkles } from 'lucide-react';
 import AgentRegistry from '../components/orchestration/AgentRegistry';
 import WorkflowAssignment from '../components/orchestration/WorkflowAssignment';
 import AgentHealthMonitor from '../components/orchestration/AgentHealthMonitor';
@@ -12,6 +12,7 @@ import WorkflowDAG from '../components/orchestration/WorkflowDAG';
 import AgentProgressMonitor from '../components/orchestration/AgentProgressMonitor';
 import ResourceManager from '../components/orchestration/ResourceManager';
 import AgentMarketplace from '../components/orchestration/AgentMarketplace';
+import WorkflowGenerator from '../components/orchestration/WorkflowGenerator';
 import { toast } from 'sonner';
 
 export default function OrchestrationHub() {
@@ -129,8 +130,12 @@ export default function OrchestrationHub() {
         </Card>
       </div>
 
-      <Tabs defaultValue="registry" className="w-full">
-        <TabsList className="grid w-full grid-cols-5 bg-slate-800">
+      <Tabs defaultValue="generator" className="w-full">
+        <TabsList className="grid w-full grid-cols-6 bg-slate-800">
+          <TabsTrigger value="generator">
+            <Sparkles className="w-4 h-4 mr-2" />
+            AI Generator
+          </TabsTrigger>
           <TabsTrigger value="registry">Agents</TabsTrigger>
           <TabsTrigger value="workflows">Workflows</TabsTrigger>
           <TabsTrigger value="collaboration">Collaborations</TabsTrigger>
@@ -140,6 +145,10 @@ export default function OrchestrationHub() {
             Marketplace
           </TabsTrigger>
         </TabsList>
+
+        <TabsContent value="generator" className="mt-6">
+          <WorkflowGenerator />
+        </TabsContent>
 
         <TabsContent value="registry" className="mt-6">
           <AgentRegistry agents={agents} onRefresh={loadData} />
