@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -10,6 +9,7 @@ import { toast } from 'sonner';
 import { format } from 'date-fns';
 import CIGateManager from './CIGateManager';
 import GateConfiguration from './GateConfiguration';
+import PipelineFlow from './PipelineFlow';
 
 const STAGE_ICONS = {
   analyze: GitBranch,
@@ -29,39 +29,98 @@ const STATUS_CONFIG = {
 export default function CIPipeline({ sessionId }) {
   const [pipelines, setPipelines] = useState([]);
   const [selectedPipeline, setSelectedPipeline] = useState(null);
+  const [gates, setGates] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     loadPipelines();
     
-    // Poll for updates
-    const interval = setInterval(loadPipelines, 5000);
+    // Real-time polling every 2 seconds
+    const interval = setInterval(() => {
+      loadPipelines();
+      if (selectedPipeline) {
+        loadGates(selectedPipeline.id);
+      }
+    }, 2000);
+    
     return () => clearInterval(interval);
-  }, [sessionId]);
+  }, [sessionId, selectedPipeline?.id]);
 
   const loadPipelines = async () => {
     try {
       const data = await base44.entities.RefactorPipeline.filter({ session_id: sessionId }, '-created_date', 10);
       setPipelines(data);
+      
       if (!selectedPipeline && data.length > 0) {
         setSelectedPipeline(data[0]);
       } else if (selectedPipeline) {
-        // If a pipeline is already selected, update its data if it's in the new list
         const updatedSelected = data.find(p => p.id === selectedPipeline.id);
         if (updatedSelected) {
+          // Check for status changes and notify
+          if (selectedPipeline.status !== updatedSelected.status) {
+            handlePipelineStatusChange(updatedSelected);
+          }
           setSelectedPipeline(updatedSelected);
-        } else if (data.length > 0) {
-          // If the previously selected pipeline is no longer available, select the first one
-          setSelectedPipeline(data[0]);
-        } else {
-          // No pipelines available
-          setSelectedPipeline(null);
         }
       }
     } catch (error) {
       console.error('Failed to load pipelines:', error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const loadGates = async (pipelineId) => {
+    try {
+      const gateData = await base44.entities.CIGate.filter({ pipeline_id: pipelineId });
+      
+      // Check for gate status changes
+      gates.forEach(oldGate => {
+        const newGate = gateData.find(g => g.id === oldGate.id);
+        if (newGate && oldGate.status !== newGate.status) {
+          handleGateStatusChange(newGate);
+        }
+      });
+      
+      setGates(gateData);
+    } catch (error) {
+      console.error('Failed to load gates:', error);
+    }
+  };
+
+  const handlePipelineStatusChange = (pipeline) => {
+    if (pipeline.status === 'failed') {
+      toast.error(`Pipeline ${pipeline.name} failed`, {
+        description: 'Check the logs for details',
+        action: {
+          label: 'View',
+          onClick: () => setSelectedPipeline(pipeline)
+        }
+      });
+    } else if (pipeline.status === 'success') {
+      toast.success(`Pipeline ${pipeline.name} completed successfully`);
+    }
+  };
+
+  const handleGateStatusChange = (gate) => {
+    if (gate.status === 'failed') {
+      toast.error(`Gate "${gate.name}" failed`, {
+        description: `${gate.gate_type} gate blocked the pipeline`,
+        action: {
+          label: 'Review',
+          onClick: () => {}
+        }
+      });
+    } else if (gate.status === 'pending' && gate.gate_type === 'approval') {
+      toast.info(`Approval required for "${gate.name}"`, {
+        description: 'Pipeline is waiting for approval',
+        action: {
+          label: 'Approve',
+          onClick: () => {}
+        }
+      });
+    } else if (gate.status === 'passed') {
+      toast.success(`Gate "${gate.name}" passed`);
     }
   };
 
@@ -138,7 +197,7 @@ export default function CIPipeline({ sessionId }) {
                     key={pipeline.id}
                     onClick={() => setSelectedPipeline(pipeline)}
                     className={`p-4 bg-slate-950 rounded-lg border cursor-pointer transition-all ${
-                      selectedPipeline?.id === pipeline.id ? 'border-blue-500' : 'border-slate-800 hover:border-slate-700'
+                      selectedPipeline?.id === pipeline.id ? 'border-blue-500 ring-1 ring-blue-500/20' : 'border-slate-800 hover:border-slate-700'
                     }`}
                   >
                     <div className="flex items-start justify-between mb-3">
@@ -170,8 +229,8 @@ export default function CIPipeline({ sessionId }) {
                         </Button>
                       )}
                     </div>
-                    <Progress value={progress} className="h-1.5" />
-                    <div className="flex items-center gap-2 mt-2 text-xs text-slate-400">
+                    <Progress value={progress} className="h-1.5 mb-2" />
+                    <div className="flex items-center gap-2 text-xs text-slate-400">
                       {pipeline.stages?.map((stage, idx) => {
                         const StageIcon = STAGE_ICONS[stage.name] || Clock;
                         const stageConfig = STATUS_CONFIG[stage.status] || STATUS_CONFIG.pending;
@@ -193,7 +252,9 @@ export default function CIPipeline({ sessionId }) {
 
       {selectedPipeline && (
         <div className="space-y-6">
-          <GateConfiguration pipelineId={selectedPipeline.id} onSave={loadPipelines} />
+          <PipelineFlow stages={selectedPipeline.stages} gates={gates} />
+          
+          <GateConfiguration pipelineId={selectedPipeline.id} onSave={() => loadGates(selectedPipeline.id)} />
           
           <Card className="bg-slate-900 border-slate-800">
             <CardHeader>
@@ -294,7 +355,7 @@ export default function CIPipeline({ sessionId }) {
             </CardContent>
           </Card>
 
-          <CIGateManager pipelineId={selectedPipeline.id} />
+          <CIGateManager pipelineId={selectedPipeline.id} gates={gates} onGateUpdate={() => loadGates(selectedPipeline.id)} />
         </div>
       )}
     </div>

@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Shield, CheckCircle2, XCircle, Clock, Users } from 'lucide-react';
+import { Shield, CheckCircle2, XCircle, Clock, Users, Loader2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
@@ -16,13 +15,41 @@ const GATE_ICONS = {
   policy: Shield
 };
 
-export default function CIGateManager({ pipelineId }) {
-  const [gates, setGates] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+const GATE_STATUS_CONFIG = {
+  pending: { 
+    badge: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
+    icon: Clock
+  },
+  running: {
+    badge: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
+    icon: Loader2,
+    animate: 'animate-spin'
+  },
+  passed: { 
+    badge: 'bg-green-500/20 text-green-400 border-green-500/30',
+    icon: CheckCircle2
+  },
+  failed: { 
+    badge: 'bg-red-500/20 text-red-400 border-red-500/30',
+    icon: XCircle
+  },
+  bypassed: { 
+    badge: 'bg-slate-500/20 text-slate-400 border-slate-500/30',
+    icon: Shield
+  }
+};
+
+export default function CIGateManager({ pipelineId, gates: propGates, onGateUpdate }) {
+  const [gates, setGates] = useState(propGates || []);
+  const [isLoading, setIsLoading] = useState(!propGates);
 
   useEffect(() => {
-    if (pipelineId) loadGates();
-  }, [pipelineId]);
+    if (propGates) {
+      setGates(propGates);
+    } else if (pipelineId) {
+      loadGates();
+    }
+  }, [pipelineId, propGates]);
 
   const loadGates = async () => {
     setIsLoading(true);
@@ -57,6 +84,7 @@ export default function CIGateManager({ pipelineId }) {
       });
 
       toast.success(`Gate ${decision === 'approve' ? 'approved' : 'rejected'}`);
+      onGateUpdate?.();
       loadGates();
     } catch (error) {
       console.error('Failed to update gate:', error);
@@ -67,7 +95,9 @@ export default function CIGateManager({ pipelineId }) {
   if (isLoading) {
     return (
       <Card className="bg-slate-900 border-slate-800">
-        <CardContent className="p-8 text-center text-slate-400">Loading...</CardContent>
+        <CardContent className="p-8 text-center">
+          <Loader2 className="w-8 h-8 animate-spin mx-auto text-slate-400" />
+        </CardContent>
       </Card>
     );
   }
@@ -78,6 +108,9 @@ export default function CIGateManager({ pipelineId }) {
         <CardTitle className="text-white flex items-center gap-2">
           <Shield className="w-5 h-5" />
           Quality Gates
+          <Badge variant="outline" className="ml-auto bg-slate-800 border-slate-700">
+            {gates.length} gates
+          </Badge>
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -89,15 +122,11 @@ export default function CIGateManager({ pipelineId }) {
           <div className="space-y-3">
             {gates.map((gate) => {
               const Icon = GATE_ICONS[gate.gate_type] || Shield;
-              const statusConfig = {
-                pending: { badge: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' },
-                passed: { badge: 'bg-green-500/20 text-green-400 border-green-500/30' },
-                failed: { badge: 'bg-red-500/20 text-red-400 border-red-500/30' },
-                bypassed: { badge: 'bg-slate-500/20 text-slate-400 border-slate-500/30' }
-              }[gate.status];
+              const statusConfig = GATE_STATUS_CONFIG[gate.status] || GATE_STATUS_CONFIG.pending;
+              const StatusIcon = statusConfig.icon;
 
               return (
-                <div key={gate.id} className="p-4 bg-slate-950 rounded-lg border border-slate-800">
+                <div key={gate.id} className="p-4 bg-slate-950 rounded-lg border border-slate-800 transition-all hover:border-slate-700">
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center gap-3">
                       <div className="p-2 rounded-lg bg-slate-800">
@@ -107,6 +136,7 @@ export default function CIGateManager({ pipelineId }) {
                         <div className="flex items-center gap-2 mb-1">
                           <span className="text-white font-medium">{gate.name}</span>
                           <Badge variant="outline" className={statusConfig.badge}>
+                            <StatusIcon className={`w-3 h-3 mr-1 ${statusConfig.animate || ''}`} />
                             {gate.status}
                           </Badge>
                         </div>
