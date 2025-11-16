@@ -9,6 +9,7 @@ import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import CIGateManager from './CIGateManager';
+import GateConfiguration from './GateConfiguration';
 
 const STAGE_ICONS = {
   analyze: GitBranch,
@@ -192,6 +193,8 @@ export default function CIPipeline({ sessionId }) {
 
       {selectedPipeline && (
         <div className="space-y-6">
+          <GateConfiguration pipelineId={selectedPipeline.id} onSave={loadPipelines} />
+          
           <Card className="bg-slate-900 border-slate-800">
             <CardHeader>
               <CardTitle className="text-white">Pipeline Details</CardTitle>

@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Run, Agent, Workflow } from '@/entities/all';
 import { DollarSign, Bot, GitFork, AlertTriangle } from 'lucide-react';
 import StatCard from '../components/dashboard/StatCard';
@@ -7,6 +7,8 @@ import CostChart from '../components/dashboard/CostChart';
 import AgentHealth from '../components/dashboard/AgentHealth';
 import ActiveRuns from '../components/dashboard/ActiveRuns';
 import QuickActions from '../components/dashboard/QuickActions';
+import OptimizationWidget from '../components/dashboard/OptimizationWidget';
+import CollaborationWidget from '../components/dashboard/CollaborationWidget';
 import { subDays, format } from 'date-fns';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -111,7 +113,16 @@ export default function Dashboard() {
         <div className="lg:col-span-2">
           <ActiveRuns runs={runs.slice(0,5)} workflows={workflows} agents={agents} isLoading={isLoading} />
         </div>
-        <QuickActions />
+        <div className="space-y-6">
+          <OptimizationWidget />
+          <CollaborationWidget />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-3">
+          <QuickActions />
+        </div>
       </div>
     </div>
   );

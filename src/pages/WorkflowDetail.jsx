@@ -36,6 +36,7 @@ import { toast } from 'sonner';
 import RunMonitor from '../components/runs/RunMonitor'; // New component for live run feedback
 import CollaborationPanel from '../components/agents/CollaborationPanel';
 import OptimizationInsights from '../components/workflows/OptimizationInsights';
+import OptimizationSettings from '../components/workflows/OptimizationSettings';
 
 const NODE_TYPES = {
   trigger: { icon: Zap, color: 'from-green-500 to-emerald-600', label: 'Trigger' },
@@ -326,7 +327,8 @@ export default function WorkflowDetail() {
         </div>
         
         <div className="space-y-6">
-          <OptimizationInsights workflow={workflow} />
+          <OptimizationSettings workflow={workflow} />
+          <OptimizationInsights workflow={workflow} onRefresh={() => {}} />
           <CollaborationPanel workflowId={workflowId} agents={agents} />
         </div>
       </div>
