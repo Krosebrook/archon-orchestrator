@@ -1,194 +1,172 @@
-
 import React, { useState, useEffect } from 'react';
+import { Agent, Workflow, AgentCollaboration } from '@/entities/all';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { base44 } from '@/api/base44Client';
-import { Brain, Network, Activity, Users, Zap } from 'lucide-react';
+import { Bot, GitFork, Users, Store } from 'lucide-react';
 import AgentRegistry from '../components/orchestration/AgentRegistry';
-import CollaborationControl from '../components/orchestration/CollaborationControl';
 import WorkflowAssignment from '../components/orchestration/WorkflowAssignment';
 import AgentHealthMonitor from '../components/orchestration/AgentHealthMonitor';
+import CollaborationControl from '../components/orchestration/CollaborationControl';
 import CollaborationCanvas from '../components/collaboration/CollaborationCanvas';
+import WorkflowDAG from '../components/orchestration/WorkflowDAG';
+import AgentProgressMonitor from '../components/orchestration/AgentProgressMonitor';
+import ResourceManager from '../components/orchestration/ResourceManager';
+import AgentMarketplace from '../components/orchestration/AgentMarketplace';
+import { toast } from 'sonner';
 
 export default function OrchestrationHub() {
   const [agents, setAgents] = useState([]);
   const [workflows, setWorkflows] = useState([]);
   const [collaborations, setCollaborations] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [selectedCollaboration, setSelectedCollaboration] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     loadData();
+    const interval = setInterval(loadData, 10000);
+    return () => clearInterval(interval);
   }, []);
 
   const loadData = async () => {
-    setIsLoading(true);
     try {
       const [agentData, workflowData, collabData] = await Promise.all([
-        base44.entities.Agent.list(),
-        base44.entities.Workflow.list(),
-        base44.entities.AgentCollaboration.list()
+        Agent.list(),
+        Workflow.list(),
+        AgentCollaboration.filter({ state: { $in: ['active', 'paused'] } })
       ]);
       setAgents(agentData);
       setWorkflows(workflowData);
       setCollaborations(collabData);
     } catch (error) {
-      console.error('Failed to load data:', error);
+      console.error('Failed to load orchestration data:', error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const stats = {
-    totalAgents: agents.length,
-    activeAgents: agents.filter(a => a.status === 'active').length,
-    activeCollaborations: collaborations.filter(c => c.state === 'active').length,
-    totalWorkflows: workflows.length
-  };
+  if (selectedCollaboration) {
+    const tasks = selectedCollaboration.shared_context?.task_delegation?.tasks || [];
+    
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h1 className="text-3xl font-bold text-white">Collaboration Detail</h1>
+        </div>
 
-  return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
-          <Brain className="w-8 h-8 text-purple-400" />
-          AI Agent Orchestration Hub
-        </h1>
-        <p className="text-slate-400">Manage agents, collaborations, and workflow assignments</p>
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="bg-slate-900 border-slate-800">
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-slate-400">Total Agents</span>
-              <Brain className="w-4 h-4 text-slate-500" />
-            </div>
-            <div className="text-3xl font-bold text-white">{stats.totalAgents}</div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-slate-900 border-slate-800">
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-slate-400">Active Agents</span>
-              <Activity className="w-4 h-4 text-green-500" />
-            </div>
-            <div className="text-3xl font-bold text-green-400">{stats.activeAgents}</div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-slate-900 border-slate-800">
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-slate-400">Collaborations</span>
-              <Users className="w-4 h-4 text-blue-500" />
-            </div>
-            <div className="text-3xl font-bold text-blue-400">{stats.activeCollaborations}</div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-slate-900 border-slate-800">
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-slate-400">Workflows</span>
-              <Network className="w-4 h-4 text-purple-500" />
-            </div>
-            <div className="text-3xl font-bold text-purple-400">{stats.totalWorkflows}</div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {selectedCollaboration ? (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2 space-y-6">
+            <WorkflowDAG tasks={tasks} agents={agents} />
             <CollaborationCanvas 
               collaborationId={selectedCollaboration.id}
               agents={agents}
             />
           </div>
           <div className="space-y-6">
-            <Card className="bg-slate-900 border-slate-800">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-white">Session Info</CardTitle>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => setSelectedCollaboration(null)}
-                    className="border-slate-700"
-                  >
-                    Back
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="p-3 bg-slate-950 rounded-lg border border-slate-800">
-                    <div className="text-xs text-slate-400 mb-1">Total Cost</div>
-                    <div className="text-lg font-bold text-white">
-                      ${((selectedCollaboration.total_cost_cents || 0) / 100).toFixed(2)}
-                    </div>
-                  </div>
-                  <div className="p-3 bg-slate-950 rounded-lg border border-slate-800">
-                    <div className="text-xs text-slate-400 mb-1">Decisions Made</div>
-                    <div className="text-lg font-bold text-white">
-                      {selectedCollaboration.decisions?.length || 0}
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-sm font-medium text-slate-300 mb-2">Participants</div>
-                    {selectedCollaboration.participant_agents?.map((agentId, idx) => {
-                      const agent = agents.find(a => a.id === agentId);
-                      return (
-                        <div key={idx} className="p-2 bg-slate-950 rounded border border-slate-800 mb-2">
-                          <div className="text-sm text-white">{agent?.name || agentId}</div>
-                          <div className="text-xs text-slate-400">{agent?.config?.model}</div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <AgentProgressMonitor 
+              collaboration={selectedCollaboration} 
+              agents={agents}
+            />
+            <ResourceManager 
+              collaboration={selectedCollaboration}
+              onUpdate={loadData}
+            />
           </div>
         </div>
-      ) : (
-        <Tabs defaultValue="registry" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 bg-slate-800">
-            <TabsTrigger value="registry">Agent Registry</TabsTrigger>
-            <TabsTrigger value="collaboration">Collaboration</TabsTrigger>
-            <TabsTrigger value="assignment">Assignment</TabsTrigger>
-            <TabsTrigger value="health">Health</TabsTrigger>
-          </TabsList>
+      </div>
+    );
+  }
 
-          <TabsContent value="registry" className="mt-6">
-            <AgentRegistry agents={agents} onRefresh={loadData} />
-          </TabsContent>
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-white mb-2">Orchestration Hub</h1>
+          <p className="text-slate-400">Manage agents, workflows, and collaborations</p>
+        </div>
+      </div>
 
-          <TabsContent value="collaboration" className="mt-6">
-            <CollaborationControl 
-              agents={agents} 
-              workflows={workflows}
-              collaborations={collaborations}
-              onRefresh={loadData}
-              onSelect={setSelectedCollaboration}
-            />
-          </TabsContent>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+        <Card className="bg-slate-900 border-slate-800">
+          <CardContent className="pt-6">
+            <div className="flex items-center gap-4">
+              <div className="p-3 rounded-lg bg-blue-500/20">
+                <Bot className="w-6 h-6 text-blue-400" />
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-white">{agents.length}</div>
+                <div className="text-sm text-slate-400">Active Agents</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
-          <TabsContent value="assignment" className="mt-6">
-            <WorkflowAssignment 
-              agents={agents}
-              workflows={workflows}
-              onRefresh={loadData}
-            />
-          </TabsContent>
+        <Card className="bg-slate-900 border-slate-800">
+          <CardContent className="pt-6">
+            <div className="flex items-center gap-4">
+              <div className="p-3 rounded-lg bg-purple-500/20">
+                <GitFork className="w-6 h-6 text-purple-400" />
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-white">{workflows.length}</div>
+                <div className="text-sm text-slate-400">Workflows</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
-          <TabsContent value="health" className="mt-6">
-            <AgentHealthMonitor agents={agents} />
-          </TabsContent>
-        </Tabs>
-      )}
+        <Card className="bg-slate-900 border-slate-800">
+          <CardContent className="pt-6">
+            <div className="flex items-center gap-4">
+              <div className="p-3 rounded-lg bg-green-500/20">
+                <Users className="w-6 h-6 text-green-400" />
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-white">{collaborations.length}</div>
+                <div className="text-sm text-slate-400">Active Collaborations</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Tabs defaultValue="registry" className="w-full">
+        <TabsList className="grid w-full grid-cols-5 bg-slate-800">
+          <TabsTrigger value="registry">Agents</TabsTrigger>
+          <TabsTrigger value="workflows">Workflows</TabsTrigger>
+          <TabsTrigger value="collaboration">Collaborations</TabsTrigger>
+          <TabsTrigger value="health">Health</TabsTrigger>
+          <TabsTrigger value="marketplace">
+            <Store className="w-4 h-4 mr-2" />
+            Marketplace
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="registry" className="mt-6">
+          <AgentRegistry agents={agents} onRefresh={loadData} />
+        </TabsContent>
+
+        <TabsContent value="workflows" className="mt-6">
+          <WorkflowAssignment workflows={workflows} />
+        </TabsContent>
+
+        <TabsContent value="collaboration" className="mt-6">
+          <CollaborationControl 
+            agents={agents} 
+            workflows={workflows}
+            collaborations={collaborations}
+            onRefresh={loadData}
+            onSelect={setSelectedCollaboration}
+          />
+        </TabsContent>
+
+        <TabsContent value="health" className="mt-6">
+          <AgentHealthMonitor agents={agents} />
+        </TabsContent>
+
+        <TabsContent value="marketplace" className="mt-6">
+          <AgentMarketplace onAgentSelect={(agent) => toast.info(`Selected ${agent.name}`)} />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
