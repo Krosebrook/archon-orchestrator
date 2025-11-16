@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import PolicyEditor from '../components/refactoring/PolicyEditor';
 import PolicyList from '../components/refactoring/PolicyList';
 import PolicySimulator from '../components/refactoring/PolicySimulator';
+import AIPolicySuggestions from '../components/refactoring/AIPolicySuggestions';
 
 export default function RefactorPolicies() {
   const [policies, setPolicies] = useState([]);
@@ -64,6 +65,10 @@ export default function RefactorPolicies() {
       console.error('Failed to save policy:', error);
       toast.error('Failed to save policy');
     }
+  };
+
+  const handleApplySuggestion = async (suggestedPolicy) => {
+    await handleSavePolicy(suggestedPolicy);
   };
 
   const stats = {
@@ -130,7 +135,8 @@ export default function RefactorPolicies() {
         />
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2 space-y-6">
+            <AIPolicySuggestions onApplySuggestion={handleApplySuggestion} />
             <PolicyList
               policies={policies}
               onEdit={handleEditPolicy}
