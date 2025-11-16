@@ -102,27 +102,52 @@ export default function OrchestrationHub() {
       {selectedCollaboration ? (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
-            <CollaborationCanvas collaborationId={selectedCollaboration.id} />
-            <Button onClick={() => setSelectedCollaboration(null)} className="mt-4">
-              Back to Collaborations
-            </Button>
+            <CollaborationCanvas 
+              collaborationId={selectedCollaboration.id}
+              agents={agents}
+            />
           </div>
           <div className="space-y-6">
             <Card className="bg-slate-900 border-slate-800">
               <CardHeader>
-                <CardTitle className="text-white">Participants</CardTitle>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-white">Session Info</CardTitle>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setSelectedCollaboration(null)}
+                    className="border-slate-700"
+                  >
+                    Back
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent>
-                <div className="space-y-2">
-                  {selectedCollaboration.participant_agents?.map((agentId, idx) => {
-                    const agent = agents.find(a => a.id === agentId);
-                    return (
-                      <div key={idx} className="p-2 bg-slate-950 rounded border border-slate-800">
-                        <div className="text-sm text-white">{agent?.name || agentId}</div>
-                        <div className="text-xs text-slate-400">{agent?.config?.model}</div>
-                      </div>
-                    );
-                  })}
+                <div className="space-y-3">
+                  <div className="p-3 bg-slate-950 rounded-lg border border-slate-800">
+                    <div className="text-xs text-slate-400 mb-1">Total Cost</div>
+                    <div className="text-lg font-bold text-white">
+                      ${((selectedCollaboration.total_cost_cents || 0) / 100).toFixed(2)}
+                    </div>
+                  </div>
+                  <div className="p-3 bg-slate-950 rounded-lg border border-slate-800">
+                    <div className="text-xs text-slate-400 mb-1">Decisions Made</div>
+                    <div className="text-lg font-bold text-white">
+                      {selectedCollaboration.decisions?.length || 0}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-sm font-medium text-slate-300 mb-2">Participants</div>
+                    {selectedCollaboration.participant_agents?.map((agentId, idx) => {
+                      const agent = agents.find(a => a.id === agentId);
+                      return (
+                        <div key={idx} className="p-2 bg-slate-950 rounded border border-slate-800 mb-2">
+                          <div className="text-sm text-white">{agent?.name || agentId}</div>
+                          <div className="text-xs text-slate-400">{agent?.config?.model}</div>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               </CardContent>
             </Card>
