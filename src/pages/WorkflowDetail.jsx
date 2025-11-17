@@ -37,6 +37,7 @@ import RunMonitor from '../components/runs/RunMonitor'; // New component for liv
 import CollaborationPanel from '../components/agents/CollaborationPanel';
 import OptimizationInsights from '../components/workflows/OptimizationInsights';
 import OptimizationSettings from '../components/workflows/OptimizationSettings';
+import SaveAsTemplate from '../components/workflows/SaveAsTemplate';
 
 const NODE_TYPES = {
   trigger: { icon: Zap, color: 'from-green-500 to-emerald-600', label: 'Trigger' },
@@ -76,6 +77,7 @@ export default function WorkflowDetail() {
   const [isRunning, setIsRunning] = useState(false);
   const [activeRun, setActiveRun] = useState(null); // State to hold the current run simulation
   const [isRunMonitorOpen, setIsRunMonitorOpen] = useState(false);
+  const [saveAsTemplateOpen, setSaveAsTemplateOpen] = useState(false);
 
   // Workflow editor state (what's currently being edited)
   const [workflowData, setWorkflowData] = useState({
@@ -400,6 +402,11 @@ export default function WorkflowDetail() {
             <Button variant="outline" className="text-white border-slate-700 hover:bg-slate-800" onClick={saveWorkflow} disabled={isSaving}>
               <Save className="w-4 h-4 mr-2" /> {isSaving ? 'Saving...' : 'Save'}
             </Button>
+            {workflow && (
+              <Button variant="outline" className="text-white border-slate-700 hover:bg-slate-800" onClick={() => setSaveAsTemplateOpen(true)}>
+                <Copy className="w-4 h-4 mr-2" /> Save as Template
+              </Button>
+            )}
             <Button className="bg-blue-600 hover:bg-blue-700" onClick={handleRun} disabled={isRunning || !workflow?.id}>
               <Play className="w-4 h-4 mr-2" /> {isRunning ? 'Running...' : 'Run'}
             </Button>
@@ -484,8 +491,8 @@ export default function WorkflowDetail() {
               <OptimizationInsights workflow={workflow} onRefresh={() => { }} />
             </div>
             <div className="space-y-6">
-              <OptimizationSettings workflow={workflow} />
               <CollaborationPanel workflowId={workflowId} agents={agents} />
+              <OptimizationSettings workflow={workflow} />
             </div>
           </div>
         </TabsContent>
@@ -498,6 +505,11 @@ export default function WorkflowDetail() {
           setActiveRun(null); // Clear active run when closing monitor
         }}
         run={activeRun}
+      />
+      <SaveAsTemplate
+        workflow={workflow}
+        open={saveAsTemplateOpen}
+        onOpenChange={setSaveAsTemplateOpen}
       />
     </div>
   );
