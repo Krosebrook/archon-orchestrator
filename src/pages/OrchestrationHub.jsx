@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Agent, Workflow, AgentCollaboration } from '@/entities/all';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,6 +15,8 @@ import ResourceManager from '../components/orchestration/ResourceManager';
 import AgentMarketplace from '../components/orchestration/AgentMarketplace';
 import WorkflowGenerator from '../components/orchestration/WorkflowGenerator';
 import WorkflowOptimizer from '../components/orchestration/WorkflowOptimizer';
+import TemplateLibrary from '../components/templates/TemplateLibrary';
+import TemplateSuggestions from '../components/templates/TemplateSuggestions';
 import { toast } from 'sonner';
 
 export default function OrchestrationHub() {
@@ -133,11 +136,12 @@ export default function OrchestrationHub() {
       </div>
 
       <Tabs defaultValue="generator" className="w-full">
-        <TabsList className="grid w-full grid-cols-7 bg-slate-800">
+        <TabsList className="grid w-full grid-cols-8 bg-slate-800">
           <TabsTrigger value="generator">
             <Sparkles className="w-4 h-4 mr-2" />
             Generator
           </TabsTrigger>
+          <TabsTrigger value="templates">Templates</TabsTrigger>
           <TabsTrigger value="optimizer">
             <Sparkles className="w-4 h-4 mr-2" />
             Optimizer
@@ -154,6 +158,13 @@ export default function OrchestrationHub() {
 
         <TabsContent value="generator" className="mt-6">
           <WorkflowGenerator />
+        </TabsContent>
+
+        <TabsContent value="templates" className="mt-6">
+          <div className="space-y-6">
+            <TemplateSuggestions />
+            <TemplateLibrary />
+          </div>
         </TabsContent>
 
         <TabsContent value="optimizer" className="mt-6">
