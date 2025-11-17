@@ -1,334 +1,288 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Progress } from '@/components/ui/progress';
-import {
-  Activity,
-  AlertCircle,
-  CheckCircle2,
-  Clock,
-  Cpu,
-  Database,
-  DollarSign,
-  TrendingUp,
-  Zap,
-  RefreshCw,
-  AlertTriangle
-} from 'lucide-react';
+import { Activity, TrendingUp, AlertTriangle, Zap, DollarSign, Clock } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
-import { Run, Agent, Alert, SystemMetric } from '@/entities/all';
-import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { format, subHours } from 'date-fns';
-
-function MetricCard({ title, value, unit, icon: Icon, trend, status = 'normal' }) {
-  const statusColors = {
-    normal: 'text-green-400',
-    warning: 'text-yellow-400',
-    critical: 'text-red-400'
-  };
-
-  return (
-    <Card className="bg-slate-900 border-slate-800">
-      <CardContent className="pt-6">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-sm text-slate-400">{title}</span>
-          <Icon className="w-4 h-4 text-slate-500" />
-        </div>
-        <div className={`text-3xl font-bold ${statusColors[status]}`}>
-          {value}
-          {unit && <span className="text-lg text-slate-500 ml-1">{unit}</span>}
-        </div>
-        {trend && (
-          <div className="flex items-center gap-1 mt-2 text-xs text-slate-400">
-            <TrendingUp className="w-3 h-3" />
-            {trend}
-          </div>
-        )}
-      </CardContent>
-    </Card>
-  );
-}
-
-function HealthStatus({ services }) {
-  return (
-    <Card className="bg-slate-900 border-slate-800">
-      <CardHeader>
-        <CardTitle className="text-white text-lg">System Health</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-3">
-          {services.map((service) => (
-            <div key={service.name} className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                {service.status === 'operational' ? (
-                  <CheckCircle2 className="w-5 h-5 text-green-400" />
-                ) : service.status === 'degraded' ? (
-                  <AlertTriangle className="w-5 h-5 text-yellow-400" />
-                ) : (
-                  <AlertCircle className="w-5 h-5 text-red-400" />
-                )}
-                <div>
-                  <div className="text-white font-medium">{service.name}</div>
-                  <div className="text-xs text-slate-400">{service.uptime}% uptime</div>
-                </div>
-              </div>
-              <Badge
-                variant="outline"
-                className={
-                  service.status === 'operational'
-                    ? 'bg-green-500/20 text-green-400 border-green-500/30'
-                    : service.status === 'degraded'
-                    ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30'
-                    : 'bg-red-500/20 text-red-400 border-red-500/30'
-                }
-              >
-                {service.status}
-              </Badge>
-            </div>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
+import { Line, Bar } from 'recharts';
+import { ResponsiveContainer, LineChart, BarChart, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { Badge } from '@/components/ui/badge';
+import { format } from 'date-fns';
 
 export default function Monitoring() {
-  const [runs, setRuns] = useState([]);
-  const [agents, setAgents] = useState([]);
-  const [alerts, setAlerts] = useState([]);
   const [metrics, setMetrics] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [autoRefresh, setAutoRefresh] = useState(true);
-
-  const loadData = async () => {
-    setIsLoading(true);
-    try {
-      const [runData, agentData, alertData, metricData] = await Promise.all([
-        Run.list('-started_at', 100),
-        Agent.list(),
-        Alert.list(),
-        SystemMetric.list('-timestamp', 50)
-      ]);
-      setRuns(runData);
-      setAgents(agentData);
-      setAlerts(alertData);
-      setMetrics(metricData);
-    } catch (error) {
-      console.error('Failed to load monitoring data:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const [runs, setRuns] = useState([]);
+  const [alerts, setAlerts] = useState([]);
+  const [systemMetrics, setSystemMetrics] = useState([]);
+  const [timeRange, setTimeRange] = useState('1h');
 
   useEffect(() => {
     loadData();
-    
-    if (autoRefresh) {
-      const interval = setInterval(loadData, 30000);
-      return () => clearInterval(interval);
+    const interval = setInterval(loadData, 5000);
+    return () => clearInterval(interval);
+  }, [timeRange]);
+
+  const loadData = async () => {
+    try {
+      const now = new Date();
+      const ranges = {
+        '1h': 60 * 60 * 1000,
+        '6h': 6 * 60 * 60 * 1000,
+        '24h': 24 * 60 * 60 * 1000
+      };
+      const startTime = new Date(now - ranges[timeRange]);
+
+      const [metricsData, runsData, alertsData, sysMetricsData] = await Promise.all([
+        base44.entities.AgentMetric.filter(
+          { timestamp: { $gte: startTime.toISOString() } },
+          '-timestamp',
+          500
+        ),
+        base44.entities.Run.filter(
+          { created_date: { $gte: startTime.toISOString() } },
+          '-created_date',
+          100
+        ),
+        base44.entities.Alert.filter({ status: 'active' }, '-created_date', 20),
+        base44.entities.SystemMetric.filter(
+          { timestamp: { $gte: startTime.toISOString() } },
+          '-timestamp',
+          200
+        )
+      ]);
+
+      setMetrics(metricsData);
+      setRuns(runsData);
+      setAlerts(alertsData);
+      setSystemMetrics(sysMetricsData);
+    } catch (error) {
+      console.error('Failed to load monitoring data:', error);
     }
-  }, [autoRefresh]);
+  };
 
-  const successRate = runs.length > 0 
-    ? Math.round((runs.filter(r => r.state === 'completed').length / runs.length) * 100)
-    : 0;
+  // Aggregate metrics by time buckets
+  const aggregateByTime = (data, valueKey, buckets = 12) => {
+    const bucketSize = (Date.now() - Date.parse(data[data.length - 1]?.timestamp || Date.now())) / buckets;
+    const aggregated = [];
 
-  const avgCost = runs.length > 0
-    ? (runs.reduce((sum, r) => sum + (r.cost_cents || 0), 0) / runs.length / 100).toFixed(2)
-    : 0;
+    for (let i = 0; i < buckets; i++) {
+      const bucketStart = Date.now() - (buckets - i) * bucketSize;
+      const bucketEnd = bucketStart + bucketSize;
+      const bucketData = data.filter(d => {
+        const time = Date.parse(d.timestamp || d.created_date);
+        return time >= bucketStart && time < bucketEnd;
+      });
 
-  const activeAgents = agents.filter(a => a.status === 'active').length;
-  const errorAgents = agents.filter(a => a.status === 'error').length;
+      aggregated.push({
+        time: format(new Date(bucketStart), 'HH:mm'),
+        value: bucketData.reduce((sum, d) => sum + (d[valueKey] || 0), 0) / Math.max(bucketData.length, 1)
+      });
+    }
 
-  const recentRuns = runs.slice(0, 24);
-  const performanceData = recentRuns.reverse().map((run, idx) => ({
-    name: `Run ${idx + 1}`,
-    cost: (run.cost_cents || 0) / 100,
-    tokens: (run.tokens_in || 0) + (run.tokens_out || 0),
-    duration: run.finished_at && run.started_at 
-      ? (new Date(run.finished_at) - new Date(run.started_at)) / 1000
-      : 0
-  }));
+    return aggregated;
+  };
 
-  const services = [
-    { name: 'API Gateway', status: 'operational', uptime: 99.9 },
-    { name: 'Database', status: 'operational', uptime: 99.8 },
-    { name: 'AI Providers', status: 'operational', uptime: 98.5 },
-    { name: 'WebSocket', status: 'operational', uptime: 99.7 },
-    { name: 'Background Jobs', status: 'operational', uptime: 99.9 }
-  ];
+  const costData = aggregateByTime(metrics, 'cost_cents');
+  const latencyData = aggregateByTime(metrics, 'latency_ms');
+  const runData = aggregateByTime(runs, 'cost_cents');
+
+  // Calculate summary stats
+  const totalCost = metrics.reduce((sum, m) => sum + (m.cost_cents || 0), 0);
+  const avgLatency = metrics.reduce((sum, m) => sum + (m.latency_ms || 0), 0) / Math.max(metrics.length, 1);
+  const successRate = runs.filter(r => r.state === 'completed').length / Math.max(runs.length, 1);
+  const activeRuns = runs.filter(r => r.state === 'running').length;
 
   return (
     <div className="space-y-6">
-      <div className="flex items-start justify-between">
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-2">System Monitoring</h1>
-          <p className="text-slate-400">Real-time system health, metrics, and performance tracking</p>
+          <h1 className="text-3xl font-bold text-white mb-2">Advanced Monitoring</h1>
+          <p className="text-slate-400">Real-time performance metrics and system health</p>
         </div>
-        <div className="flex items-center gap-3">
-          <Badge variant="outline" className="bg-green-500/20 text-green-400 border-green-500/30">
-            <Activity className="w-3 h-3 mr-1" />
-            All Systems Operational
-          </Badge>
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => setAutoRefresh(!autoRefresh)}
-            className={autoRefresh ? 'border-blue-600' : 'border-slate-700'}
-          >
-            <RefreshCw className={`w-4 h-4 mr-2 ${autoRefresh ? 'animate-spin' : ''}`} />
-            {autoRefresh ? 'Auto-Refresh ON' : 'Auto-Refresh OFF'}
-          </Button>
+        <div className="flex gap-2">
+          {['1h', '6h', '24h'].map(range => (
+            <button
+              key={range}
+              onClick={() => setTimeRange(range)}
+              className={`px-3 py-1 rounded-lg text-sm ${
+                timeRange === range
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+              }`}
+            >
+              {range}
+            </button>
+          ))}
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <MetricCard
-          title="Success Rate (24h)"
-          value={successRate}
-          unit="%"
-          icon={CheckCircle2}
-          trend="+2.3% vs yesterday"
-          status={successRate >= 95 ? 'normal' : successRate >= 80 ? 'warning' : 'critical'}
-        />
-        <MetricCard
-          title="Avg Cost per Run"
-          value={`$${avgCost}`}
-          icon={DollarSign}
-          trend="-8% vs last week"
-          status="normal"
-        />
-        <MetricCard
-          title="Active Agents"
-          value={activeAgents}
-          unit={`/${agents.length}`}
-          icon={Zap}
-          status={errorAgents === 0 ? 'normal' : 'warning'}
-        />
-        <MetricCard
-          title="Response Time (P95)"
-          value="245"
-          unit="ms"
-          icon={Clock}
-          trend="-12ms vs baseline"
-          status="normal"
-        />
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-6">
+        <Card className="bg-slate-900 border-slate-800">
+          <CardContent className="pt-6">
+            <div className="flex items-center gap-4">
+              <div className="p-3 rounded-lg bg-green-500/20">
+                <DollarSign className="w-6 h-6 text-green-400" />
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-white">${(totalCost / 100).toFixed(2)}</div>
+                <div className="text-sm text-slate-400">Total Cost</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-slate-900 border-slate-800">
+          <CardContent className="pt-6">
+            <div className="flex items-center gap-4">
+              <div className="p-3 rounded-lg bg-blue-500/20">
+                <Clock className="w-6 h-6 text-blue-400" />
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-white">{Math.round(avgLatency)}ms</div>
+                <div className="text-sm text-slate-400">Avg Latency</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-slate-900 border-slate-800">
+          <CardContent className="pt-6">
+            <div className="flex items-center gap-4">
+              <div className="p-3 rounded-lg bg-purple-500/20">
+                <TrendingUp className="w-6 h-6 text-purple-400" />
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-white">{(successRate * 100).toFixed(1)}%</div>
+                <div className="text-sm text-slate-400">Success Rate</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-slate-900 border-slate-800">
+          <CardContent className="pt-6">
+            <div className="flex items-center gap-4">
+              <div className="p-3 rounded-lg bg-orange-500/20">
+                <Activity className="w-6 h-6 text-orange-400" />
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-white">{activeRuns}</div>
+                <div className="text-sm text-slate-400">Active Runs</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
+      <Tabs defaultValue="performance" className="w-full">
+        <TabsList className="grid w-full grid-cols-4 bg-slate-800">
+          <TabsTrigger value="performance">Performance</TabsTrigger>
+          <TabsTrigger value="cost">Cost</TabsTrigger>
+          <TabsTrigger value="alerts">Alerts ({alerts.length})</TabsTrigger>
+          <TabsTrigger value="system">System</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="performance" className="mt-6">
           <Card className="bg-slate-900 border-slate-800">
             <CardHeader>
-              <CardTitle className="text-white text-lg">Performance Trends</CardTitle>
+              <CardTitle className="text-white">Latency Trends</CardTitle>
             </CardHeader>
             <CardContent>
-              <Tabs defaultValue="cost" className="w-full">
-                <TabsList className="grid w-full grid-cols-3 bg-slate-800">
-                  <TabsTrigger value="cost">Cost</TabsTrigger>
-                  <TabsTrigger value="tokens">Tokens</TabsTrigger>
-                  <TabsTrigger value="duration">Duration</TabsTrigger>
-                </TabsList>
-                <TabsContent value="cost" className="mt-4">
-                  <ResponsiveContainer width="100%" height={300}>
-                    <AreaChart data={performanceData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                      <XAxis dataKey="name" stroke="#9ca3af" fontSize={12} />
-                      <YAxis stroke="#9ca3af" fontSize={12} />
-                      <Tooltip
-                        contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #334155' }}
-                        labelStyle={{ color: '#e2e8f0' }}
-                      />
-                      <Area type="monotone" dataKey="cost" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.3} />
-                    </AreaChart>
-                  </ResponsiveContainer>
-                </TabsContent>
-                <TabsContent value="tokens" className="mt-4">
-                  <ResponsiveContainer width="100%" height={300}>
-                    <LineChart data={performanceData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                      <XAxis dataKey="name" stroke="#9ca3af" fontSize={12} />
-                      <YAxis stroke="#9ca3af" fontSize={12} />
-                      <Tooltip
-                        contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #334155' }}
-                        labelStyle={{ color: '#e2e8f0' }}
-                      />
-                      <Line type="monotone" dataKey="tokens" stroke="#8b5cf6" strokeWidth={2} />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </TabsContent>
-                <TabsContent value="duration" className="mt-4">
-                  <ResponsiveContainer width="100%" height={300}>
-                    <AreaChart data={performanceData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                      <XAxis dataKey="name" stroke="#9ca3af" fontSize={12} />
-                      <YAxis stroke="#9ca3af" fontSize={12} />
-                      <Tooltip
-                        contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #334155' }}
-                        labelStyle={{ color: '#e2e8f0' }}
-                      />
-                      <Area type="monotone" dataKey="duration" stroke="#10b981" fill="#10b981" fillOpacity={0.3} />
-                    </AreaChart>
-                  </ResponsiveContainer>
-                </TabsContent>
-              </Tabs>
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={latencyData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                  <XAxis dataKey="time" stroke="#94a3b8" />
+                  <YAxis stroke="#94a3b8" />
+                  <Tooltip
+                    contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #334155' }}
+                    labelStyle={{ color: '#cbd5e1' }}
+                  />
+                  <Legend />
+                  <Line type="monotone" dataKey="value" stroke="#3b82f6" name="Latency (ms)" strokeWidth={2} />
+                </LineChart>
+              </ResponsiveContainer>
             </CardContent>
           </Card>
-        </div>
+        </TabsContent>
 
-        <HealthStatus services={services} />
-      </div>
+        <TabsContent value="cost" className="mt-6">
+          <Card className="bg-slate-900 border-slate-800">
+            <CardHeader>
+              <CardTitle className="text-white">Cost Analysis</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={costData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                  <XAxis dataKey="time" stroke="#94a3b8" />
+                  <YAxis stroke="#94a3b8" />
+                  <Tooltip
+                    contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #334155' }}
+                    labelStyle={{ color: '#cbd5e1' }}
+                  />
+                  <Legend />
+                  <Bar dataKey="value" fill="#10b981" name="Cost (cents)" />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="bg-slate-900 border-slate-800">
-          <CardHeader>
-            <CardTitle className="text-white text-lg">Recent Errors</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {runs.filter(r => r.state === 'failed').slice(0, 5).map((run) => (
-                <div key={run.id} className="flex items-start gap-3 p-3 bg-slate-950 rounded-lg border border-slate-800">
-                  <AlertCircle className="w-4 h-4 text-red-400 mt-0.5" />
-                  <div className="flex-1">
-                    <div className="text-sm text-white font-medium">Run {run.id.slice(0, 8)}</div>
-                    <div className="text-xs text-slate-400 mt-1">
-                      {format(new Date(run.started_at), 'MMM d, h:mm a')}
+        <TabsContent value="alerts" className="mt-6">
+          <Card className="bg-slate-900 border-slate-800">
+            <CardHeader>
+              <CardTitle className="text-white flex items-center gap-2">
+                <AlertTriangle className="w-5 h-5 text-orange-400" />
+                Active Alerts
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {alerts.length === 0 ? (
+                <div className="text-center py-8 text-slate-400">
+                  No active alerts
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {alerts.map(alert => (
+                    <div key={alert.id} className="p-3 bg-red-900/20 rounded-lg border border-red-800/30">
+                      <div className="flex items-start justify-between mb-1">
+                        <span className="text-white font-medium">{alert.name}</span>
+                        <Badge variant="outline" className="bg-red-500/20 text-red-400 border-red-500/30">
+                          {alert.severity}
+                        </Badge>
+                      </div>
+                      <p className="text-sm text-slate-400 mb-2">{alert.message}</p>
+                      <div className="text-xs text-slate-500">
+                        {format(new Date(alert.created_date), 'MMM d, h:mm a')}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="system" className="mt-6">
+          <Card className="bg-slate-900 border-slate-800">
+            <CardHeader>
+              <CardTitle className="text-white">System Health</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-4">
+                {systemMetrics.slice(0, 6).map((metric, idx) => (
+                  <div key={idx} className="p-3 bg-slate-950 rounded-lg border border-slate-800">
+                    <div className="text-sm text-slate-400 mb-1">{metric.metric_name}</div>
+                    <div className="text-lg font-bold text-white">
+                      {metric.value} {metric.unit}
                     </div>
                   </div>
-                </div>
-              ))}
-              {runs.filter(r => r.state === 'failed').length === 0 && (
-                <div className="text-center text-slate-400 py-8">No errors in the last 24 hours</div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-slate-900 border-slate-800">
-          <CardHeader>
-            <CardTitle className="text-white text-lg">Active Alerts</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {alerts.filter(a => a.enabled).slice(0, 5).map((alert) => (
-                <div key={alert.id} className="flex items-start gap-3 p-3 bg-slate-950 rounded-lg border border-slate-800">
-                  <AlertTriangle className="w-4 h-4 text-yellow-400 mt-0.5" />
-                  <div className="flex-1">
-                    <div className="text-sm text-white font-medium">{alert.name}</div>
-                    <div className="text-xs text-slate-400 mt-1">
-                      {alert.condition?.threshold && `Threshold: ${alert.condition.threshold}`}
-                    </div>
-                  </div>
-                </div>
-              ))}
-              {alerts.filter(a => a.enabled).length === 0 && (
-                <div className="text-center text-slate-400 py-8">No active alerts configured</div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
