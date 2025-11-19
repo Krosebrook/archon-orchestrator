@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import PersonaCustomizer from '../components/agents/PersonaCustomizer';
 import MemoryManager from '../components/agents/MemoryManager';
+import MemoryVisualization from '../components/agents/MemoryVisualization';
 import ToolDiscovery from '../components/agents/ToolDiscovery';
 import TeamBuilder from '../components/agents/TeamBuilder';
 
@@ -146,7 +147,10 @@ export default function AgentDetail() {
         </TabsContent>
 
         <TabsContent value="memory" className="mt-6">
-          <MemoryManager agentId={agent.id} />
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+            <MemoryManager agentId={agent.id} />
+            <MemoryVisualization agentId={agent.id} />
+          </div>
         </TabsContent>
 
         <TabsContent value="tools" className="mt-6">
