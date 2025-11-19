@@ -9,6 +9,9 @@ import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import PersonaCustomizer from '../components/agents/PersonaCustomizer';
+import MemoryManager from '../components/agents/MemoryManager';
+import ToolDiscovery from '../components/agents/ToolDiscovery';
+import TeamBuilder from '../components/agents/TeamBuilder';
 
 export default function AgentDetail() {
   const [searchParams] = useSearchParams();
@@ -111,14 +114,26 @@ export default function AgentDetail() {
       </div>
 
       <Tabs defaultValue="persona" className="w-full">
-        <TabsList className="grid w-full grid-cols-3 bg-slate-800">
+        <TabsList className="grid w-full grid-cols-6 bg-slate-800">
           <TabsTrigger value="persona">
             <UserCircle className="w-4 h-4 mr-2" />
             Persona
           </TabsTrigger>
+          <TabsTrigger value="memory">
+            <Bot className="w-4 h-4 mr-2" />
+            Memory
+          </TabsTrigger>
+          <TabsTrigger value="tools">
+            <Settings className="w-4 h-4 mr-2" />
+            Tools
+          </TabsTrigger>
+          <TabsTrigger value="teams">
+            <Bot className="w-4 h-4 mr-2" />
+            Teams
+          </TabsTrigger>
           <TabsTrigger value="config">
             <Settings className="w-4 h-4 mr-2" />
-            Configuration
+            Config
           </TabsTrigger>
           <TabsTrigger value="metrics">
             <Activity className="w-4 h-4 mr-2" />
@@ -128,6 +143,18 @@ export default function AgentDetail() {
 
         <TabsContent value="persona" className="mt-6">
           <PersonaCustomizer agent={agent} onUpdate={loadAgent} />
+        </TabsContent>
+
+        <TabsContent value="memory" className="mt-6">
+          <MemoryManager agentId={agent.id} />
+        </TabsContent>
+
+        <TabsContent value="tools" className="mt-6">
+          <ToolDiscovery agentId={agent.id} currentTools={agent.config?.enabled_tools || []} />
+        </TabsContent>
+
+        <TabsContent value="teams" className="mt-6">
+          <TeamBuilder agentId={agent.id} />
         </TabsContent>
 
         <TabsContent value="config" className="mt-6">
