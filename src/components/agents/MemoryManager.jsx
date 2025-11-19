@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Brain, Clock, BookOpen, Tag, Search, Trash2, Plus } from 'lucide-react';
+import { Brain, Clock, BookOpen, Tag, Search, Trash2, Plus, Sparkles, Loader2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
@@ -15,6 +15,9 @@ export default function MemoryManager({ agentId }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedType, setSelectedType] = useState('all');
   const [isAdding, setIsAdding] = useState(false);
+  const [contextQuery, setContextQuery] = useState('');
+  const [relevantMemories, setRelevantMemories] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
   const [newMemory, setNewMemory] = useState({
     memory_type: 'long_term',
     content: '',
@@ -77,6 +80,62 @@ export default function MemoryManager({ agentId }) {
     }
   };
 
+  const semanticSearch = async () => {
+    if (!contextQuery.trim()) {
+      toast.error('Please provide a context query');
+      return;
+    }
+
+    setIsSearching(true);
+    try {
+      const memoryTexts = memories.map(m => ({
+        id: m.id,
+        text: `${m.content?.text || ''} [Context: ${m.context || 'none'}] [Tags: ${m.tags?.join(', ') || 'none'}]`,
+        type: m.memory_type,
+        importance: m.importance,
+        created: m.created_date
+      }));
+
+      const prompt = `Given the following context: "${contextQuery}"
+
+Analyze these agent memories and identify the most relevant ones:
+
+${memoryTexts.map((m, idx) => `${idx + 1}. [${m.type}] ${m.text}`).join('\n')}
+
+Return the top 5 most relevant memory IDs based on semantic similarity and importance to the given context. Consider both semantic meaning and practical relevance.`;
+
+      const result = await base44.integrations.Core.InvokeLLM({
+        prompt,
+        response_json_schema: {
+          type: 'object',
+          properties: {
+            relevant_ids: {
+              type: 'array',
+              items: { type: 'string' },
+              description: 'Array of memory IDs ranked by relevance'
+            },
+            reasoning: {
+              type: 'string',
+              description: 'Brief explanation of why these memories are relevant'
+            }
+          },
+          required: ['relevant_ids', 'reasoning']
+        }
+      });
+
+      const relevantIds = result.relevant_ids || [];
+      const relevant = memories.filter(m => relevantIds.includes(m.id));
+      
+      setRelevantMemories(relevant);
+      toast.success(`Found ${relevant.length} relevant memories`);
+    } catch (error) {
+      console.error('Failed to perform semantic search:', error);
+      toast.error('Failed to search memories');
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
   const filteredMemories = memories.filter(m => {
     const matchesType = selectedType === 'all' || m.memory_type === selectedType;
     const matchesSearch = !searchQuery || 
@@ -107,6 +166,16 @@ export default function MemoryManager({ agentId }) {
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
+        <Tabs defaultValue="browse" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 bg-slate-800">
+            <TabsTrigger value="browse">Browse Memories</TabsTrigger>
+            <TabsTrigger value="semantic">
+              <Sparkles className="w-4 h-4 mr-2" />
+              AI Retrieval
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="browse" className="space-y-4 mt-4">
         <div className="grid grid-cols-4 gap-3">
           <div className="p-3 bg-slate-950 rounded-lg border border-slate-800">
             <div className="text-xs text-slate-400 mb-1">Short-term</div>
