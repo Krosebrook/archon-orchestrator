@@ -303,6 +303,97 @@ Return the top 5 most relevant memory IDs based on semantic similarity and impor
             </div>
           ))}
         </div>
+          </TabsContent>
+
+          <TabsContent value="semantic" className="space-y-4 mt-4">
+            <div className="p-4 bg-slate-950 rounded-lg border border-slate-800 space-y-3">
+              <div className="flex items-center gap-2 mb-2">
+                <Sparkles className="w-4 h-4 text-purple-400" />
+                <span className="text-sm font-medium text-white">AI-Powered Memory Retrieval</span>
+              </div>
+              <p className="text-xs text-slate-400 mb-3">
+                Describe your current context or task, and AI will find the most relevant memories semantically.
+              </p>
+              <Textarea
+                value={contextQuery}
+                onChange={(e) => setContextQuery(e.target.value)}
+                placeholder="E.g., 'Working on customer support ticket about billing issues' or 'Planning Q4 marketing campaign'"
+                className="bg-slate-800 border-slate-700 resize-none"
+                rows={3}
+              />
+              <Button
+                onClick={semanticSearch}
+                disabled={isSearching || !contextQuery.trim()}
+                className="w-full bg-purple-600 hover:bg-purple-700"
+              >
+                {isSearching ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Searching...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-4 h-4 mr-2" />
+                    Find Relevant Memories
+                  </>
+                )}
+              </Button>
+            </div>
+
+            {relevantMemories.length > 0 && (
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-medium text-white">Relevant Memories</h3>
+                  <Badge variant="outline" className="bg-purple-500/20 text-purple-400 border-purple-500/30">
+                    {relevantMemories.length} found
+                  </Badge>
+                </div>
+                {relevantMemories.map((memory, idx) => (
+                  <div key={memory.id} className="p-3 bg-gradient-to-br from-purple-900/10 to-slate-950 rounded-lg border border-purple-500/20">
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <Badge className="bg-purple-500/20 text-purple-400 border-purple-500/30 text-xs">
+                          #{idx + 1}
+                        </Badge>
+                        <Badge variant="outline" className="bg-blue-500/20 text-blue-400 border-blue-500/30 text-xs">
+                          {memory.memory_type}
+                        </Badge>
+                        <Badge variant="outline" className="bg-slate-800 border-slate-700 text-xs">
+                          Importance: {memory.importance}
+                        </Badge>
+                      </div>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => deleteMemory(memory.id)}
+                        className="text-red-400 hover:text-red-300"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </Button>
+                    </div>
+                    <p className="text-sm text-slate-300 mb-2">{memory.content?.text}</p>
+                    {memory.context && (
+                      <p className="text-xs text-slate-500 mb-2">Context: {memory.context}</p>
+                    )}
+                    {memory.tags && memory.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mb-2">
+                        {memory.tags.map((tag, tagIdx) => (
+                          <span key={tagIdx} className="text-xs px-2 py-0.5 bg-slate-800 text-slate-400 rounded">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                    <div className="flex items-center gap-3 text-xs text-slate-500">
+                      <span>{format(new Date(memory.created_date), 'MMM d, h:mm a')}</span>
+                      {memory.access_count > 0 && <span>Accessed {memory.access_count}x</span>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </TabsContent>
+        </Tabs>
       </CardContent>
     </Card>
   );
