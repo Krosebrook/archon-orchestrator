@@ -42,6 +42,7 @@ import { RBACGuard } from './components/shared/RBACGuard';
 import { AuthProvider, useAuth } from './components/contexts/AuthContext';
 import { ErrorBoundary } from './components/shared/ErrorBoundary';
 import ToastProvider from './components/providers/ToastProvider';
+import PWAInstaller from './components/shared/PWAInstaller';
 
 const navItems = [
   { name: 'Dashboard', icon: LayoutDashboard, path: 'Dashboard', permission: null },
@@ -270,6 +271,7 @@ function AppLayout({ children, currentPageName }) {
   return (
     <div className="flex h-screen bg-slate-950 overflow-hidden">
       <ToastProvider />
+      <PWAInstaller />
       <CommandPalette />
       <Sidebar 
         isCollapsed={isCollapsed} 
