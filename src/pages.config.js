@@ -18,6 +18,7 @@ import Monitoring from './pages/Monitoring';
 import OrchestrationHub from './pages/OrchestrationHub';
 import Observability from './pages/Observability';
 import RefactorPolicies from './pages/RefactorPolicies';
+import WorkflowStudio from './pages/WorkflowStudio';
 import __Layout from './Layout.jsx';
 
 
@@ -42,6 +43,7 @@ export const PAGES = {
     "OrchestrationHub": OrchestrationHub,
     "Observability": Observability,
     "RefactorPolicies": RefactorPolicies,
+    "WorkflowStudio": WorkflowStudio,
 }
 
 export const pagesConfig = {

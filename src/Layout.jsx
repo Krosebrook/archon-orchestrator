@@ -47,6 +47,7 @@ import PWAInstaller from './components/shared/PWAInstaller';
 const navItems = [
   { name: 'Dashboard', icon: LayoutDashboard, path: 'Dashboard', permission: null },
   { name: 'Orchestration', icon: Bot, path: 'OrchestrationHub', permission: 'agent.view' },
+  { name: 'Workflow Studio', icon: Zap, path: 'WorkflowStudio', permission: 'workflow.edit' },
   { name: 'Agents', icon: Bot, path: 'Agents', permission: 'agent.view' },
   { name: 'Workflows', icon: GitFork, path: 'Workflows', permission: 'workflow.view' },
   { name: 'Runs', icon: PlaySquare, path: 'Runs', permission: 'workflow.view' },
