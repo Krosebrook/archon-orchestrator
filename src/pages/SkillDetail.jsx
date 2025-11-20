@@ -9,8 +9,6 @@ import { ArrowLeft, Star, Download, Shield, DollarSign, Code, Lock, AlertTriangl
 import { createPageUrl } from '@/utils';
 import SkillInstaller from '../components/skills/SkillInstaller';
 import SkillReviews from '../components/skills/SkillReviews';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 export default function SkillDetail() {
   const [searchParams] = useSearchParams();
@@ -166,9 +164,9 @@ export default function SkillDetail() {
                   {skill.spec.parameters && (
                     <div>
                       <h3 className="text-sm font-medium text-slate-400 mb-2">Parameters</h3>
-                      <SyntaxHighlighter language="json" style={vscDarkPlus} className="rounded-lg">
+                      <pre className="bg-slate-950 text-slate-300 p-4 rounded-lg overflow-x-auto text-sm font-mono">
                         {JSON.stringify(skill.spec.parameters, null, 2)}
-                      </SyntaxHighlighter>
+                      </pre>
                     </div>
                   )}
 
