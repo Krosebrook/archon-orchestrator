@@ -2,8 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { WorkflowTemplate } from '@/entities/all';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Search, Sparkles, Filter } from 'lucide-react';
+import { Search, Sparkles, Filter, Wrench } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 import TemplateLibrary from '../components/templates/TemplateLibrary';
 import { toast } from 'sonner';
 
@@ -64,12 +67,21 @@ export default function Templates() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-2">
-          <Sparkles className="w-8 h-8 text-purple-400" />
-          Workflow Templates
-        </h1>
-        <p className="text-slate-400">Pre-built workflow patterns ready to customize</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-2">
+            <Sparkles className="w-8 h-8 text-purple-400" />
+            Workflow Templates
+          </h1>
+          <p className="text-slate-400">Pre-built workflow patterns ready to customize</p>
+        </div>
+        <Button 
+          onClick={() => navigate(createPageUrl('TemplateCustomizer'))}
+          className="bg-purple-600 hover:bg-purple-700"
+        >
+          <Wrench className="w-4 h-4 mr-2" />
+          Customization Hub
+        </Button>
       </div>
 
       <Card className="bg-slate-900 border-slate-800">

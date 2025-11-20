@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Agent, Workflow, Run } from '@/entities/all';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Sparkles, GitBranch, Activity, Wand2 } from 'lucide-react';
+import { Sparkles, GitBranch, Activity, Wand2, Wrench } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 import AIAssistant from '../components/workflow-studio/AIAssistant';
 import AgentSequencer from '../components/workflow-studio/AgentSequencer';
 import WorkflowGenerator from '../components/workflow-studio/WorkflowGenerator';
@@ -10,6 +12,7 @@ import WorkflowMonitor from '../components/workflow-studio/WorkflowMonitor';
 import { toast } from 'sonner';
 
 export default function WorkflowStudio() {
+  const navigate = useNavigate();
   const [agents, setAgents] = useState([]);
   const [workflows, setWorkflows] = useState([]);
   const [activeRuns, setActiveRuns] = useState([]);
@@ -57,6 +60,13 @@ export default function WorkflowStudio() {
           </h1>
           <p className="text-slate-400">AI-powered workflow orchestration and optimization</p>
         </div>
+        <Button 
+          onClick={() => navigate(createPageUrl('TemplateCustomizer'))}
+          className="bg-purple-600 hover:bg-purple-700"
+        >
+          <Wrench className="w-4 h-4 mr-2" />
+          Template Customizer
+        </Button>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">

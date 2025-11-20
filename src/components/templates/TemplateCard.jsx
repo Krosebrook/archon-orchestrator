@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Play, Sparkles, Clock, DollarSign, Loader2 } from 'lucide-react';
+import { Play, Sparkles, Clock, DollarSign, Loader2, Wrench } from 'lucide-react';
 import { Workflow, WorkflowTemplate } from '@/entities/all';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
@@ -116,23 +116,33 @@ export default function TemplateCard({ template, onRefresh }) {
           </div>
         </div>
 
-        <Button
-          onClick={handleUseTemplate}
-          disabled={isCreating}
-          className="w-full bg-blue-600 hover:bg-blue-700"
-        >
-          {isCreating ? (
-            <>
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              Creating...
-            </>
-          ) : (
-            <>
-              <Play className="w-4 h-4 mr-2" />
-              Use Template
-            </>
-          )}
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            onClick={() => navigate(createPageUrl(`TemplateCustomizer?template=${template.id}`))}
+            variant="outline"
+            className="flex-1 border-slate-700"
+          >
+            <Wrench className="w-4 h-4 mr-2" />
+            Customize
+          </Button>
+          <Button
+            onClick={handleUseTemplate}
+            disabled={isCreating}
+            className="flex-1 bg-blue-600 hover:bg-blue-700"
+          >
+            {isCreating ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Creating...
+              </>
+            ) : (
+              <>
+                <Play className="w-4 h-4 mr-2" />
+                Use Now
+              </>
+            )}
+          </Button>
+        </div>
 
         {template.usage_count > 0 && (
           <div className="text-center">
