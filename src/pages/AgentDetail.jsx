@@ -13,6 +13,7 @@ import MemoryManager from '../components/agents/MemoryManager';
 import MemoryVisualization from '../components/agents/MemoryVisualization';
 import ToolDiscovery from '../components/agents/ToolDiscovery';
 import TeamBuilder from '../components/agents/TeamBuilder';
+import AgentMemoryConfig from '../components/agents/AgentMemoryConfig';
 
 export default function AgentDetail() {
   const [searchParams] = useSearchParams();
@@ -147,9 +148,14 @@ export default function AgentDetail() {
         </TabsContent>
 
         <TabsContent value="memory" className="mt-6">
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-            <MemoryManager agentId={agent.id} />
-            <MemoryVisualization agentId={agent.id} />
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+            <div className="xl:col-span-2 space-y-6">
+              <MemoryManager agentId={agent.id} />
+              <MemoryVisualization agentId={agent.id} />
+            </div>
+            <div>
+              <AgentMemoryConfig agent={agent} onUpdate={loadAgent} />
+            </div>
           </div>
         </TabsContent>
 
