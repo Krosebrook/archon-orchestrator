@@ -53,6 +53,7 @@ const navItems = [
   { name: 'Workflow Studio', icon: Zap, path: 'WorkflowStudio', permission: 'workflow.edit' },
   { name: 'Templates', icon: FileText, path: 'Templates', permission: 'workflow.view' },
   { name: 'Agents', icon: Bot, path: 'Agents', permission: 'agent.view' },
+  { name: 'Agent Workflows', icon: GitFork, path: 'AgentWorkflowDesigner', permission: 'agent.view' },
   { name: 'Workflows', icon: GitFork, path: 'Workflows', permission: 'workflow.view' },
   { name: 'Runs', icon: PlaySquare, path: 'Runs', permission: 'workflow.view' },
   { name: 'Analytics', icon: BarChart3, path: 'Analytics', permission: 'workflow.view' },

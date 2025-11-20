@@ -25,6 +25,7 @@ import IntegrationManagement from './pages/IntegrationManagement';
 import SkillMarketplace from './pages/SkillMarketplace';
 import SkillDetail from './pages/SkillDetail';
 import AgentAnalytics from './pages/AgentAnalytics';
+import AgentWorkflowDesigner from './pages/AgentWorkflowDesigner';
 import __Layout from './Layout.jsx';
 
 
@@ -56,6 +57,7 @@ export const PAGES = {
     "SkillMarketplace": SkillMarketplace,
     "SkillDetail": SkillDetail,
     "AgentAnalytics": AgentAnalytics,
+    "AgentWorkflowDesigner": AgentWorkflowDesigner,
 }
 
 export const pagesConfig = {
