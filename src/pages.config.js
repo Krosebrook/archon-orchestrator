@@ -20,6 +20,7 @@ import Observability from './pages/Observability';
 import RefactorPolicies from './pages/RefactorPolicies';
 import WorkflowStudio from './pages/WorkflowStudio';
 import ToolMarketplace from './pages/ToolMarketplace';
+import TemplateCustomizer from './pages/TemplateCustomizer';
 import __Layout from './Layout.jsx';
 
 
@@ -46,6 +47,7 @@ export const PAGES = {
     "RefactorPolicies": RefactorPolicies,
     "WorkflowStudio": WorkflowStudio,
     "ToolMarketplace": ToolMarketplace,
+    "TemplateCustomizer": TemplateCustomizer,
 }
 
 export const pagesConfig = {

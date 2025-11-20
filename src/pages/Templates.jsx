@@ -8,6 +8,7 @@ import TemplateLibrary from '../components/templates/TemplateLibrary';
 import { toast } from 'sonner';
 
 export default function Templates() {
+  const navigate = useNavigate();
   const [templates, setTemplates] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
