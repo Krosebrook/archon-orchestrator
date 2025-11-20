@@ -13,9 +13,11 @@ import {
   Mail,
   Webhook,
   Trash2,
-  X
+  X,
+  Users
 } from 'lucide-react';
 import WorkflowNodePanel from './WorkflowNodePanel';
+import AgentCollaborationNode from './AgentCollaborationNode';
 
 const nodeTypes = {
   agent: { icon: Bot, color: 'bg-blue-500', label: 'AI Agent' },
@@ -23,7 +25,8 @@ const nodeTypes = {
   condition: { icon: GitBranch, color: 'bg-yellow-500', label: 'Condition' },
   data: { icon: Database, color: 'bg-purple-500', label: 'Data' },
   email: { icon: Mail, color: 'bg-red-500', label: 'Email' },
-  webhook: { icon: Webhook, color: 'bg-orange-500', label: 'Webhook' }
+  webhook: { icon: Webhook, color: 'bg-orange-500', label: 'Webhook' },
+  agent_collaboration: { icon: Users, color: 'bg-purple-600', label: 'Agent Collaboration' }
 };
 
 const WorkflowNode = ({ node, selected, onClick, onDelete }) => {
@@ -84,10 +87,15 @@ export default function VisualWorkflowDesigner({ workflow, agents, tools, onSave
   const [nodes, setNodes] = useState(workflow?.spec?.nodes || initialNodes);
   const [selectedNode, setSelectedNode] = useState(null);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
+  const [editingCollabNode, setEditingCollabNode] = useState(null);
 
   const onNodeClick = useCallback((node) => {
-    setSelectedNode(node);
-    setIsPanelOpen(true);
+    if (node.data.type === 'agent_collaboration') {
+      setEditingCollabNode(node);
+    } else {
+      setSelectedNode(node);
+      setIsPanelOpen(true);
+    }
   }, []);
 
   const addNode = (type) => {
@@ -216,6 +224,19 @@ export default function VisualWorkflowDesigner({ workflow, agents, tools, onSave
           )}
         </div>
       </div>
+
+      {editingCollabNode && (
+        <AgentCollaborationNode
+          node={editingCollabNode}
+          agents={agents || []}
+          open={!!editingCollabNode}
+          onOpenChange={(open) => !open && setEditingCollabNode(null)}
+          onUpdate={(updatedNode) => {
+            updateNode(updatedNode.id, updatedNode);
+            setEditingCollabNode(null);
+          }}
+        />
+      )}
     </div>
   );
 }
