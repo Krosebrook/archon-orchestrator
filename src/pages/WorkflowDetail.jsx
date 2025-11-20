@@ -49,7 +49,9 @@ const NODE_TYPES = {
   webhook: { icon: Globe, color: 'from-teal-500 to-cyan-600', label: 'Webhook' },
   email: { icon: Mail, color: 'from-red-500 to-pink-600', label: 'Email' },
   output: { icon: FileText, color: 'from-slate-500 to-gray-600', label: 'Output' },
-  agent_collaboration: { icon: MessageSquare, color: 'from-purple-500 to-fuchsia-600', label: 'Agent Collaboration' }
+  agent_collaboration: { icon: MessageSquare, color: 'from-purple-500 to-fuchsia-600', label: 'Agent Collaboration' },
+  memory_read: { icon: Brain, color: 'from-indigo-500 to-violet-600', label: 'Memory Read' },
+  memory_write: { icon: Brain, color: 'from-blue-500 to-indigo-600', label: 'Memory Write' }
 };
 
 // Mock base44 for auth, as it's not imported. In a real app, this would be from a context or a global object.
@@ -363,6 +365,23 @@ export default function WorkflowDetail() {
           context_mapping: {},
           security_level: 'encrypted',
           coordination_strategy: 'sequential'
+        };
+      case 'memory_read':
+        return {
+          agent_id: agents[0]?.id || '',
+          memory_type: 'long_term',
+          operation: 'retrieve',
+          query: '',
+          context: ''
+        };
+      case 'memory_write':
+        return {
+          agent_id: agents[0]?.id || '',
+          memory_type: 'long_term',
+          operation: 'store',
+          content: '',
+          importance: 50,
+          tags: []
         };
       default:
         return {};

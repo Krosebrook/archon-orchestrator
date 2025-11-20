@@ -14,10 +14,12 @@ import {
   Webhook,
   Trash2,
   X,
-  Users
+  Users,
+  Brain
 } from 'lucide-react';
 import WorkflowNodePanel from './WorkflowNodePanel';
 import AgentCollaborationNode from './AgentCollaborationNode';
+import MemoryNode from './MemoryNode';
 
 const nodeTypes = {
   agent: { icon: Bot, color: 'bg-blue-500', label: 'AI Agent' },
@@ -26,7 +28,9 @@ const nodeTypes = {
   data: { icon: Database, color: 'bg-purple-500', label: 'Data' },
   email: { icon: Mail, color: 'bg-red-500', label: 'Email' },
   webhook: { icon: Webhook, color: 'bg-orange-500', label: 'Webhook' },
-  agent_collaboration: { icon: Users, color: 'bg-purple-600', label: 'Agent Collaboration' }
+  agent_collaboration: { icon: Users, color: 'bg-purple-600', label: 'Agent Collaboration' },
+  memory_read: { icon: Brain, color: 'bg-indigo-500', label: 'Memory Read' },
+  memory_write: { icon: Brain, color: 'bg-blue-600', label: 'Memory Write' }
 };
 
 const WorkflowNode = ({ node, selected, onClick, onDelete }) => {
@@ -88,10 +92,13 @@ export default function VisualWorkflowDesigner({ workflow, agents, tools, onSave
   const [selectedNode, setSelectedNode] = useState(null);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [editingCollabNode, setEditingCollabNode] = useState(null);
+  const [editingMemoryNode, setEditingMemoryNode] = useState(null);
 
   const onNodeClick = useCallback((node) => {
     if (node.data.type === 'agent_collaboration') {
       setEditingCollabNode(node);
+    } else if (node.data.type === 'memory_read' || node.data.type === 'memory_write') {
+      setEditingMemoryNode(node);
     } else {
       setSelectedNode(node);
       setIsPanelOpen(true);
@@ -234,6 +241,19 @@ export default function VisualWorkflowDesigner({ workflow, agents, tools, onSave
           onUpdate={(updatedNode) => {
             updateNode(updatedNode.id, updatedNode);
             setEditingCollabNode(null);
+          }}
+        />
+      )}
+
+      {editingMemoryNode && (
+        <MemoryNode
+          node={editingMemoryNode}
+          agents={agents || []}
+          open={!!editingMemoryNode}
+          onOpenChange={(open) => !open && setEditingMemoryNode(null)}
+          onUpdate={(updatedNode) => {
+            updateNode(updatedNode.id, updatedNode);
+            setEditingMemoryNode(null);
           }}
         />
       )}
