@@ -21,6 +21,7 @@ import RefactorPolicies from './pages/RefactorPolicies';
 import WorkflowStudio from './pages/WorkflowStudio';
 import ToolMarketplace from './pages/ToolMarketplace';
 import TemplateCustomizer from './pages/TemplateCustomizer';
+import IntegrationManagement from './pages/IntegrationManagement';
 import __Layout from './Layout.jsx';
 
 
@@ -48,6 +49,7 @@ export const PAGES = {
     "WorkflowStudio": WorkflowStudio,
     "ToolMarketplace": ToolMarketplace,
     "TemplateCustomizer": TemplateCustomizer,
+    "IntegrationManagement": IntegrationManagement,
 }
 
 export const pagesConfig = {

@@ -58,6 +58,7 @@ const navItems = [
   { name: 'Monitoring', icon: Eye, path: 'Monitoring', permission: 'workflow.view' },
   { name: 'Approvals', icon: CheckSquare, path: 'Approvals', permission: 'workflow.run' },
   { name: 'Tool Marketplace', icon: Store, path: 'ToolMarketplace', permission: 'workflow.view' },
+  { name: 'Integrations', icon: Settings, path: 'IntegrationManagement', permission: 'workflow.edit' },
   { name: 'Governance', icon: Shield, path: 'Governance', permission: 'policy.view' },
   { name: 'Refactoring', icon: Wrench, path: 'Refactoring', permission: 'workflow.edit' },
   { name: 'Policies', icon: Shield, path: 'RefactorPolicies', permission: 'policy.view' },
