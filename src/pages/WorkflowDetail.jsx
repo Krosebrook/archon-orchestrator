@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { Workflow, WorkflowVersion, Agent, Tool, Audit } from '@/entities/all'; // Added Audit entity
@@ -38,6 +37,7 @@ import CollaborationPanel from '../components/agents/CollaborationPanel';
 import OptimizationInsights from '../components/workflows/OptimizationInsights';
 import OptimizationSettings from '../components/workflows/OptimizationSettings';
 import SaveAsTemplate from '../components/workflows/SaveAsTemplate';
+import MultiAgentCoordinator from '../components/workflows/MultiAgentCoordinator';
 
 const NODE_TYPES = {
   trigger: { icon: Zap, color: 'from-green-500 to-emerald-600', label: 'Trigger' },
@@ -48,7 +48,8 @@ const NODE_TYPES = {
   notification: { icon: MessageSquare, color: 'from-pink-500 to-rose-600', label: 'Notify' },
   webhook: { icon: Globe, color: 'from-teal-500 to-cyan-600', label: 'Webhook' },
   email: { icon: Mail, color: 'from-red-500 to-pink-600', label: 'Email' },
-  output: { icon: FileText, color: 'from-slate-500 to-gray-600', label: 'Output' }
+  output: { icon: FileText, color: 'from-slate-500 to-gray-600', label: 'Output' },
+  agent_collaboration: { icon: MessageSquare, color: 'from-purple-500 to-fuchsia-600', label: 'Agent Collaboration' }
 };
 
 // Mock base44 for auth, as it's not imported. In a real app, this would be from a context or a global object.
@@ -355,6 +356,14 @@ export default function WorkflowDetail() {
         return { url: '', method: 'POST', headers: {} };
       case 'email':
         return { to: '', subject: 'Workflow Notification', template: '' };
+      case 'agent_collaboration':
+        return { 
+          collaboration_type: 'trigger', 
+          target_agent_id: agents[0]?.id || '', 
+          context_mapping: {},
+          security_level: 'encrypted',
+          coordination_strategy: 'sequential'
+        };
       default:
         return {};
     }
@@ -492,6 +501,7 @@ export default function WorkflowDetail() {
             </div>
             <div className="space-y-6">
               <CollaborationPanel workflowId={workflowId} agents={agents} />
+              <MultiAgentCoordinator workflowId={workflowId} agents={agents} onRefresh={loadWorkflowAndVersions} />
               <OptimizationSettings workflow={workflow} />
             </div>
           </div>
