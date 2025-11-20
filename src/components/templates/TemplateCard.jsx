@@ -3,15 +3,17 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Play, Sparkles, Clock, DollarSign, Loader2, Wrench } from 'lucide-react';
-import { Workflow, WorkflowTemplate } from '@/entities/all';
+import { Play, Sparkles, Clock, DollarSign, Loader2, Wrench, Star, MessageSquare } from 'lucide-react';
+import { Workflow, WorkflowTemplate, TemplateUsage, TemplateReview } from '@/entities/all';
+import TemplateRating from './TemplateRating';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 
-export default function TemplateCard({ template, onRefresh }) {
+export default function TemplateCard({ template, onRefresh, averageRating, reviewCount }) {
   const navigate = useNavigate();
   const [isCreating, setIsCreating] = useState(false);
+  const [showRating, setShowRating] = useState(false);
 
   const complexityColors = {
     beginner: 'bg-green-500/20 text-green-400 border-green-500/30',
@@ -41,9 +43,17 @@ export default function TemplateCard({ template, onRefresh }) {
         org_id: user.organization.id
       });
 
-      await WorkflowTemplate.update(template.id, {
-        usage_count: (template.usage_count || 0) + 1
-      });
+      await Promise.all([
+        WorkflowTemplate.update(template.id, {
+          usage_count: (template.usage_count || 0) + 1
+        }),
+        TemplateUsage.create({
+          template_id: template.id,
+          user_email: user.email,
+          workflow_id: newWorkflow.id,
+          org_id: user.organization.id
+        })
+      ]);
 
       toast.success('Workflow created from template');
       onRefresh?.();
@@ -65,13 +75,22 @@ export default function TemplateCard({ template, onRefresh }) {
             <Sparkles className="w-4 h-4 text-yellow-400 flex-shrink-0" />
           )}
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 items-center">
           <Badge variant="outline" className={categoryColors[template.category]}>
             {template.category.replace('_', ' ')}
           </Badge>
           <Badge variant="outline" className={complexityColors[template.complexity]}>
             {template.complexity}
           </Badge>
+          {averageRating > 0 && (
+            <div className="flex items-center gap-1 ml-auto">
+              <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+              <span className="text-xs text-slate-400">{averageRating.toFixed(1)}</span>
+              {reviewCount > 0 && (
+                <span className="text-xs text-slate-500">({reviewCount})</span>
+              )}
+            </div>
+          )}
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -144,13 +163,29 @@ export default function TemplateCard({ template, onRefresh }) {
           </Button>
         </div>
 
-        {template.usage_count > 0 && (
-          <div className="text-center">
+        <div className="flex items-center justify-between pt-2 border-t border-slate-800">
+          {template.usage_count > 0 && (
             <span className="text-xs text-slate-500">
               Used {template.usage_count} {template.usage_count === 1 ? 'time' : 'times'}
             </span>
-          </div>
-        )}
+          )}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowRating(true)}
+            className="text-slate-400 hover:text-white ml-auto"
+          >
+            <MessageSquare className="w-3 h-3 mr-1" />
+            Rate
+          </Button>
+        </div>
+
+        <TemplateRating
+          template={template}
+          open={showRating}
+          onOpenChange={setShowRating}
+          onSubmitted={onRefresh}
+        />
       </CardContent>
     </Card>
   );

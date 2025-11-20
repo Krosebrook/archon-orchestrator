@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { WorkflowTemplate } from '@/entities/all';
+import { WorkflowTemplate, TemplateUsage, TemplateReview } from '@/entities/all';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Search, Sparkles, Filter, Wrench } from 'lucide-react';
+import { Search, Sparkles, Filter, Wrench, Clock, TrendingUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import TemplateLibrary from '../components/templates/TemplateLibrary';
@@ -13,6 +13,8 @@ import { toast } from 'sonner';
 export default function Templates() {
   const navigate = useNavigate();
   const [templates, setTemplates] = useState([]);
+  const [recentUsage, setRecentUsage] = useState([]);
+  const [reviews, setReviews] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [isLoading, setIsLoading] = useState(true);
@@ -23,14 +25,27 @@ export default function Templates() {
 
   const loadTemplates = async () => {
     try {
-      const data = await WorkflowTemplate.list('-usage_count');
-      setTemplates(data);
+      const [templateData, usageData, reviewData] = await Promise.all([
+        WorkflowTemplate.list('-usage_count'),
+        TemplateUsage.list('-created_date', 50),
+        TemplateReview.list()
+      ]);
+      setTemplates(templateData);
+      setRecentUsage(usageData);
+      setReviews(reviewData);
     } catch (error) {
       console.error('Failed to load templates:', error);
       toast.error('Failed to load templates');
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const getTemplateRating = (templateId) => {
+    const templateReviews = reviews.filter(r => r.template_id === templateId);
+    if (templateReviews.length === 0) return { average: 0, count: 0 };
+    const sum = templateReviews.reduce((acc, r) => acc + r.rating, 0);
+    return { average: sum / templateReviews.length, count: templateReviews.length };
   };
 
   const categories = [
@@ -55,6 +70,13 @@ export default function Templates() {
   });
 
   const featuredTemplates = filteredTemplates.filter(t => t.is_featured);
+  const popularTemplates = filteredTemplates
+    .sort((a, b) => (b.usage_count || 0) - (a.usage_count || 0))
+    .slice(0, 6);
+  
+  const recentTemplateIds = [...new Set(recentUsage.map(u => u.template_id))].slice(0, 6);
+  const recentlyUsedTemplates = templates.filter(t => recentTemplateIds.includes(t.id));
+  
   const otherTemplates = filteredTemplates.filter(t => !t.is_featured);
 
   if (isLoading) {
@@ -112,13 +134,45 @@ export default function Templates() {
         </CardContent>
       </Card>
 
+      {recentlyUsedTemplates.length > 0 && !searchQuery && selectedCategory === 'all' && (
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <Clock className="w-5 h-5 text-blue-400" />
+            <h2 className="text-xl font-semibold text-white">Recently Used</h2>
+          </div>
+          <TemplateLibrary 
+            templates={recentlyUsedTemplates} 
+            onRefresh={loadTemplates}
+            getTemplateRating={getTemplateRating}
+          />
+        </div>
+      )}
+
+      {popularTemplates.length > 0 && !searchQuery && selectedCategory === 'all' && (
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <TrendingUp className="w-5 h-5 text-green-400" />
+            <h2 className="text-xl font-semibold text-white">Popular Templates</h2>
+          </div>
+          <TemplateLibrary 
+            templates={popularTemplates} 
+            onRefresh={loadTemplates}
+            getTemplateRating={getTemplateRating}
+          />
+        </div>
+      )}
+
       {featuredTemplates.length > 0 && (
         <div className="space-y-4">
           <div className="flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-yellow-400" />
             <h2 className="text-xl font-semibold text-white">Featured Templates</h2>
           </div>
-          <TemplateLibrary templates={featuredTemplates} onRefresh={loadTemplates} />
+          <TemplateLibrary 
+            templates={featuredTemplates} 
+            onRefresh={loadTemplates}
+            getTemplateRating={getTemplateRating}
+          />
         </div>
       )}
 
@@ -126,7 +180,11 @@ export default function Templates() {
         <h2 className="text-xl font-semibold text-white">
           {featuredTemplates.length > 0 ? 'All Templates' : `${filteredTemplates.length} Templates`}
         </h2>
-        <TemplateLibrary templates={otherTemplates} onRefresh={loadTemplates} />
+        <TemplateLibrary 
+          templates={otherTemplates} 
+          onRefresh={loadTemplates}
+          getTemplateRating={getTemplateRating}
+        />
       </div>
 
       {filteredTemplates.length === 0 && (
