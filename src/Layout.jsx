@@ -26,6 +26,7 @@ import {
   Bell,
   Store,
   FileText,
+  Brain,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -55,6 +56,7 @@ const navItems = [
   { name: 'Workflows', icon: GitFork, path: 'Workflows', permission: 'workflow.view' },
   { name: 'Runs', icon: PlaySquare, path: 'Runs', permission: 'workflow.view' },
   { name: 'Analytics', icon: BarChart3, path: 'Analytics', permission: 'workflow.view' },
+  { name: 'Agent Analytics', icon: Brain, path: 'AgentAnalytics', permission: 'workflow.view' },
   { name: 'Observability', icon: Eye, path: 'Observability', permission: 'workflow.view' },
   { name: 'Monitoring', icon: Eye, path: 'Monitoring', permission: 'workflow.view' },
   { name: 'Approvals', icon: CheckSquare, path: 'Approvals', permission: 'workflow.run' },
