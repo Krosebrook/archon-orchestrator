@@ -19,6 +19,7 @@ import OrchestrationHub from './pages/OrchestrationHub';
 import Observability from './pages/Observability';
 import RefactorPolicies from './pages/RefactorPolicies';
 import WorkflowStudio from './pages/WorkflowStudio';
+import ToolMarketplace from './pages/ToolMarketplace';
 import __Layout from './Layout.jsx';
 
 
@@ -44,6 +45,7 @@ export const PAGES = {
     "Observability": Observability,
     "RefactorPolicies": RefactorPolicies,
     "WorkflowStudio": WorkflowStudio,
+    "ToolMarketplace": ToolMarketplace,
 }
 
 export const pagesConfig = {

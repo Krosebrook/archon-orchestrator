@@ -24,6 +24,7 @@ import {
   Eye,
   Menu,
   Bell,
+  Store,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -56,7 +57,7 @@ const navItems = [
   { name: 'Observability', icon: Eye, path: 'Observability', permission: 'workflow.view' },
   { name: 'Monitoring', icon: Eye, path: 'Monitoring', permission: 'workflow.view' },
   { name: 'Approvals', icon: CheckSquare, path: 'Approvals', permission: 'workflow.run' },
-  { name: 'Integrations', icon: Zap, path: 'Integrations', permission: 'workflow.edit' },
+  { name: 'Tool Marketplace', icon: Store, path: 'ToolMarketplace', permission: 'workflow.view' },
   { name: 'Governance', icon: Shield, path: 'Governance', permission: 'policy.view' },
   { name: 'Refactoring', icon: Wrench, path: 'Refactoring', permission: 'workflow.edit' },
   { name: 'Policies', icon: Shield, path: 'RefactorPolicies', permission: 'policy.view' },
