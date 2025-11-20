@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Run, Agent, Workflow } from '@/entities/all';
 import { DollarSign, Bot, GitFork, AlertTriangle } from 'lucide-react';
@@ -7,6 +6,8 @@ import CostChart from '../components/dashboard/CostChart';
 import AgentHealth from '../components/dashboard/AgentHealth';
 import ActiveRuns from '../components/dashboard/ActiveRuns';
 import QuickActions from '../components/dashboard/QuickActions';
+import AgentMonitoringDashboard from '../components/monitoring/AgentMonitoringDashboard';
+import AgentAnomalyDetection from '../components/monitoring/AgentAnomalyDetection';
 import OptimizationWidget from '../components/dashboard/OptimizationWidget';
 import CollaborationWidget from '../components/dashboard/CollaborationWidget';
 import { subDays, format } from 'date-fns';
