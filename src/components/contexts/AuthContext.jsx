@@ -27,6 +27,7 @@ const MOCK_USER_DATA = {
   },
 };
 
+// RBAC Permissions - Archon governance model
 const PERMISSIONS = {
   'agent.create': ['owner', 'admin'],
   'agent.edit': ['owner', 'admin'],
@@ -39,10 +40,17 @@ const PERMISSIONS = {
   'workflow.run': ['owner', 'admin', 'operator'],
   'policy.create': ['owner', 'admin'],
   'policy.edit': ['owner', 'admin'],
+  'policy.delete': ['owner'],
   'policy.view': ['owner', 'admin', 'operator', 'viewer'],
+  'approval.view': ['owner', 'admin', 'operator'],
+  'approval.approve': ['owner', 'admin'],
   'team.invite': ['owner', 'admin'],
   'team.remove': ['owner', 'admin'],
   'team.view': ['owner', 'admin', 'operator', 'viewer'],
+  'settings.view': ['owner', 'admin'],
+  'settings.edit': ['owner'],
+  'audit.view': ['owner', 'admin'],
+  'audit.export': ['owner', 'admin'],
   'billing.manage': ['owner'],
 };
 
@@ -60,9 +68,13 @@ export function AuthProvider({ children }) {
   }, [role]);
 
   const hasPermission = (permission) => {
-    if (!permission) return true; // No permission required
+    if (!permission) return true;
     const allowedRoles = PERMISSIONS[permission];
-    return allowedRoles && allowedRoles.includes(currentUser?.role);
+    if (!allowedRoles) {
+      console.warn(`[RBAC] Unknown permission: ${permission}`);
+      return false;
+    }
+    return allowedRoles.includes(currentUser?.role);
   };
   
   const switchRole = (newRole) => {

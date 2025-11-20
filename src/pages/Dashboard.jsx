@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Run, Agent, Workflow } from '@/entities/all';
 import { DollarSign, Bot, GitFork, AlertTriangle } from 'lucide-react';
+import { handleError } from '../components/utils/api-client';
 import StatCard from '../components/dashboard/StatCard';
 import CostChart from '../components/dashboard/CostChart';
 import AgentHealth from '../components/dashboard/AgentHealth';
@@ -32,9 +33,9 @@ export default function Dashboard() {
         setRuns(runData);
         setAgents(agentData);
         setWorkflows(workflowData);
-      } catch (error) {
-        console.error("Failed to fetch dashboard data:", error);
-      } finally {
+        } catch (error) {
+        handleError(error, { silent: false });
+        } finally {
         setIsLoading(false);
       }
     };
