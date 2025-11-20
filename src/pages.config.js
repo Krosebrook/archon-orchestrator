@@ -22,6 +22,8 @@ import WorkflowStudio from './pages/WorkflowStudio';
 import ToolMarketplace from './pages/ToolMarketplace';
 import TemplateCustomizer from './pages/TemplateCustomizer';
 import IntegrationManagement from './pages/IntegrationManagement';
+import SkillMarketplace from './pages/SkillMarketplace';
+import SkillDetail from './pages/SkillDetail';
 import __Layout from './Layout.jsx';
 
 
@@ -50,6 +52,8 @@ export const PAGES = {
     "ToolMarketplace": ToolMarketplace,
     "TemplateCustomizer": TemplateCustomizer,
     "IntegrationManagement": IntegrationManagement,
+    "SkillMarketplace": SkillMarketplace,
+    "SkillDetail": SkillDetail,
 }
 
 export const pagesConfig = {
