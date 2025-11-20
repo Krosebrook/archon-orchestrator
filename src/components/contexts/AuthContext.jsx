@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
 
 const AuthContext = createContext(null);
