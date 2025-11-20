@@ -9,6 +9,7 @@ import CostBreakdown from '../components/analytics/CostBreakdown';
 import ErrorTrendAnalysis from '../components/analytics/ErrorTrendAnalysis';
 import BottleneckDetection from '../components/analytics/BottleneckDetection';
 import PredictiveInsights from '../components/analytics/PredictiveInsights';
+import AIAuditInsights from '../components/analytics/AIAuditInsights';
 import { toast } from 'sonner';
 
 export default function Analytics() {
@@ -150,13 +151,14 @@ export default function Analytics() {
       </div>
 
       <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="grid w-full grid-cols-6 bg-slate-800">
+        <TabsList className="grid w-full grid-cols-7 bg-slate-800">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="history">Run History</TabsTrigger>
           <TabsTrigger value="performance">Performance</TabsTrigger>
           <TabsTrigger value="costs">Costs</TabsTrigger>
           <TabsTrigger value="errors">Errors</TabsTrigger>
           <TabsTrigger value="insights">AI Insights</TabsTrigger>
+          <TabsTrigger value="audit">Security Audit</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="mt-6">
@@ -187,6 +189,10 @@ export default function Analytics() {
             <BottleneckDetection runs={runs} workflows={workflows} agents={agents} />
             <PredictiveInsights runs={runs} metrics={metrics} />
           </div>
+        </TabsContent>
+
+        <TabsContent value="audit" className="mt-6">
+          <AIAuditInsights runs={runs} workflows={workflows} />
         </TabsContent>
       </Tabs>
     </div>
