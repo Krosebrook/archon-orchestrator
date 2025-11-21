@@ -1,7 +1,9 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Workflow } from '@/entities/Workflow';
 import { Button } from '@/components/ui/button';
-import { PlusCircle, Library, Search } from 'lucide-react';
+import { PlusCircle, Library, Search, GitFork } from 'lucide-react';
+import { handleError } from '../components/utils/api-client';
+import { useRBAC } from '../components/hooks/useRBAC';
 import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import WorkflowCard from '../components/workflows/WorkflowCard';
@@ -16,6 +18,7 @@ export default function Workflows() {
   const [showTemplateLibrary, setShowTemplateLibrary] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
+  const { hasPermission } = useRBAC();
 
   useEffect(() => {
     loadWorkflows();
@@ -27,7 +30,7 @@ export default function Workflows() {
       const data = await Workflow.list('-updated_date');
       setWorkflows(data);
     } catch (error) {
-      console.error("Failed to load workflows:", error);
+      handleError(error);
     } finally {
       setIsLoading(false);
     }
@@ -62,12 +65,14 @@ export default function Workflows() {
             <Library className="mr-2 h-4 w-4" />
             Browse Templates
           </Button>
-          <Link to={createPageUrl('WorkflowDetail')}>
-            <Button className="bg-blue-600 hover:bg-blue-700 text-white">
-              <PlusCircle className="mr-2 h-4 w-4" />
-              New Workflow
-            </Button>
-          </Link>
+          {hasPermission('workflow.create') && (
+            <Link to={createPageUrl('WorkflowDetail')}>
+              <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+                <PlusCircle className="mr-2 h-4 w-4" />
+                New Workflow
+              </Button>
+            </Link>
+          )}
         </div>
       </div>
       

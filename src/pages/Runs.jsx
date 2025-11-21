@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Run, Workflow, Agent } from '@/entities/all';
+import { handleError } from '../components/utils/api-client';
 import RunsTable from '../components/runs/RunsTable';
 
 export default function Runs() {
@@ -21,7 +22,7 @@ export default function Runs() {
         setWorkflows(workflowData);
         setAgents(agentData);
       } catch (error) {
-        console.error("Failed to load runs data:", error);
+        handleError(error);
       } finally {
         setIsLoading(false);
       }

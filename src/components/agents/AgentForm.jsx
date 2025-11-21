@@ -1,5 +1,4 @@
-
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -15,6 +14,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Agent } from '@/entities/Agent';
 import { useAuth } from '@/components/contexts/AuthContext';
 import { RBACGuard } from '../shared/RBACGuard';
+import { handleError } from '../utils/api-client';
+import { validateAgentConfig } from '../utils/validation';
+import { createAuditLog, redactSensitiveData, AuditActions, AuditEntities } from '../utils/audit-logger';
+import { toast } from 'sonner';
+import { base44 } from '@/api/base44Client';
 
 const emptyAgent = {
   name: '',
@@ -56,17 +60,54 @@ export default function AgentForm({ open, onOpenChange, agent, onSave }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validate agent configuration
+    const validation = validateAgentConfig(formData.config);
+    if (!validation.valid) {
+      toast.error(`Validation failed: ${validation.errors.join(', ')}`);
+      return;
+    }
+    
     setIsSaving(true);
     try {
+      let result;
+      const user = await base44.auth.me();
+      
       if (formData.id) {
-        await Agent.update(formData.id, formData);
+        // Update existing agent
+        result = await Agent.update(formData.id, formData);
+        
+        // Create audit log
+        await base44.entities.Audit.create(createAuditLog(
+          AuditActions.UPDATE,
+          AuditEntities.AGENT,
+          formData.id,
+          {
+            before: redactSensitiveData(agent),
+            after: redactSensitiveData(formData)
+          }
+        ));
+        
+        toast.success('Agent updated successfully');
       } else {
-        await Agent.create(formData);
+        // Create new agent
+        result = await Agent.create(formData);
+        
+        // Create audit log
+        await base44.entities.Audit.create(createAuditLog(
+          AuditActions.CREATE,
+          AuditEntities.AGENT,
+          result.id,
+          { after: redactSensitiveData(result) }
+        ));
+        
+        toast.success('Agent created successfully');
       }
-      onSave(); // Callback to refresh data on the parent page
+      
+      onOpenChange(false);
+      onSave();
     } catch (error) {
-      console.error('Failed to save agent:', error);
-      // Here you would show an error toast
+      handleError(error);
     } finally {
       setIsSaving(false);
     }
@@ -91,6 +132,9 @@ export default function AgentForm({ open, onOpenChange, agent, onSave }) {
               className="bg-slate-800 border-slate-700"
               required
               disabled={!canEdit}
+              minLength={3}
+              maxLength={100}
+              placeholder="My AI Agent"
             />
           </div>
           <div>
