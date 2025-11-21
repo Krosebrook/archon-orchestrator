@@ -55,6 +55,7 @@ const navItems = [
   { name: 'Agents', icon: Bot, path: 'Agents', permission: 'agent.view' },
   { name: 'Agent Workflows', icon: GitFork, path: 'AgentWorkflowDesigner', permission: 'agent.view' },
   { name: 'Workflows', icon: GitFork, path: 'Workflows', permission: 'workflow.view' },
+  { name: 'CI/CD', icon: GitFork, path: 'CICD', permission: 'workflow.edit' },
   { name: 'Runs', icon: PlaySquare, path: 'Runs', permission: 'workflow.view' },
   { name: 'Analytics', icon: BarChart3, path: 'Analytics', permission: 'workflow.view' },
   { name: 'Agent Analytics', icon: Brain, path: 'AgentAnalytics', permission: 'workflow.view' },

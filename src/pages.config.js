@@ -26,6 +26,7 @@ import SkillMarketplace from './pages/SkillMarketplace';
 import SkillDetail from './pages/SkillDetail';
 import AgentAnalytics from './pages/AgentAnalytics';
 import AgentWorkflowDesigner from './pages/AgentWorkflowDesigner';
+import CICD from './pages/CICD';
 import __Layout from './Layout.jsx';
 
 
@@ -58,6 +59,7 @@ export const PAGES = {
     "SkillDetail": SkillDetail,
     "AgentAnalytics": AgentAnalytics,
     "AgentWorkflowDesigner": AgentWorkflowDesigner,
+    "CICD": CICD,
 }
 
 export const pagesConfig = {
