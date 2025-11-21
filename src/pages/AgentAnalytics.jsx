@@ -8,6 +8,9 @@ import AgentPerformanceMetrics from '../components/analytics/AgentPerformanceMet
 import AgentCostAnalysis from '../components/analytics/AgentCostAnalysis';
 import AgentFeedbackAnalysis from '../components/analytics/AgentFeedbackAnalysis';
 import AgentOptimizationPredictions from '../components/analytics/AgentOptimizationPredictions';
+import AIInsightsAssistant from '../components/analytics/AIInsightsAssistant';
+import PredictiveAnomalyDetector from '../components/analytics/PredictiveAnomalyDetector';
+import AIOptimizationSuggestions from '../components/analytics/AIOptimizationSuggestions';
 
 export default function AgentAnalytics() {
   const [agents, setAgents] = useState([]);
