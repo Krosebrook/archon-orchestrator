@@ -29,6 +29,7 @@ import {
   Brain,
   Sparkles,
   Bug,
+  GraduationCap,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -73,6 +74,7 @@ const navItems = [
   { name: 'Refactoring', icon: Wrench, path: 'Refactoring', permission: 'workflow.edit' },
   { name: 'Policies', icon: Shield, path: 'RefactorPolicies', permission: 'policy.view' },
   { name: 'AI Debugger', icon: Bug, path: 'AgentDebugger', permission: 'workflow.edit' },
+  { name: 'Agent Training', icon: GraduationCap, path: 'AgentTraining', permission: 'agent.view' },
 ];
 
 const Sidebar = ({ isCollapsed, isMobileOpen, setIsMobileOpen }) => {
