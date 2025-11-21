@@ -27,6 +27,7 @@ import {
   Store,
   FileText,
   Brain,
+  Sparkles,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -64,6 +65,7 @@ const navItems = [
   { name: 'Approvals', icon: CheckSquare, path: 'Approvals', permission: 'workflow.run' },
   { name: 'Tool Marketplace', icon: Store, path: 'ToolMarketplace', permission: 'workflow.view' },
   { name: 'Skill Marketplace', icon: Zap, path: 'SkillMarketplace', permission: 'workflow.view' },
+  { name: 'Skill Management', icon: Sparkles, path: 'SkillManagement', permission: 'workflow.view' },
   { name: 'Integrations', icon: Settings, path: 'IntegrationManagement', permission: 'workflow.edit' },
   { name: 'Governance', icon: Shield, path: 'Governance', permission: 'policy.view' },
   { name: 'Refactoring', icon: Wrench, path: 'Refactoring', permission: 'workflow.edit' },
