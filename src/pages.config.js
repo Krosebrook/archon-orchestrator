@@ -29,6 +29,7 @@ import AgentWorkflowDesigner from './pages/AgentWorkflowDesigner';
 import CICD from './pages/CICD';
 import SkillManagement from './pages/SkillManagement';
 import AgentCollaboration from './pages/AgentCollaboration';
+import AgentDebugger from './pages/AgentDebugger';
 import __Layout from './Layout.jsx';
 
 
@@ -64,6 +65,7 @@ export const PAGES = {
     "CICD": CICD,
     "SkillManagement": SkillManagement,
     "AgentCollaboration": AgentCollaboration,
+    "AgentDebugger": AgentDebugger,
 }
 
 export const pagesConfig = {

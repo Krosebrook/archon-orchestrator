@@ -28,6 +28,7 @@ import {
   FileText,
   Brain,
   Sparkles,
+  Bug,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -71,6 +72,7 @@ const navItems = [
   { name: 'Governance', icon: Shield, path: 'Governance', permission: 'policy.view' },
   { name: 'Refactoring', icon: Wrench, path: 'Refactoring', permission: 'workflow.edit' },
   { name: 'Policies', icon: Shield, path: 'RefactorPolicies', permission: 'policy.view' },
+  { name: 'AI Debugger', icon: Bug, path: 'AgentDebugger', permission: 'workflow.edit' },
 ];
 
 const Sidebar = ({ isCollapsed, isMobileOpen, setIsMobileOpen }) => {
