@@ -21,23 +21,26 @@ export default function Dashboard() {
   const [runs, setRuns] = useState([]);
   const [agents, setAgents] = useState([]);
   const [workflows, setWorkflows] = useState([]);
+  const [metrics, setMetrics] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const [runData, agentData, workflowData] = await Promise.all([
+        const [runData, agentData, workflowData, metricData] = await Promise.all([
           Run.list('-started_at', 20),
           Agent.list(),
-          Workflow.list()
+          Workflow.list(),
+          base44.entities.AgentMetric.list('-timestamp', 200)
         ]);
         setRuns(runData);
         setAgents(agentData);
         setWorkflows(workflowData);
-        } catch (error) {
+        setMetrics(metricData);
+      } catch (error) {
         handleError(error, { silent: false });
-        } finally {
+      } finally {
         setIsLoading(false);
       }
     };
@@ -116,8 +119,8 @@ export default function Dashboard() {
       <AgentMonitoringDashboard />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <AIHealthSummary agents={agents} metrics={[]} runs={runs} />
-        <PredictiveFailureAnalysis agents={agents} metrics={[]} runs={runs} />
+        <AIHealthSummary agents={agents} metrics={metrics} runs={runs} />
+        <PredictiveFailureAnalysis agents={agents} metrics={metrics} runs={runs} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

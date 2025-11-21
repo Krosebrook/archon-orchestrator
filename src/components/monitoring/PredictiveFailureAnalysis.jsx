@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { AlertTriangle, TrendingDown, Clock, Shield, Loader2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { handleError } from '../utils/api-client';
 
 export default function PredictiveFailureAnalysis({ agents, metrics, runs }) {
   const [predictions, setPredictions] = useState(null);
@@ -86,8 +86,7 @@ Focus on agents showing degradation patterns, increasing error rates, or resourc
       setPredictions({ ...result, timestamp: new Date() });
       toast.success('Predictive analysis complete');
     } catch (error) {
-      console.error('Predictive analysis failed:', error);
-      toast.error('Failed to analyze failure patterns');
+      handleError(error);
     } finally {
       setIsAnalyzing(false);
     }

@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Brain, Loader2, CheckCircle, AlertTriangle, TrendingUp, Zap } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
+import { handleError } from '../utils/api-client';
 
 export default function AIHealthSummary({ agents, metrics, runs }) {
   const [summary, setSummary] = useState(null);
@@ -76,8 +77,7 @@ Be concise, direct, and focused on actionable intelligence. Use natural language
       setSummary({ ...result, timestamp: new Date() });
       toast.success('Health summary updated');
     } catch (error) {
-      console.error('Failed to generate summary:', error);
-      toast.error('Failed to generate health summary');
+      handleError(error);
     } finally {
       setIsGenerating(false);
     }

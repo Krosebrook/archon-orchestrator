@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Bug, Loader2, CheckCircle, ArrowRight, Lightbulb } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
+import { handleError } from '../utils/api-client';
 
 export default function DebugWizard({ agents, runs, metrics }) {
   const [issue, setIssue] = useState('');
@@ -21,6 +22,7 @@ export default function DebugWizard({ agents, runs, metrics }) {
 
     setIsGenerating(true);
     try {
+      const user = await base44.auth.me();
       const contextData = {
         agents: agents.slice(0, 5).map(a => ({ id: a.id, name: a.name, status: a.status, config: a.config })),
         recent_failures: runs.filter(r => r.status === 'failed').slice(0, 10).map(r => ({
@@ -84,10 +86,19 @@ Be systematic, pedagogical, and thorough. Guide them to understand root cause, n
 
       setGuidance(result);
       setCurrentStep(0);
+      
+      // Audit log
+      await base44.entities.Audit.create({
+        entity_type: 'system',
+        entity_id: 'debug_wizard',
+        action: 'debug_session_started',
+        metadata: { issue_description: issue.substring(0, 100), step_count: result.steps?.length || 0 },
+        org_id: user.organization.id
+      });
+      
       toast.success('Debug guidance generated');
     } catch (error) {
-      console.error('Failed to generate guidance:', error);
-      toast.error('Failed to generate guidance');
+      handleError(error);
     } finally {
       setIsGenerating(false);
     }

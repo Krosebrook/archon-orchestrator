@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Sparkles, Loader2, Code, TrendingUp, Zap } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
+import { handleError } from '../utils/api-client';
 
 export default function RefactoringSuggestions({ agents, onRefresh }) {
   const [selectedAgent, setSelectedAgent] = useState('');
@@ -20,7 +21,12 @@ export default function RefactoringSuggestions({ agents, onRefresh }) {
 
     setIsGenerating(true);
     try {
+      const user = await base44.auth.me();
       const agent = agents.find(a => a.id === selectedAgent);
+      if (!agent) {
+        toast.error('Agent not found');
+        return;
+      }
       const metrics = await base44.entities.AgentMetric.filter({ agent_id: selectedAgent }, '-timestamp', 100);
       
       const performanceProfile = {
@@ -79,10 +85,19 @@ Prioritize suggestions by impact.`,
       });
 
       setSuggestions(result);
+      
+      // Audit log
+      await base44.entities.Audit.create({
+        entity_type: 'agent',
+        entity_id: selectedAgent,
+        action: 'refactor_analysis',
+        metadata: { suggestion_count: result.suggestions?.length || 0 },
+        org_id: user.organization.id
+      });
+      
       toast.success('Suggestions generated');
     } catch (error) {
-      console.error('Failed to generate suggestions:', error);
-      toast.error('Failed to generate suggestions');
+      handleError(error);
     } finally {
       setIsGenerating(false);
     }

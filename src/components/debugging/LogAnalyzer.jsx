@@ -7,6 +7,7 @@ import { FileSearch, Loader2, AlertCircle, CheckCircle, TrendingUp } from 'lucid
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
+import { handleError } from '../utils/api-client';
 
 export default function LogAnalyzer({ agents, runs, metrics, onRefresh }) {
   const [selectedRun, setSelectedRun] = useState('');
@@ -21,7 +22,12 @@ export default function LogAnalyzer({ agents, runs, metrics, onRefresh }) {
 
     setIsAnalyzing(true);
     try {
+      const user = await base44.auth.me();
       const run = runs.find(r => r.id === selectedRun);
+      if (!run) {
+        toast.error('Run not found');
+        return;
+      }
       const agent = agents.find(a => a.id === run.agent_id);
       const runMetrics = metrics.filter(m => m.run_id === selectedRun);
 
@@ -70,10 +76,19 @@ Be precise, technical, and actionable. Reference specific timestamps and metrics
       });
 
       setAnalysis({ ...result, run, agent });
+      
+      // Audit log for debug session
+      await base44.entities.Audit.create({
+        entity_type: 'run',
+        entity_id: selectedRun,
+        action: 'debug_analysis',
+        metadata: { category: result.category, severity: result.severity },
+        org_id: user.organization.id
+      });
+      
       toast.success('Analysis complete');
     } catch (error) {
-      console.error('Analysis failed:', error);
-      toast.error('Failed to analyze logs');
+      handleError(error);
     } finally {
       setIsAnalyzing(false);
     }
