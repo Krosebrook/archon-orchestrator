@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Agent, AgentMetric, SkillInstallation, SkillReview, Run } from '@/entities/all';
+import { base44 } from '@/api/base44Client';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -18,6 +19,7 @@ export default function AgentAnalytics() {
   const [runs, setRuns] = useState([]);
   const [installations, setInstallations] = useState([]);
   const [reviews, setReviews] = useState([]);
+  const [skills, setSkills] = useState([]);
   const [selectedAgent, setSelectedAgent] = useState('all');
   const [timeRange, setTimeRange] = useState('30d');
   const [isLoading, setIsLoading] = useState(true);
@@ -28,18 +30,20 @@ export default function AgentAnalytics() {
 
   const loadData = async () => {
     try {
-      const [agentData, metricData, runData, installData, reviewData] = await Promise.all([
+      const [agentData, metricData, runData, installData, reviewData, skillData] = await Promise.all([
         Agent.list(),
         AgentMetric.filter({}, '-timestamp', 1000),
         Run.filter({}, '-started_at', 500),
         SkillInstallation.list(),
-        SkillReview.list()
+        SkillReview.list(),
+        base44.entities.Skill.list()
       ]);
       setAgents(agentData);
       setMetrics(metricData);
       setRuns(runData);
       setInstallations(installData);
       setReviews(reviewData);
+      setSkills(skillData);
     } catch (error) {
       console.error('Failed to load analytics data:', error);
     } finally {
@@ -96,7 +100,7 @@ export default function AgentAnalytics() {
       </div>
 
       <Tabs defaultValue="performance" className="w-full">
-        <TabsList className="bg-slate-800 grid grid-cols-4 w-full">
+        <TabsList className="bg-slate-800 grid grid-cols-5 w-full">
           <TabsTrigger value="performance" className="flex items-center gap-2">
             <BarChart3 className="w-4 h-4" />
             Performance
@@ -112,6 +116,10 @@ export default function AgentAnalytics() {
           <TabsTrigger value="optimization" className="flex items-center gap-2">
             <TrendingUp className="w-4 h-4" />
             Optimization
+          </TabsTrigger>
+          <TabsTrigger value="ai-insights" className="flex items-center gap-2">
+            <TrendingUp className="w-4 h-4" />
+            AI Insights
           </TabsTrigger>
         </TabsList>
 
@@ -149,6 +157,27 @@ export default function AgentAnalytics() {
             metrics={filteredMetrics}
             runs={filteredRuns}
             selectedAgent={selectedAgent}
+          />
+        </TabsContent>
+
+        <TabsContent value="ai-insights" className="mt-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <AIInsightsAssistant 
+              metrics={filteredMetrics} 
+              agents={agents} 
+              runs={filteredRuns} 
+              reviews={reviews} 
+            />
+            <PredictiveAnomalyDetector 
+              metrics={filteredMetrics} 
+              agents={agents} 
+            />
+          </div>
+          <AIOptimizationSuggestions 
+            metrics={filteredMetrics} 
+            agents={agents} 
+            runs={filteredRuns}
+            skills={skills}
           />
         </TabsContent>
       </Tabs>
