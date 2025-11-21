@@ -6,6 +6,7 @@ import { handleError } from '../components/utils/api-client';
 import LogAnalyzer from '../components/debugging/LogAnalyzer';
 import RefactoringSuggestions from '../components/debugging/RefactoringSuggestions';
 import DebugWizard from '../components/debugging/DebugWizard';
+import APIDocumentation from '../components/debugging/APIDocumentation';
 
 export default function AgentDebugger() {
   const [agents, setAgents] = useState([]);
@@ -43,7 +44,7 @@ export default function AgentDebugger() {
       </div>
 
       <Tabs defaultValue="logs" className="w-full">
-        <TabsList className="grid w-full grid-cols-3 bg-slate-800">
+        <TabsList className="grid w-full grid-cols-4 bg-slate-800">
           <TabsTrigger value="logs" className="flex items-center gap-2">
             <FileSearch className="w-4 h-4" />
             Log Analysis
@@ -55,6 +56,10 @@ export default function AgentDebugger() {
           <TabsTrigger value="debug" className="flex items-center gap-2">
             <Bug className="w-4 h-4" />
             Debug Wizard
+          </TabsTrigger>
+          <TabsTrigger value="api" className="flex items-center gap-2">
+            <GitBranch className="w-4 h-4" />
+            API Docs
           </TabsTrigger>
         </TabsList>
 
@@ -80,6 +85,10 @@ export default function AgentDebugger() {
             runs={runs}
             metrics={metrics}
           />
+        </TabsContent>
+
+        <TabsContent value="api" className="mt-6">
+          <APIDocumentation />
         </TabsContent>
       </Tabs>
     </div>
