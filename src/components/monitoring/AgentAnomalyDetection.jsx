@@ -37,6 +37,45 @@ export default function AgentAnomalyDetection() {
     try {
       const user = await base44.auth.me();
       const metrics = await AgentMetric.filter({}, '-timestamp', 200);
+
+      // Use AI to analyze patterns
+      const aiAnalysis = await base44.integrations.Core.InvokeLLM({
+        prompt: `Analyze these agent metrics and identify anomalies:
+${JSON.stringify(metrics.slice(0, 50).map(m => ({
+  agent_id: m.agent_id,
+  latency: m.latency_ms,
+  cpu: m.cpu_usage_percent,
+  memory: m.memory_mb,
+  status: m.status,
+  cost: m.cost_cents
+})), null, 2)}
+
+Identify:
+1. Performance degradation patterns
+2. Unusual cost spikes
+3. Error clusters
+4. Resource exhaustion risks
+
+Return anomaly types with severity and recommended actions.`,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            anomalies: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  type: { type: "string" },
+                  severity: { type: "string", enum: ["low", "medium", "high", "critical"] },
+                  description: { type: "string" },
+                  affected_agents: { type: "array", items: { type: "string" } },
+                  recommended_action: { type: "string" }
+                }
+              }
+            }
+          }
+        }
+      });
       
       const agentGroups = {};
       metrics.forEach(m => {
@@ -113,6 +152,21 @@ export default function AgentAnomalyDetection() {
         }
       }
 
+      // Combine AI-detected and rule-based anomalies
+      const aiAnomalies = aiAnalysis.anomalies || [];
+      for (const aiAnomaly of aiAnomalies) {
+        for (const agentId of aiAnomaly.affected_agents || []) {
+          newAnomalies.push({
+            agent_id: agentId,
+            agent_name: agents.find(a => a.id === agentId)?.name || 'Unknown',
+            type: aiAnomaly.type,
+            severity: aiAnomaly.severity,
+            message: `${aiAnomaly.description} - ${aiAnomaly.recommended_action}`,
+            metric_value: 0
+          });
+        }
+      }
+
       // Create alerts for new anomalies
       for (const anomaly of newAnomalies) {
         await Alert.create({
@@ -124,7 +178,8 @@ export default function AgentAnomalyDetection() {
           status: 'active',
           metadata: {
             type: anomaly.type,
-            metric_value: anomaly.metric_value
+            metric_value: anomaly.metric_value,
+            ai_detected: aiAnomalies.length > 0
           },
           org_id: user.organization.id
         });

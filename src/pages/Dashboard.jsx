@@ -9,6 +9,8 @@ import ActiveRuns from '../components/dashboard/ActiveRuns';
 import QuickActions from '../components/dashboard/QuickActions';
 import AgentMonitoringDashboard from '../components/monitoring/AgentMonitoringDashboard';
 import AgentAnomalyDetection from '../components/monitoring/AgentAnomalyDetection';
+import AIHealthSummary from '../components/monitoring/AIHealthSummary';
+import PredictiveFailureAnalysis from '../components/monitoring/PredictiveFailureAnalysis';
 import OptimizationWidget from '../components/dashboard/OptimizationWidget';
 import CollaborationWidget from '../components/dashboard/CollaborationWidget';
 import { subDays, format } from 'date-fns';
@@ -112,6 +114,11 @@ export default function Dashboard() {
       </div>
 
       <AgentMonitoringDashboard />
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <AIHealthSummary agents={agents} metrics={[]} runs={runs} />
+        <PredictiveFailureAnalysis agents={agents} metrics={[]} runs={runs} />
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
