@@ -1,25 +1,74 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
+import { z } from 'npm:zod@3.22.4';
+
+const InputSchema = z.object({
+  agent_id: z.string().min(1, 'agent_id is required'),
+  run_limit: z.number().int().min(5).max(200).default(50),
+  min_success_rate: z.number().min(0).max(1).default(0.8)
+});
+
+const ErrorCodes = {
+  UNAUTHORIZED: 'UNAUTHORIZED',
+  VALIDATION_ERROR: 'VALIDATION_ERROR',
+  INSUFFICIENT_CONTEXT: 'INSUFFICIENT_CONTEXT',
+  NOT_FOUND: 'NOT_FOUND',
+  SERVER_ERROR: 'SERVER_ERROR'
+};
+
+function createError(code, message, hint = null, retryable = false, trace_id = null) {
+  return Response.json({
+    code,
+    message,
+    hint,
+    retryable,
+    trace_id
+  }, { status: code === ErrorCodes.UNAUTHORIZED ? 401 : code === ErrorCodes.VALIDATION_ERROR || code === ErrorCodes.INSUFFICIENT_CONTEXT ? 422 : code === ErrorCodes.NOT_FOUND ? 404 : 500 });
+}
 
 Deno.serve(async (req) => {
+  const trace_id = crypto.randomUUID();
+  const startTime = Date.now();
+
   try {
     const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
 
     if (!user) {
-      return Response.json({ 
-        code: 'UNAUTHORIZED',
-        message: 'Authentication required'
-      }, { status: 401 });
+      return createError(
+        ErrorCodes.UNAUTHORIZED,
+        'Authentication required',
+        'Please authenticate to access this endpoint',
+        false,
+        trace_id
+      );
     }
 
+    // Validate input
     const body = await req.json();
-    const { agent_id, run_limit = 50, min_success_rate = 0.8 } = body;
+    const validation = InputSchema.safeParse(body);
+    
+    if (!validation.success) {
+      return createError(
+        ErrorCodes.VALIDATION_ERROR,
+        validation.error.errors[0].message,
+        'Check your request parameters',
+        false,
+        trace_id
+      );
+    }
 
-    if (!agent_id) {
-      return Response.json({
-        code: 'VALIDATION_ERROR',
-        message: 'agent_id is required'
-      }, { status: 422 });
+    const { agent_id, run_limit, min_success_rate } = validation.data;
+
+    // Verify agent exists and user has access
+    const agents = await base44.entities.Agent.filter({ id: agent_id });
+    if (!agents || agents.length === 0) {
+      return createError(
+        ErrorCodes.NOT_FOUND,
+        'Agent not found',
+        'Verify the agent_id and ensure you have access',
+        false,
+        trace_id
+      );
     }
 
     // Fetch successful runs
@@ -30,14 +79,16 @@ Deno.serve(async (req) => {
     );
 
     if (successfulRuns.length < 5) {
-      return Response.json({
-        code: 'INSUFFICIENT_CONTEXT',
-        message: 'Need at least 5 successful runs for pattern analysis',
-        hint: 'Run the agent more times to build training data'
-      }, { status: 422 });
+      return createError(
+        ErrorCodes.INSUFFICIENT_CONTEXT,
+        'Need at least 5 successful runs for pattern analysis',
+        'Run the agent more times to build training data',
+        false,
+        trace_id
+      );
     }
 
-    // Fetch metrics for these runs
+    // Fetch metrics
     const runIds = successfulRuns.map(r => r.id);
     const metrics = await base44.entities.AgentMetric.filter(
       { run_id: { $in: runIds } },
@@ -68,6 +119,7 @@ Deno.serve(async (req) => {
     };
 
     // AI analysis
+    const analysisStart = Date.now();
     const analysis = await base44.integrations.Core.InvokeLLM({
       prompt: `You are an AI training specialist. Analyze these successful agent runs to extract learning patterns:
 
@@ -129,6 +181,7 @@ Be specific and actionable. Focus on reproducible patterns.`,
         }
       }
     });
+    const analysisLatency = Date.now() - analysisStart;
 
     // Create training module
     const trainingModule = await base44.asServiceRole.entities.TrainingModule.create({
@@ -159,25 +212,48 @@ Be specific and actionable. Focus on reproducible patterns.`,
       metadata: {
         samples_analyzed: successfulRuns.length,
         patterns_found: analysis.success_patterns.length,
-        api_call: true
+        analysis_latency_ms: analysisLatency,
+        trace_id
       },
       org_id: user.organization.id
     });
+
+    const totalLatency = Date.now() - startTime;
+
+    // Telemetry
+    console.log(JSON.stringify({
+      event: 'analyze_successful_runs',
+      trace_id,
+      agent_id,
+      samples: successfulRuns.length,
+      latency_ms: totalLatency,
+      analysis_latency_ms: analysisLatency,
+      org_id: user.organization.id
+    }));
 
     return Response.json({
       success: true,
       data: {
         analysis,
         training_module: trainingModule
-      }
+      },
+      trace_id
     }, { status: 200 });
 
   } catch (error) {
-    console.error('Success analysis error:', error);
-    return Response.json({
-      code: 'SERVER_ERROR',
-      message: error.message || 'Failed to analyze successful runs',
-      retryable: true
-    }, { status: 500 });
+    console.error(JSON.stringify({
+      event: 'analyze_successful_runs_error',
+      trace_id,
+      error: error.message,
+      stack: error.stack
+    }));
+
+    return createError(
+      ErrorCodes.SERVER_ERROR,
+      'Failed to analyze successful runs',
+      'Please try again or contact support if the issue persists',
+      true,
+      trace_id
+    );
   }
 });

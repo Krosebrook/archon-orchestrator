@@ -1,47 +1,93 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
+import { z } from 'npm:zod@3.22.4';
+
+const InputSchema = z.object({
+  agent_id: z.string().min(1, 'agent_id is required'),
+  feedback_window_days: z.number().int().min(1).max(90).default(7),
+  auto_apply: z.boolean().default(false)
+});
+
+const ErrorCodes = {
+  UNAUTHORIZED: 'UNAUTHORIZED',
+  VALIDATION_ERROR: 'VALIDATION_ERROR',
+  NOT_FOUND: 'NOT_FOUND',
+  INSUFFICIENT_DATA: 'INSUFFICIENT_DATA',
+  SERVER_ERROR: 'SERVER_ERROR'
+};
+
+function createError(code, message, hint = null, retryable = false, trace_id = null) {
+  return Response.json({
+    code,
+    message,
+    hint,
+    retryable,
+    trace_id
+  }, { status: code === ErrorCodes.UNAUTHORIZED ? 401 : code === ErrorCodes.VALIDATION_ERROR || code === ErrorCodes.INSUFFICIENT_DATA ? 422 : code === ErrorCodes.NOT_FOUND ? 404 : 500 });
+}
 
 Deno.serve(async (req) => {
+  const trace_id = crypto.randomUUID();
+  const startTime = Date.now();
+
   try {
     const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
 
     if (!user) {
-      return Response.json({ 
-        code: 'UNAUTHORIZED',
-        message: 'Authentication required'
-      }, { status: 401 });
+      return createError(
+        ErrorCodes.UNAUTHORIZED,
+        'Authentication required',
+        'Please authenticate to access this endpoint',
+        false,
+        trace_id
+      );
     }
 
+    // Validate input
     const body = await req.json();
-    const { agent_id, feedback_window_days = 7, auto_apply = false } = body;
-
-    if (!agent_id) {
-      return Response.json({
-        code: 'VALIDATION_ERROR',
-        message: 'agent_id is required'
-      }, { status: 422 });
+    const validation = InputSchema.safeParse(body);
+    
+    if (!validation.success) {
+      return createError(
+        ErrorCodes.VALIDATION_ERROR,
+        validation.error.errors[0].message,
+        'Check your request parameters',
+        false,
+        trace_id
+      );
     }
 
-    // Fetch agent and recent performance data
+    const { agent_id, feedback_window_days, auto_apply } = validation.data;
+
+    // Fetch agent
     const agents = await base44.entities.Agent.filter({ id: agent_id });
     if (!agents || agents.length === 0) {
-      return Response.json({
-        code: 'NOT_FOUND',
-        message: 'Agent not found'
-      }, { status: 404 });
+      return createError(
+        ErrorCodes.NOT_FOUND,
+        'Agent not found',
+        'Verify the agent_id and ensure you have access',
+        false,
+        trace_id
+      );
     }
-
     const agent = agents[0];
     
     // Get recent runs
-    const cutoffDate = new Date();
-    cutoffDate.setDate(cutoffDate.getDate() - feedback_window_days);
-    
     const recentRuns = await base44.entities.Run.filter(
       { agent_id },
       '-finished_at',
       100
     );
+
+    if (recentRuns.length < 5) {
+      return createError(
+        ErrorCodes.INSUFFICIENT_DATA,
+        'Need at least 5 runs for adaptation analysis',
+        'Run the agent more times to generate sufficient feedback data',
+        false,
+        trace_id
+      );
+    }
 
     const metrics = await base44.entities.AgentMetric.filter(
       { agent_id },
@@ -65,6 +111,7 @@ Deno.serve(async (req) => {
     };
 
     // AI-driven adaptation analysis
+    const analysisStart = Date.now();
     const adaptation = await base44.integrations.Core.InvokeLLM({
       prompt: `You are an adaptive learning system. Analyze this agent's recent performance and recommend behavioral adaptations:
 
@@ -130,6 +177,7 @@ Be conservative - only recommend changes with high confidence.`,
         }
       }
     });
+    const analysisLatency = Date.now() - analysisStart;
 
     // Auto-apply if requested and low risk
     let applied = false;
@@ -170,10 +218,25 @@ Be conservative - only recommend changes with high confidence.`,
         auto_applied: applied,
         risk_level: adaptation.risk_assessment.risk_level,
         confidence: adaptation.risk_assessment.confidence,
-        api_call: true
+        analysis_latency_ms: analysisLatency,
+        trace_id
       },
       org_id: user.organization.id
     });
+
+    const totalLatency = Date.now() - startTime;
+
+    // Telemetry
+    console.log(JSON.stringify({
+      event: 'adapt_agent_behavior',
+      trace_id,
+      agent_id,
+      auto_applied: applied,
+      risk_level: adaptation.risk_assessment.risk_level,
+      latency_ms: totalLatency,
+      analysis_latency_ms: analysisLatency,
+      org_id: user.organization.id
+    }));
 
     return Response.json({
       success: true,
@@ -182,15 +245,24 @@ Be conservative - only recommend changes with high confidence.`,
         performance_trends: performanceTrends,
         applied,
         session_id: session.id
-      }
+      },
+      trace_id
     }, { status: 200 });
 
   } catch (error) {
-    console.error('Adaptive behavior error:', error);
-    return Response.json({
-      code: 'SERVER_ERROR',
-      message: error.message || 'Failed to adapt agent behavior',
-      retryable: true
-    }, { status: 500 });
+    console.error(JSON.stringify({
+      event: 'adapt_agent_behavior_error',
+      trace_id,
+      error: error.message,
+      stack: error.stack
+    }));
+
+    return createError(
+      ErrorCodes.SERVER_ERROR,
+      'Failed to adapt agent behavior',
+      'Please try again or contact support if the issue persists',
+      true,
+      trace_id
+    );
   }
 });
