@@ -1,3 +1,4 @@
+
 /**
  * @fileoverview Documentation Module Barrel Export
  * @description Central export point for all embedded documentation.
@@ -9,3 +10,4 @@
 export { ARCHITECTURE_DOC } from './ARCHITECTURE.md';
 export { README_DOC } from './README.md';
 export { SECURITY_DOC } from './SECURITY.md';
+export { API_REFERENCE_DOC } from './API_REFERENCE.md';
