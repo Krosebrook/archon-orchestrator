@@ -1,3 +1,4 @@
+
 /**
  * @fileoverview Shared Module Barrel Export
  * @description Central export point for all shared utilities, constants, and types.
@@ -52,4 +53,4 @@ export { Types } from './types';
 // DOCUMENTATION
 // =============================================================================
 
-export { ARCHITECTURE_DOC } from './docs/ARCHITECTURE.md';
+export { ARCHITECTURE_DOC, README_DOC, SECURITY_DOC } from './docs';
