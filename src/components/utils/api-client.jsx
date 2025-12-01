@@ -1,81 +1,69 @@
 /**
- * API Client Utilities
- * Axis: Architecture, Security, Quality
+ * @fileoverview API Client Utilities
+ * @description Production-grade HTTP client with error handling, retry logic,
+ * circuit breaker pattern, and request deduplication.
  * 
- * Enhanced error taxonomy with:
- * - Full error classification (code, message, hint, retryable, trace_id)
- * - Retry logic with exponential backoff
- * - Request deduplication
- * - Circuit breaker pattern
- * - Correlation ID propagation
+ * @module utils/api-client
+ * @version 2.0.0
+ * 
+ * @example
+ * import { apiRequest, withRetry, handleError } from '@/components/utils/api-client';
+ * 
+ * // With all features
+ * const result = await apiRequest(
+ *   () => base44.entities.Agent.list(),
+ *   { retry: true, circuitBreakerName: 'agents' }
+ * );
+ * 
+ * // Simple retry
+ * const data = await withRetry(() => fetchData(), { maxRetries: 3 });
  */
 
 import { toast } from 'sonner';
+import {
+  ErrorCodes,
+  ErrorSeverity,
+  DefaultRetryConfig,
+  DefaultCircuitBreakerConfig,
+  HttpStatusToError
+} from '../shared/constants';
 
-// =============================================================================
-// ERROR TAXONOMY (aligned with backend functions)
-// =============================================================================
-
-export const ErrorCodes = Object.freeze({
-  // Auth errors
-  UNAUTHORIZED: 'UNAUTHORIZED',
-  FORBIDDEN: 'FORBIDDEN',
-  SESSION_EXPIRED: 'SESSION_EXPIRED',
-  
-  // Resource errors
-  NOT_FOUND: 'NOT_FOUND',
-  CONFLICT: 'CONFLICT',
-  GONE: 'GONE',
-  
-  // Input errors
-  VALIDATION_ERROR: 'VALIDATION_ERROR',
-  INVALID_FORMAT: 'INVALID_FORMAT',
-  MISSING_REQUIRED: 'MISSING_REQUIRED',
-  
-  // Rate/quota errors
-  RATE_LIMITED: 'RATE_LIMITED',
-  QUOTA_EXCEEDED: 'QUOTA_EXCEEDED',
-  
-  // Server errors
-  SERVER_ERROR: 'SERVER_ERROR',
-  SERVICE_UNAVAILABLE: 'SERVICE_UNAVAILABLE',
-  GATEWAY_TIMEOUT: 'GATEWAY_TIMEOUT',
-  
-  // Client errors
-  NETWORK_ERROR: 'NETWORK_ERROR',
-  TIMEOUT: 'TIMEOUT',
-  ABORTED: 'ABORTED',
-  
-  // AI-specific errors
-  AI_PROVIDER_ERROR: 'AI_PROVIDER_ERROR',
-  AI_RATE_LIMITED: 'AI_RATE_LIMITED',
-  AI_CONTENT_FILTERED: 'AI_CONTENT_FILTERED',
-  AI_CONTEXT_TOO_LONG: 'AI_CONTEXT_TOO_LONG'
-});
-
-// Error severity levels for observability
-export const ErrorSeverity = Object.freeze({
-  LOW: 'low',
-  MEDIUM: 'medium',
-  HIGH: 'high',
-  CRITICAL: 'critical'
-});
+// Re-export for backwards compatibility
+export { ErrorCodes, ErrorSeverity };
 
 // =============================================================================
 // API ERROR CLASS
 // =============================================================================
 
+/**
+ * Structured API error with full taxonomy support.
+ * @extends Error
+ */
 export class APIError extends Error {
+  /**
+   * @param {string} code - Error code from ErrorCodes enum
+   * @param {string} message - Human-readable error message
+   * @param {import('../shared/types').APIErrorOptions} [options] - Additional options
+   */
   constructor(code, message, options = {}) {
     super(message);
+    /** @type {string} */
     this.name = 'APIError';
+    /** @type {string} */
     this.code = code;
+    /** @type {string|null} */
     this.hint = options.hint || null;
+    /** @type {boolean} */
     this.retryable = options.retryable ?? false;
+    /** @type {string|null} */
     this.trace_id = options.trace_id || null;
+    /** @type {number|null} */
     this.status = options.status || null;
+    /** @type {string} */
     this.severity = options.severity || ErrorSeverity.MEDIUM;
+    /** @type {string} */
     this.timestamp = new Date().toISOString();
+    /** @type {Object} */
     this.context = options.context || {};
     
     // Capture stack trace
@@ -84,6 +72,10 @@ export class APIError extends Error {
     }
   }
 
+  /**
+   * Convert to JSON-serializable object.
+   * @returns {import('../shared/types').APIErrorJSON}
+   */
   toJSON() {
     return {
       name: this.name,
@@ -103,20 +95,8 @@ export class APIError extends Error {
 // ERROR NORMALIZATION
 // =============================================================================
 
-const STATUS_TO_ERROR = {
-  400: { code: ErrorCodes.VALIDATION_ERROR, message: 'Invalid request', severity: ErrorSeverity.LOW },
-  401: { code: ErrorCodes.UNAUTHORIZED, message: 'Authentication required', severity: ErrorSeverity.MEDIUM },
-  403: { code: ErrorCodes.FORBIDDEN, message: 'Permission denied', severity: ErrorSeverity.MEDIUM },
-  404: { code: ErrorCodes.NOT_FOUND, message: 'Resource not found', severity: ErrorSeverity.LOW },
-  409: { code: ErrorCodes.CONFLICT, message: 'Resource conflict', severity: ErrorSeverity.MEDIUM },
-  410: { code: ErrorCodes.GONE, message: 'Resource no longer available', severity: ErrorSeverity.LOW },
-  422: { code: ErrorCodes.VALIDATION_ERROR, message: 'Invalid input', severity: ErrorSeverity.LOW },
-  429: { code: ErrorCodes.RATE_LIMITED, message: 'Too many requests', retryable: true, severity: ErrorSeverity.MEDIUM },
-  500: { code: ErrorCodes.SERVER_ERROR, message: 'Server error', retryable: true, severity: ErrorSeverity.HIGH },
-  502: { code: ErrorCodes.SERVICE_UNAVAILABLE, message: 'Service unavailable', retryable: true, severity: ErrorSeverity.HIGH },
-  503: { code: ErrorCodes.SERVICE_UNAVAILABLE, message: 'Service temporarily unavailable', retryable: true, severity: ErrorSeverity.HIGH },
-  504: { code: ErrorCodes.GATEWAY_TIMEOUT, message: 'Gateway timeout', retryable: true, severity: ErrorSeverity.HIGH }
-};
+// Use centralized status mapping
+const STATUS_TO_ERROR = HttpStatusToError;
 
 export function normalizeError(error, context = {}) {
   // Already normalized
@@ -206,14 +186,8 @@ export function handleError(error, options = {}) {
 // RETRY LOGIC WITH EXPONENTIAL BACKOFF
 // =============================================================================
 
-const DEFAULT_RETRY_CONFIG = {
-  maxRetries: 3,
-  baseDelayMs: 1000,
-  maxDelayMs: 10000,
-  backoffMultiplier: 2,
-  retryableStatuses: [408, 429, 500, 502, 503, 504],
-  retryableCodes: [ErrorCodes.RATE_LIMITED, ErrorCodes.SERVICE_UNAVAILABLE, ErrorCodes.GATEWAY_TIMEOUT, ErrorCodes.NETWORK_ERROR]
-};
+// Use centralized retry config
+const DEFAULT_RETRY_CONFIG = DefaultRetryConfig;
 
 function calculateBackoff(attempt, config) {
   const delay = Math.min(
