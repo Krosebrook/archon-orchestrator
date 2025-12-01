@@ -32,6 +32,7 @@ import AgentCollaboration from './pages/AgentCollaboration';
 import AgentDebugger from './pages/AgentDebugger';
 import AgentTraining from './pages/AgentTraining';
 import VisualWorkflowBuilder from './pages/VisualWorkflowBuilder';
+import Documentation from './pages/Documentation';
 import __Layout from './Layout.jsx';
 
 
@@ -70,6 +71,7 @@ export const PAGES = {
     "AgentDebugger": AgentDebugger,
     "AgentTraining": AgentTraining,
     "VisualWorkflowBuilder": VisualWorkflowBuilder,
+    "Documentation": Documentation,
 }
 
 export const pagesConfig = {
