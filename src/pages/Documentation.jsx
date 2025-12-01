@@ -14,7 +14,7 @@ import {
   AlertCircle,
   CheckCircle2
 } from 'lucide-react';
-import { ARCHITECTURE_DOC, README_DOC, SECURITY_DOC } from '../components/shared/docs';
+import { ARCHITECTURE_DOC, README_DOC, SECURITY_DOC, API_REFERENCE_DOC } from '../components/shared/docs';
 
 const QuickRefCard = ({ title, icon: Icon, items, color = 'blue' }) => (
   <Card className="bg-slate-800/50 border-slate-700">
@@ -68,7 +68,8 @@ export default function Documentation() {
       <Tabs defaultValue="overview" className="space-y-4">
         <TabsList className="bg-slate-800">
           <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="api">API Reference</TabsTrigger>
+          <TabsTrigger value="api-cards">Quick Reference</TabsTrigger>
+          <TabsTrigger value="api-full">Full API</TabsTrigger>
           <TabsTrigger value="architecture">Architecture</TabsTrigger>
           <TabsTrigger value="security">Security</TabsTrigger>
         </TabsList>
@@ -150,7 +151,7 @@ export default function Documentation() {
           </div>
         </TabsContent>
 
-        <TabsContent value="api" className="space-y-4">
+        <TabsContent value="api-cards" className="space-y-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <ApiRefCard
               module="api-client"
@@ -213,6 +214,18 @@ export default function Documentation() {
               ]}
             />
           </div>
+        </TabsContent>
+
+        <TabsContent value="api-full">
+          <Card className="bg-slate-800/50 border-slate-700">
+            <CardContent className="p-6">
+              <ScrollArea className="h-[600px]">
+                <div className="prose prose-invert prose-sm max-w-none">
+                  <ReactMarkdown>{API_REFERENCE_DOC}</ReactMarkdown>
+                </div>
+              </ScrollArea>
+            </CardContent>
+          </Card>
         </TabsContent>
 
         <TabsContent value="architecture">
