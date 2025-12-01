@@ -14,7 +14,7 @@ import {
   AlertCircle,
   CheckCircle2
 } from 'lucide-react';
-import { ARCHITECTURE_DOC } from '../components/shared/docs/ARCHITECTURE.md';
+import { ARCHITECTURE_DOC, README_DOC, SECURITY_DOC } from '../components/shared/docs';
 
 const QuickRefCard = ({ title, icon: Icon, items, color = 'blue' }) => (
   <Card className="bg-slate-800/50 border-slate-700">
@@ -227,88 +227,19 @@ export default function Documentation() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="security" className="space-y-4">
+        <TabsContent value="security">
           <Card className="bg-slate-800/50 border-slate-700">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Shield className="w-5 h-5 text-green-400" />
-                Security Checklist
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h4 className="text-sm font-semibold text-white mb-3">Input Protection</h4>
-                  <div className="space-y-2">
-                    {[
-                      'XSS sanitization on all user inputs',
-                      'Prompt injection detection (20+ patterns)',
-                      'Schema validation at boundaries',
-                      'Rate limiting per user/operation',
-                      'Null byte removal'
-                    ].map((item, idx) => (
-                      <div key={idx} className="flex items-center gap-2 text-sm">
-                        <Badge className="bg-green-500/20 text-green-400">✓</Badge>
-                        <span className="text-slate-300">{item}</span>
-                      </div>
-                    ))}
-                  </div>
+            <CardContent className="p-6">
+              <ScrollArea className="h-[600px]">
+                <div className="prose prose-invert prose-sm max-w-none">
+                  <ReactMarkdown>{SECURITY_DOC}</ReactMarkdown>
                 </div>
-                <div>
-                  <h4 className="text-sm font-semibold text-white mb-3">Data Protection</h4>
-                  <div className="space-y-2">
-                    {[
-                      'RLS on all entities (org_id scoped)',
-                      'PII redaction in audit logs',
-                      'SHA-256 audit integrity hashing',
-                      'No secrets in client code',
-                      'HTTPS enforced'
-                    ].map((item, idx) => (
-                      <div key={idx} className="flex items-center gap-2 text-sm">
-                        <Badge className="bg-green-500/20 text-green-400">✓</Badge>
-                        <span className="text-slate-300">{item}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <h4 className="text-sm font-semibold text-white mb-3">Access Control</h4>
-                  <div className="space-y-2">
-                    {[
-                      'RBAC with 4 role levels',
-                      'Permission guards on mutations',
-                      'Audit logging for all changes',
-                      'Session tracking',
-                      'Correlation ID propagation'
-                    ].map((item, idx) => (
-                      <div key={idx} className="flex items-center gap-2 text-sm">
-                        <Badge className="bg-green-500/20 text-green-400">✓</Badge>
-                        <span className="text-slate-300">{item}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <h4 className="text-sm font-semibold text-white mb-3">Resilience</h4>
-                  <div className="space-y-2">
-                    {[
-                      'Circuit breaker pattern',
-                      'Exponential backoff retry',
-                      'Request deduplication',
-                      'Graceful error handling',
-                      'Error boundary components'
-                    ].map((item, idx) => (
-                      <div key={idx} className="flex items-center gap-2 text-sm">
-                        <Badge className="bg-green-500/20 text-green-400">✓</Badge>
-                        <span className="text-slate-300">{item}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
+              </ScrollArea>
             </CardContent>
           </Card>
         </TabsContent>
+
+
       </Tabs>
     </div>
   );
