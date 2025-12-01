@@ -1,9 +1,28 @@
+/**
+ * @fileoverview Error Boundary Component
+ * @description React error boundary that catches JavaScript errors anywhere in the child
+ * component tree and displays a fallback UI with error reporting.
+ * 
+ * @module shared/ErrorBoundary
+ * @version 2.0.0
+ * 
+ * @example
+ * <ErrorBoundary>
+ *   <MyComponent />
+ * </ErrorBoundary>
+ */
+
 import React from 'react';
 import { AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { createPageUrl } from '@/utils';
+import { auditCritical, AuditEntities, AuditActions } from '../utils/audit-logger';
 
+/**
+ * Error Boundary component that catches and handles React errors.
+ * @extends React.Component
+ */
 export class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
@@ -22,23 +41,37 @@ export class ErrorBoundary extends React.Component {
   componentDidCatch(error, errorInfo) {
     const errorCode = `ERR_${Date.now()}`;
     
-    console.error('Error Boundary caught:', {
-      error,
-      errorInfo,
+    // Structured error logging
+    const errorData = {
+      error: error?.message || String(error),
+      stack: error?.stack,
+      componentStack: errorInfo?.componentStack,
       errorCode,
       timestamp: new Date().toISOString(),
-      userAgent: navigator.userAgent
-    });
+      userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : null,
+      url: typeof window !== 'undefined' ? window.location.href : null
+    };
+    
+    console.error('[ErrorBoundary] Caught error:', errorData);
 
     this.setState({ 
       errorInfo, 
       errorCode 
     });
 
-    // In production, send to error tracking service
-    if (process.env.NODE_ENV === 'production') {
-      // TODO: Send to error tracking (Sentry, etc.)
-    }
+    // Audit critical error
+    auditCritical(
+      AuditActions.EXECUTE,
+      AuditEntities.SYSTEM,
+      'error_boundary',
+      {
+        error_code: errorCode,
+        error_message: error?.message,
+        component_stack: errorInfo?.componentStack?.slice(0, 500)
+      }
+    ).catch(() => {
+      // Silently fail if audit logging fails
+    });
   }
 
   handleReset = () => {

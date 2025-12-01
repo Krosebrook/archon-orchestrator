@@ -1,8 +1,35 @@
+/**
+ * @fileoverview RBAC Guard Component
+ * @description Permission-based access control component that conditionally renders
+ * children based on user permissions.
+ * 
+ * @module shared/RBACGuard
+ * @version 2.0.0
+ * 
+ * @example
+ * <RBACGuard permission="workflow.edit">
+ *   <EditButton />
+ * </RBACGuard>
+ * 
+ * <RBACGuard permission="admin.view" fallback={<UpgradePrompt />}>
+ *   <AdminPanel />
+ * </RBACGuard>
+ */
 
+import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Lock } from 'lucide-react';
-import { useAuth } from '@/components/contexts/AuthContext'; // Corrected import path
+import { useAuth } from '@/components/contexts/AuthContext';
 
+/**
+ * Guard component that renders children only if user has required permission.
+ * @param {Object} props
+ * @param {React.ReactNode} props.children - Content to render if authorized
+ * @param {string} props.permission - Required permission (e.g., 'workflow.edit')
+ * @param {React.ReactNode} [props.fallback] - Content to render if unauthorized
+ * @param {boolean} [props.showLockMessage=true] - Whether to show default lock message
+ * @returns {React.ReactNode}
+ */
 export function RBACGuard({ 
   children, 
   permission, 

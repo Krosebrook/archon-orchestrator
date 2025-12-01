@@ -1,10 +1,32 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Loader2 } from 'lucide-react';
+/**
+ * @fileoverview Authentication Context
+ * @description Provides authentication state and RBAC permissions throughout the app.
+ * In production, this would integrate with Clerk or another auth provider.
+ * 
+ * @module contexts/AuthContext
+ * @version 2.0.0
+ * 
+ * @example
+ * // In a component
+ * const { user, role, hasPermission, isLoading } = useAuth();
+ * 
+ * if (hasPermission('workflow.edit')) {
+ *   // show edit controls
+ * }
+ */
 
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
+import { Loader2 } from 'lucide-react';
+import { Permissions } from '../shared/constants';
+
+/** @type {React.Context<AuthContextValue|null>} */
 const AuthContext = createContext(null);
 
-// In a real app, this data would come from a decoded JWT or an API call
-const MOCK_USER_DATA = {
+/**
+ * Mock user data for development. In production, this comes from JWT/API.
+ * @readonly
+ */
+const MOCK_USER_DATA = Object.freeze({
   'owner': {
     user: { fullName: 'Alex Williams', email: 'alex@acme.com' },
     organization: { id: 'org_acme', name: 'Acme Inc.' },
@@ -25,71 +47,82 @@ const MOCK_USER_DATA = {
     organization: { id: 'org_acme', name: 'Acme Inc.' },
     role: 'viewer',
   },
-};
+});
 
-// RBAC Permissions - Archon governance model
-const PERMISSIONS = {
-  'agent.create': ['owner', 'admin'],
-  'agent.edit': ['owner', 'admin'],
-  'agent.delete': ['owner', 'admin'],
-  'agent.view': ['owner', 'admin', 'operator', 'viewer'],
-  'workflow.create': ['owner', 'admin', 'operator'],
-  'workflow.edit': ['owner', 'admin', 'operator'],
-  'workflow.delete': ['owner', 'admin'],
-  'workflow.view': ['owner', 'admin', 'operator', 'viewer'],
-  'workflow.run': ['owner', 'admin', 'operator'],
-  'policy.create': ['owner', 'admin'],
-  'policy.edit': ['owner', 'admin'],
-  'policy.delete': ['owner'],
-  'policy.view': ['owner', 'admin', 'operator', 'viewer'],
-  'approval.view': ['owner', 'admin', 'operator'],
-  'approval.approve': ['owner', 'admin'],
-  'team.invite': ['owner', 'admin'],
-  'team.remove': ['owner', 'admin'],
-  'team.view': ['owner', 'admin', 'operator', 'viewer'],
-  'settings.view': ['owner', 'admin'],
-  'settings.edit': ['owner'],
-  'audit.view': ['owner', 'admin'],
-  'audit.export': ['owner', 'admin'],
-  'billing.manage': ['owner'],
-};
+// Use centralized permissions from constants
+const RBAC_PERMISSIONS = Permissions;
 
+/**
+ * Authentication Provider component.
+ * @param {Object} props
+ * @param {React.ReactNode} props.children - Child components
+ * @returns {React.ReactElement}
+ */
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [role, setRole] = useState('operator'); // Default role
+  const [role, setRole] = useState('operator');
 
   useEffect(() => {
     // Simulate fetching user data on app load
-    setTimeout(() => {
+    // In production: integrate with Clerk/Auth0/etc.
+    const timer = setTimeout(() => {
       setCurrentUser(MOCK_USER_DATA[role]);
       setIsLoading(false);
     }, 500);
+    
+    return () => clearTimeout(timer);
   }, [role]);
 
-  const hasPermission = (permission) => {
+  /**
+   * Check if current user has a specific permission.
+   * @param {string} permission - Permission to check
+   * @returns {boolean}
+   */
+  const hasPermission = useCallback((permission) => {
     if (!permission) return true;
-    const allowedRoles = PERMISSIONS[permission];
+    const allowedRoles = RBAC_PERMISSIONS[permission];
     if (!allowedRoles) {
       console.warn(`[RBAC] Unknown permission: ${permission}`);
       return false;
     }
     return allowedRoles.includes(currentUser?.role);
-  };
+  }, [currentUser?.role]);
   
-  const switchRole = (newRole) => {
-      if (MOCK_USER_DATA[newRole]) {
-          setIsLoading(true);
-          setRole(newRole);
-      }
-  }
+  /**
+   * Switch to a different role (development only).
+   * @param {string} newRole - Role to switch to
+   */
+  const switchRole = useCallback((newRole) => {
+    if (MOCK_USER_DATA[newRole]) {
+      setIsLoading(true);
+      setRole(newRole);
+    }
+  }, []);
 
-  const value = {
+  /**
+   * Guard function that throws if permission is missing.
+   * @param {string} permission - Required permission
+   * @param {string} [action] - Human-readable action description
+   * @throws {Error} If permission is not granted
+   */
+  const guard = useCallback((permission, action = 'perform this action') => {
+    if (!hasPermission(permission)) {
+      throw new Error(`Permission denied: You don't have permission to ${action}`);
+    }
+  }, [hasPermission]);
+
+  const value = useMemo(() => ({
     ...currentUser,
     isLoading,
     hasPermission,
     switchRole,
-  };
+    guard,
+    // Convenience flags
+    isOwner: currentUser?.role === 'owner',
+    isAdmin: ['owner', 'admin'].includes(currentUser?.role),
+    canMutate: currentUser?.role !== 'viewer',
+  }), [currentUser, isLoading, hasPermission, switchRole, guard]);
 
   if (isLoading) {
     return (
@@ -102,10 +135,32 @@ export function AuthProvider({ children }) {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
+/**
+ * Hook to access authentication context.
+ * @returns {AuthContextValue}
+ * @throws {Error} If used outside of AuthProvider
+ * 
+ * @example
+ * const { user, role, hasPermission, guard, isAdmin } = useAuth();
+ */
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (context === undefined) {
+  if (context === undefined || context === null) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
 };
+
+/**
+ * @typedef {Object} AuthContextValue
+ * @property {Object} user - Current user object
+ * @property {Object} organization - Current organization
+ * @property {string} role - Current role (owner|admin|operator|viewer)
+ * @property {boolean} isLoading - Whether auth is loading
+ * @property {(permission: string) => boolean} hasPermission - Permission checker
+ * @property {(newRole: string) => void} switchRole - Role switcher (dev only)
+ * @property {(permission: string, action?: string) => void} guard - Permission guard
+ * @property {boolean} isOwner - Is owner role
+ * @property {boolean} isAdmin - Is admin or owner
+ * @property {boolean} canMutate - Can perform mutations
+ */
