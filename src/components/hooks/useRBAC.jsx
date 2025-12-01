@@ -1,26 +1,28 @@
-import { useAuth } from '../contexts/AuthContext';
+/**
+ * @fileoverview RBAC Permission Hook
+ * @description Role-based access control with permission checking and guards.
+ * 
+ * @module hooks/useRBAC
+ * @version 2.0.0
+ * 
+ * @example
+ * const { hasPermission, guard, isAdmin } = useRBAC();
+ * 
+ * if (!hasPermission('workflow.edit')) {
+ *   return <AccessDenied />;
+ * }
+ * 
+ * const handleDelete = () => {
+ *   guard('workflow.delete', 'delete this workflow');
+ *   // proceed...
+ * };
+ */
 
-const PERMISSIONS = {
-  'workflow.view': ['owner', 'admin', 'operator', 'viewer'],
-  'workflow.create': ['owner', 'admin', 'operator'],
-  'workflow.edit': ['owner', 'admin', 'operator'],
-  'workflow.delete': ['owner', 'admin'],
-  'workflow.run': ['owner', 'admin', 'operator'],
-  'agent.view': ['owner', 'admin', 'operator', 'viewer'],
-  'agent.create': ['owner', 'admin'],
-  'agent.edit': ['owner', 'admin'],
-  'agent.delete': ['owner', 'admin'],
-  'policy.view': ['owner', 'admin', 'operator', 'viewer'],
-  'policy.create': ['owner', 'admin'],
-  'policy.edit': ['owner', 'admin'],
-  'policy.delete': ['owner'],
-  'approval.view': ['owner', 'admin', 'operator'],
-  'approval.approve': ['owner', 'admin'],
-  'settings.view': ['owner', 'admin'],
-  'settings.edit': ['owner'],
-  'audit.view': ['owner', 'admin'],
-  'audit.export': ['owner', 'admin']
-};
+import { useAuth } from '../contexts/AuthContext';
+import { Permissions } from '../shared/constants';
+
+// Use centralized permissions
+const PERMISSIONS = Permissions;
 
 export function useRBAC() {
   const { role } = useAuth();

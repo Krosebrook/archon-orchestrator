@@ -1,28 +1,27 @@
 /**
- * Performance Utilities
- * Axis: Performance, Observability
+ * @fileoverview Performance Utilities
+ * @description Performance monitoring, memoization, batching, and Web Vitals tracking.
  * 
- * Enhanced with:
- * - Performance measurement with thresholds
- * - Memoization with LRU cache
- * - Request batching
- * - Lazy loading utilities
- * - Performance budgets
- * - Metrics collection
+ * @module utils/performance
+ * @version 2.0.0
+ * 
+ * @example
+ * import { measurePerformance, memoize, debounce, observeWebVitals } from '@/components/utils/performance';
+ * 
+ * // Measure operation against budget
+ * const measuredFetch = measurePerformance('fetchAgents', fetchAgents, { budget: 300 });
+ * 
+ * // Memoize expensive computation
+ * const memoizedCalc = memoize(expensiveCalc, { maxSize: 100, ttlMs: 60000 });
+ * 
+ * // Debounce user input
+ * const debouncedSearch = debounce(search, 300, { leading: false, trailing: true });
  */
 
-// =============================================================================
-// PERFORMANCE BUDGETS
-// =============================================================================
+import { PerformanceBudgets } from '../shared/constants';
 
-export const PerformanceBudgets = Object.freeze({
-  API_CALL: 300,          // ms - non-AI API calls
-  AI_CALL: 1500,          // ms - AI-backed operations
-  RENDER: 16,             // ms - React render (60fps)
-  DATABASE_QUERY: 100,    // ms - database operations
-  FILE_UPLOAD: 5000,      // ms - file uploads
-  INITIAL_LOAD: 2500      // ms - initial page load (LCP)
-});
+// Re-export for backwards compatibility
+export { PerformanceBudgets };
 
 // =============================================================================
 // PERFORMANCE MEASUREMENT

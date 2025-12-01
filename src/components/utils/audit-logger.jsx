@@ -1,56 +1,29 @@
 /**
- * Audit Logger
- * Axis: Security, Architecture, Observability
+ * @fileoverview Audit Logger
+ * @description Tamper-evident audit trail with PII redaction,
+ * SHA-256 integrity hashing, batch processing, and export functionality.
  * 
- * Enhanced with:
- * - Structured audit entries with hash verification
- * - PII redaction
- * - Correlation ID tracking
- * - Batch processing
- * - Export functionality
+ * @module utils/audit-logger
+ * @version 2.0.0
+ * 
+ * @example
+ * import { auditCreate, auditUpdate, auditDelete, auditCritical } from '@/components/utils/audit-logger';
+ * 
+ * // Log entity creation
+ * await auditCreate('Agent', agentId, agentData);
+ * 
+ * // Log entity update with before/after
+ * await auditUpdate('Workflow', workflowId, beforeState, afterState);
+ * 
+ * // Log critical action (sent immediately, not batched)
+ * await auditCritical('deploy', 'Workflow', workflowId, { environment: 'production' });
  */
 
 import { base44 } from '@/api/base44Client';
+import { AuditActions, AuditEntities, AuditSeverity } from '../shared/constants';
 
-// =============================================================================
-// CONSTANTS
-// =============================================================================
-
-export const AuditActions = Object.freeze({
-  CREATE: 'create',
-  UPDATE: 'update',
-  DELETE: 'delete',
-  VIEW: 'view',
-  EXECUTE: 'execute',
-  LOGIN: 'login',
-  LOGOUT: 'logout',
-  EXPORT: 'export',
-  IMPORT: 'import',
-  APPROVE: 'approve',
-  REJECT: 'reject',
-  CONFIGURE: 'configure',
-  DEPLOY: 'deploy',
-  ROLLBACK: 'rollback'
-});
-
-export const AuditEntities = Object.freeze({
-  WORKFLOW: 'Workflow',
-  AGENT: 'Agent',
-  RUN: 'Run',
-  POLICY: 'Policy',
-  USER: 'User',
-  TEAM: 'Team',
-  INTEGRATION: 'Integration',
-  SKILL: 'Skill',
-  TEMPLATE: 'Template',
-  SYSTEM: 'System'
-});
-
-export const AuditSeverity = Object.freeze({
-  INFO: 'info',
-  WARNING: 'warning',
-  CRITICAL: 'critical'
-});
+// Re-export for backwards compatibility
+export { AuditActions, AuditEntities, AuditSeverity };
 
 // =============================================================================
 // SENSITIVE DATA PATTERNS

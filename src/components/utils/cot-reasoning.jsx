@@ -1,35 +1,35 @@
 /**
- * Chain-of-Thought (CoT) Reasoning Engine
- * Axis: Quality, AI Cost-Efficiency
+ * @fileoverview Chain-of-Thought (CoT) Reasoning Engine
+ * @description Structured AI reasoning with multi-step analysis,
+ * dual-path reasoning, prompt compression, and cost tracking.
  * 
- * Provides structured reasoning pipelines for AI agents:
- * - Explicit multi-step reasoning
- * - Structured output validation
- * - Dual-path reasoning with arbiter
- * - Cost-optimized prompt compression
+ * @module utils/cot-reasoning
+ * @version 2.0.0
+ * 
+ * @example
+ * import { executeCoTReasoning, executeDualPathReasoning, estimateCoTCost } from '@/components/utils/cot-reasoning';
+ * 
+ * // Single-path reasoning
+ * const result = await executeCoTReasoning(
+ *   'Analyze this customer complaint',
+ *   { context: { complaint, history }, maxSteps: 5 }
+ * );
+ * 
+ * // Dual-path (conservative + optimistic)
+ * const analysis = await executeDualPathReasoning(
+ *   'Should we launch this feature?',
+ *   { context: { metrics, risks } }
+ * );
+ * 
+ * // Estimate cost before execution
+ * const cost = estimateCoTCost(taskLength, contextLength, 5);
  */
 
 import { base44 } from '@/api/base44Client';
+import { ReasoningStepType, ConfidenceLevel } from '../shared/constants';
 
-// =============================================================================
-// COT STEP SCHEMA
-// =============================================================================
-
-export const ReasoningStepType = Object.freeze({
-  ANALYZE: 'analyze',
-  DECOMPOSE: 'decompose',
-  EVALUATE: 'evaluate',
-  SYNTHESIZE: 'synthesize',
-  VALIDATE: 'validate',
-  CONCLUDE: 'conclude'
-});
-
-export const ConfidenceLevel = Object.freeze({
-  HIGH: 'high',
-  MEDIUM: 'medium',
-  LOW: 'low',
-  UNCERTAIN: 'uncertain'
-});
+// Re-export for backwards compatibility
+export { ReasoningStepType, ConfidenceLevel };
 
 // =============================================================================
 // STRUCTURED OUTPUT SCHEMA

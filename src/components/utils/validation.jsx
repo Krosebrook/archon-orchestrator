@@ -1,14 +1,25 @@
 /**
- * Validation Utilities
- * Axis: Security, Quality
+ * @fileoverview Validation Utilities
+ * @description Security-first input validation with XSS protection,
+ * prompt injection defense, schema validation, and rate limiting.
  * 
- * Enhanced with:
- * - Zod-like schema validation
- * - Prompt injection defense
- * - XSS protection
- * - Input sanitization
- * - Rate limiting with sliding window
+ * @module utils/validation
+ * @version 2.0.0
+ * 
+ * @example
+ * import { sanitizeInput, detectPromptInjection, Schema, validate } from '@/components/utils/validation';
+ * 
+ * // Sanitize user input
+ * const clean = sanitizeInput(userInput, { escapeHtml: true });
+ * 
+ * // Check for prompt injection
+ * const { safe, threats } = detectPromptInjection(prompt);
+ * 
+ * // Validate schema
+ * const result = validate(Schema.string({ email: true }), email);
  */
+
+import { ValidationPatterns, RateLimitConfig } from '../shared/constants';
 
 // =============================================================================
 // BASIC VALIDATORS
