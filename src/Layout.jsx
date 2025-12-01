@@ -76,6 +76,7 @@ const navItems = [
   { name: 'Policies', icon: Shield, path: 'RefactorPolicies', permission: 'policy.view' },
   { name: 'AI Debugger', icon: Bug, path: 'AgentDebugger', permission: 'workflow.edit' },
   { name: 'Agent Training', icon: GraduationCap, path: 'AgentTraining', permission: 'agent.view' },
+  { name: 'Documentation', icon: FileText, path: 'Documentation', permission: null },
 ];
 
 const Sidebar = ({ isCollapsed, isMobileOpen, setIsMobileOpen }) => {
