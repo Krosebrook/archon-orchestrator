@@ -32,7 +32,10 @@ import {
   Download,
   Upload,
   Eye,
-  Activity
+  Activity,
+  Sparkles,
+  TrendingUp,
+  FlaskConical
 } from 'lucide-react';
 import { toast } from 'sonner';
 import WorkflowCanvas from '../components/workflow-builder/WorkflowCanvas';
@@ -40,6 +43,10 @@ import NodeLibrary from '../components/workflow-builder/NodeLibrary';
 import WorkflowProperties from '../components/workflow-builder/WorkflowProperties';
 import ExecutionMonitor from '../components/workflow-builder/ExecutionMonitor';
 import VersionHistory from '../components/workflow-builder/VersionHistory';
+import AIWorkflowAssistant from '../components/workflow-builder/AIWorkflowAssistant';
+import OptimizationSuggestions from '../components/workflow-builder/OptimizationSuggestions';
+import ABTestManager from '../components/workflow-builder/ABTestManager';
+import AdvancedVersioning from '../components/workflow-builder/AdvancedVersioning';
 
 export default function VisualWorkflowBuilder() {
   const navigate = useNavigate();
@@ -58,6 +65,9 @@ export default function VisualWorkflowBuilder() {
   const [showLoadDialog, setShowLoadDialog] = useState(false);
   const [showVersionDialog, setShowVersionDialog] = useState(false);
   const [activeRun, setActiveRun] = useState(null);
+  const [showAIAssistant, setShowAIAssistant] = useState(false);
+  const [showOptimizations, setShowOptimizations] = useState(false);
+  const [showABTests, setShowABTests] = useState(false);
   
   // Undo/Redo history
   const [history, setHistory] = useState([]);
@@ -429,13 +439,68 @@ export default function VisualWorkflowBuilder() {
             <Play className="w-4 h-4 mr-2" />
             {isExecuting ? 'Running...' : 'Execute'}
           </Button>
+          
+          <div className="w-px h-6 bg-slate-700 mx-2" />
+          
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => setShowAIAssistant(!showAIAssistant)}
+            className={`border-slate-700 ${showAIAssistant ? 'bg-purple-500/20 border-purple-500' : ''}`}
+          >
+            <Sparkles className="w-4 h-4 mr-2" />
+            AI Assistant
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => setShowOptimizations(!showOptimizations)}
+            className={`border-slate-700 ${showOptimizations ? 'bg-blue-500/20 border-blue-500' : ''}`}
+          >
+            <TrendingUp className="w-4 h-4 mr-2" />
+            Optimize
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => setShowABTests(!showABTests)}
+            className={`border-slate-700 ${showABTests ? 'bg-green-500/20 border-green-500' : ''}`}
+          >
+            <FlaskConical className="w-4 h-4 mr-2" />
+            A/B Test
+          </Button>
         </div>
       </div>
 
       {/* Main Content */}
       <div className="flex-1 flex gap-4 overflow-hidden">
-        {/* Left Panel - Node Library */}
-        <NodeLibrary 
+        {/* Left Panel - Dynamic */}
+        {showAIAssistant && (
+          <div className="w-96">
+            <AIWorkflowAssistant
+              agents={agents}
+              skills={skills}
+              currentWorkflow={workflow}
+              onWorkflowGenerated={(generatedWorkflow) => {
+                setWorkflow({
+                  ...workflow,
+                  name: generatedWorkflow.name || workflow.name,
+                  description: generatedWorkflow.description || workflow.description,
+                  spec: {
+                    ...workflow.spec,
+                    collaboration_strategy: generatedWorkflow.collaboration_strategy || 'sequential'
+                  }
+                });
+                setNodes(generatedWorkflow.nodes || []);
+                setEdges(generatedWorkflow.edges || []);
+                pushToHistory(generatedWorkflow.nodes || [], generatedWorkflow.edges || []);
+              }}
+            />
+          </div>
+        )}
+        
+        {!showAIAssistant && !showOptimizations && !showABTests && (
+          <NodeLibrary 
           agents={agents} 
           skills={skills}
           onNodeAdd={(nodeType) => {
@@ -491,13 +556,17 @@ export default function VisualWorkflowBuilder() {
               />
             </TabsContent>
 
-            <TabsContent value="versions" className="flex-1 m-0 overflow-auto">
-              <VersionHistory
-                workflowId={workflow?.id}
+            <TabsContent value="versions" className="flex-1 m-0 overflow-auto p-4">
+              <AdvancedVersioning
+                workflow={workflow}
                 onLoadVersion={(version) => {
                   setNodes(version.spec?.nodes || []);
                   setEdges(version.spec?.edges || []);
+                  setWorkflow({ ...workflow, version: version.version });
                   toast.success(`Loaded version ${version.version}`);
+                }}
+                onCreateBranch={(branchName) => {
+                  toast.info('Branch created');
                 }}
               />
             </TabsContent>

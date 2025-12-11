@@ -25,6 +25,7 @@ import { format } from 'date-fns';
 import { handleError } from '../utils/api-client';
 import { auditExecute, AuditEntities } from '../utils/audit-logger';
 import { measurePerformance } from '../utils/performance';
+import ExecutionStepViewer from './ExecutionStepViewer';
 
 export default function ExecutionInspector({ run, onClose }) {
   const [executionSteps, setExecutionSteps] = useState([]);
@@ -404,24 +405,11 @@ export default function ExecutionInspector({ run, onClose }) {
               </TabsContent>
 
               <TabsContent value="metrics" className="mt-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="p-4 bg-slate-950 rounded border border-slate-800">
-                    <div className="text-xs text-slate-400 mb-1">Input Tokens</div>
-                    <div className="text-2xl font-bold text-white">{step.tokens.input.toLocaleString()}</div>
-                  </div>
-                  <div className="p-4 bg-slate-950 rounded border border-slate-800">
-                    <div className="text-xs text-slate-400 mb-1">Output Tokens</div>
-                    <div className="text-2xl font-bold text-white">{step.tokens.output.toLocaleString()}</div>
-                  </div>
-                  <div className="p-4 bg-slate-950 rounded border border-slate-800">
-                    <div className="text-xs text-slate-400 mb-1">Step Latency</div>
-                    <div className="text-2xl font-bold text-white">{step.latency}ms</div>
-                  </div>
-                  <div className="p-4 bg-slate-950 rounded border border-slate-800">
-                    <div className="text-xs text-slate-400 mb-1">Step Cost</div>
-                    <div className="text-2xl font-bold text-white">${(step.cost / 100).toFixed(4)}</div>
-                  </div>
-                </div>
+                <ExecutionStepViewer 
+                  step={step} 
+                  totalTokens={totalTokens}
+                  totalCost={totalCost}
+                />
               </TabsContent>
             </Tabs>
           </CardContent>

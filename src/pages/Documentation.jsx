@@ -14,7 +14,14 @@ import {
   AlertCircle,
   CheckCircle2
 } from 'lucide-react';
-import { ARCHITECTURE_DOC, README_DOC, SECURITY_DOC, API_REFERENCE_DOC } from '../components/shared/docs';
+import { 
+  ARCHITECTURE_DOC, 
+  README_DOC, 
+  SECURITY_DOC, 
+  API_REFERENCE_DOC,
+  DEPLOYMENT_DOC,
+  CONTRIBUTING_DOC 
+} from '../components/shared/docs';
 
 const QuickRefCard = ({ title, icon: Icon, items, color = 'blue' }) => (
   <Card className="bg-slate-800/50 border-slate-700">
@@ -66,12 +73,14 @@ export default function Documentation() {
       </div>
 
       <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList className="bg-slate-800">
+        <TabsList className="bg-slate-800 flex-wrap h-auto">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="api-cards">Quick Reference</TabsTrigger>
           <TabsTrigger value="api-full">Full API</TabsTrigger>
           <TabsTrigger value="architecture">Architecture</TabsTrigger>
           <TabsTrigger value="security">Security</TabsTrigger>
+          <TabsTrigger value="deployment">Deployment</TabsTrigger>
+          <TabsTrigger value="contributing">Contributing</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
