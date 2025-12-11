@@ -499,23 +499,6 @@ export default function VisualWorkflowBuilder() {
           </div>
         )}
         
-        {!showAIAssistant && !showOptimizations && !showABTests && (
-          <NodeLibrary 
-            agents={agents} 
-            skills={skills}
-            onNodeAdd={(nodeType) => {
-              const newNode = {
-                id: `node_${Date.now()}`,
-                type: nodeType.type,
-                label: nodeType.label,
-                position: { x: 200 + nodes.length * 50, y: 150 + nodes.length * 30 },
-                config: {}
-              };
-              handleNodesChange([...nodes, newNode]);
-            }}
-          />
-        )}
-        
         {showOptimizations && (
           <div className="w-96">
             <OptimizationSuggestions
@@ -526,7 +509,6 @@ export default function VisualWorkflowBuilder() {
                 let newNodes = [...nodes];
                 let newEdges = [...edges];
 
-                // Apply changes
                 if (changes.nodes_to_add) {
                   newNodes = [...newNodes, ...changes.nodes_to_add];
                 }
@@ -556,6 +538,23 @@ export default function VisualWorkflowBuilder() {
               }}
             />
           </div>
+        )}
+        
+        {!showAIAssistant && !showOptimizations && !showABTests && (
+          <NodeLibrary 
+            agents={agents} 
+            skills={skills}
+            onNodeAdd={(nodeType) => {
+              const newNode = {
+                id: `node_${Date.now()}`,
+                type: nodeType.type,
+                label: nodeType.label,
+                position: { x: 200 + nodes.length * 50, y: 150 + nodes.length * 30 },
+                config: {}
+              };
+              handleNodesChange([...nodes, newNode]);
+            }}
+          />
         )}
 
         {/* Center - Canvas & Tabs */}
