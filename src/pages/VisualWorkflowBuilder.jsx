@@ -501,19 +501,62 @@ export default function VisualWorkflowBuilder() {
         
         {!showAIAssistant && !showOptimizations && !showABTests && (
           <NodeLibrary 
-          agents={agents} 
-          skills={skills}
-          onNodeAdd={(nodeType) => {
-            const newNode = {
-              id: `node_${Date.now()}`,
-              type: nodeType.type,
-              label: nodeType.label,
-              position: { x: 200 + nodes.length * 50, y: 150 + nodes.length * 30 },
-              config: {}
-            };
-            handleNodesChange([...nodes, newNode]);
-          }}
-        />
+            agents={agents} 
+            skills={skills}
+            onNodeAdd={(nodeType) => {
+              const newNode = {
+                id: `node_${Date.now()}`,
+                type: nodeType.type,
+                label: nodeType.label,
+                position: { x: 200 + nodes.length * 50, y: 150 + nodes.length * 30 },
+                config: {}
+              };
+              handleNodesChange([...nodes, newNode]);
+            }}
+          />
+        )}
+        
+        {showOptimizations && (
+          <div className="w-96">
+            <OptimizationSuggestions
+              workflow={workflow}
+              nodes={nodes}
+              edges={edges}
+              onApplyOptimization={(changes) => {
+                let newNodes = [...nodes];
+                let newEdges = [...edges];
+
+                // Apply changes
+                if (changes.nodes_to_add) {
+                  newNodes = [...newNodes, ...changes.nodes_to_add];
+                }
+                if (changes.nodes_to_remove) {
+                  newNodes = newNodes.filter(n => !changes.nodes_to_remove.includes(n.id));
+                }
+                if (changes.edges_to_add) {
+                  newEdges = [...newEdges, ...changes.edges_to_add];
+                }
+
+                handleNodesChange(newNodes);
+                handleEdgesChange(newEdges);
+              }}
+            />
+          </div>
+        )}
+        
+        {showABTests && (
+          <div className="w-96">
+            <ABTestManager
+              workflow={workflow}
+              onCreateVariant={(variantWorkflow) => {
+                toast.info('Switch to variant workflow to edit it');
+              }}
+              onSelectWinner={(winnerId) => {
+                toast.success('Winner promoted to production');
+              }}
+            />
+          </div>
+        )}
 
         {/* Center - Canvas & Tabs */}
         <div className="flex-1 flex flex-col bg-slate-900 rounded-lg border border-slate-800 overflow-hidden">
