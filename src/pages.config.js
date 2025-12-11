@@ -34,6 +34,7 @@ import AgentTraining from './pages/AgentTraining';
 import VisualWorkflowBuilder from './pages/VisualWorkflowBuilder';
 import Documentation from './pages/Documentation';
 import AuditExport from './pages/AuditExport';
+import SecurityTests from './pages/SecurityTests';
 import __Layout from './Layout.jsx';
 
 
@@ -74,6 +75,7 @@ export const PAGES = {
     "VisualWorkflowBuilder": VisualWorkflowBuilder,
     "Documentation": Documentation,
     "AuditExport": AuditExport,
+    "SecurityTests": SecurityTests,
 }
 
 export const pagesConfig = {
