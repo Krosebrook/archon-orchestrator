@@ -33,6 +33,7 @@ import AgentDebugger from './pages/AgentDebugger';
 import AgentTraining from './pages/AgentTraining';
 import VisualWorkflowBuilder from './pages/VisualWorkflowBuilder';
 import Documentation from './pages/Documentation';
+import AuditExport from './pages/AuditExport';
 import __Layout from './Layout.jsx';
 
 
@@ -72,6 +73,7 @@ export const PAGES = {
     "AgentTraining": AgentTraining,
     "VisualWorkflowBuilder": VisualWorkflowBuilder,
     "Documentation": Documentation,
+    "AuditExport": AuditExport,
 }
 
 export const pagesConfig = {
