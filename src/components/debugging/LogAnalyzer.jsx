@@ -3,13 +3,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { FileSearch, Loader2, AlertCircle, CheckCircle, TrendingUp } from 'lucide-react';
+import { FileSearch, Loader2, AlertCircle, CheckCircle, TrendingUp, Eye } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { handleError } from '../utils/api-client';
 
-export default function LogAnalyzer({ agents, runs, metrics, onRefresh }) {
+export default function LogAnalyzer({ agents, runs, metrics, onRefresh, onInspectRun }) {
   const [selectedRun, setSelectedRun] = useState('');
   const [analysis, setAnalysis] = useState(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -214,6 +214,16 @@ Be precise, technical, and actionable. Reference specific timestamps and metrics
                 </ul>
               </div>
             )}
+
+            <div className="flex justify-end">
+              <Button
+                onClick={() => onInspectRun && onInspectRun(analysis.run)}
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                <Eye className="w-4 h-4 mr-2" />
+                Inspect Execution
+              </Button>
+            </div>
           </CardContent>
         </Card>
       )}
