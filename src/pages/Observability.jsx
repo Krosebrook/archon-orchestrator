@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import TraceViewer from '../components/observability/TraceViewer';
 import { base44 } from '@/api/base44Client';
 import { Eye, Activity, Cpu, Database, AlertCircle } from 'lucide-react';
 import TraceExplorer from '../components/observability/TraceExplorer';
