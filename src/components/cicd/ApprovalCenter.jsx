@@ -5,8 +5,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle2, XCircle, Clock, RefreshCw } from 'lucide-react';
 import { format } from 'date-fns';
-import { useApprovals } from '../hooks/useApprovals';
-import { approvalService } from '../services/ApprovalService';
+import { useApprovals } from '@/components/hooks/useApprovals';
+import { approvalService } from '@/components/services/ApprovalService';
 
 export default function ApprovalCenter() {
   const [selectedRequest, setSelectedRequest] = useState(null);

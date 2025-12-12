@@ -5,8 +5,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Search, Clock, AlertCircle, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
-import { traceService } from '../services/TraceService';
-import { useAsync } from '../hooks/useAsync';
+import { traceService } from '@/components/services/TraceService';
+import { useAsync } from '@/components/hooks/useAsync';
 
 export default function TraceViewer() {
   const [searchQuery, setSearchQuery] = useState('');
