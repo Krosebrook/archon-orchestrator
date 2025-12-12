@@ -11,6 +11,10 @@ import PipelineForm from '../components/cicd/PipelineForm';
 import EnvironmentManager from '../components/cicd/EnvironmentManager';
 import TestResults from '../components/cicd/TestResults';
 import DeploymentHistory from '../components/cicd/DeploymentHistory';
+import PipelineExecutor from '../components/cicd/PipelineExecutor';
+import RollbackManager from '../components/cicd/RollbackManager';
+import CLIInstructions from '../components/cicd/CLIInstructions';
+import QuickDeploy from '../components/cicd/QuickDeploy';
 
 export default function CICD() {
   const [pipelines, setPipelines] = useState([]);
@@ -20,6 +24,8 @@ export default function CICD() {
   const [isLoading, setIsLoading] = useState(true);
   const [showPipelineForm, setShowPipelineForm] = useState(false);
   const [editingPipeline, setEditingPipeline] = useState(null);
+  const [selectedWorkflow, setSelectedWorkflow] = useState(null);
+  const [selectedPipeline, setSelectedPipeline] = useState(null);
 
   useEffect(() => {
     loadData();
@@ -69,7 +75,7 @@ export default function CICD() {
       </div>
 
       <Tabs defaultValue="pipelines" className="w-full">
-        <TabsList className="grid w-full grid-cols-4 bg-slate-800">
+        <TabsList className="grid w-full grid-cols-5 bg-slate-800">
           <TabsTrigger value="pipelines" className="flex items-center gap-2">
             <GitBranch className="w-4 h-4" />
             Pipelines
@@ -85,6 +91,10 @@ export default function CICD() {
           <TabsTrigger value="deployments" className="flex items-center gap-2">
             <Play className="w-4 h-4" />
             Deployments
+          </TabsTrigger>
+          <TabsTrigger value="cli" className="flex items-center gap-2">
+            <Play className="w-4 h-4" />
+            CLI
           </TabsTrigger>
         </TabsList>
 
@@ -120,6 +130,30 @@ export default function CICD() {
             pipelines={pipelines}
             agents={agents}
           />
+        </TabsContent>
+
+        <TabsContent value="cli" className="mt-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2 space-y-6">
+              <CLIInstructions />
+              {selectedWorkflow && selectedPipeline && (
+                <>
+                  <PipelineExecutor 
+                    pipeline={selectedPipeline} 
+                    workflow={selectedWorkflow}
+                    onComplete={loadData}
+                  />
+                  <RollbackManager workflow={selectedWorkflow} />
+                </>
+              )}
+            </div>
+            <div>
+              <QuickDeploy 
+                onWorkflowSelect={setSelectedWorkflow}
+                onPipelineSelect={setSelectedPipeline}
+              />
+            </div>
+          </div>
         </TabsContent>
       </Tabs>
 
