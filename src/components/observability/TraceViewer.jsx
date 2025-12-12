@@ -1,50 +1,39 @@
-import React, { useState, useEffect } from 'react';
-import { base44 } from '@/api/base44Client';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Search, ChevronRight, Clock, AlertCircle } from 'lucide-react';
+import { Search, Clock, AlertCircle, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
+import { traceService } from '../services/TraceService';
+import { useAsync } from '../hooks/useAsync';
 
 export default function TraceViewer() {
-  const [traces, setTraces] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTrace, setSelectedTrace] = useState(null);
-  const [loading, setLoading] = useState(false);
+
+  const { data: rawTraces, loading, error, execute: loadTraces } = useAsync(
+    () => traceService.listTraces({ limit: 100 }),
+    { executeOnMount: true }
+  );
 
   useEffect(() => {
-    loadTraces();
-  }, []);
-
-  const loadTraces = async () => {
-    setLoading(true);
-    try {
-      const data = await base44.entities.Trace.list('-start_time', 100);
-      
-      // Group by trace_id
-      const grouped = data.reduce((acc, span) => {
-        if (!acc[span.trace_id]) {
-          acc[span.trace_id] = [];
-        }
-        acc[span.trace_id].push(span);
-        return acc;
-      }, {});
-      
-      setTraces(Object.entries(grouped).map(([trace_id, spans]) => ({
-        trace_id,
-        spans,
-        root_span: spans.find(s => !s.parent_span_id) || spans[0],
-        total_duration: Math.max(...spans.map(s => s.duration_ms || 0)),
-        status: spans.some(s => s.status === 'error') ? 'error' : 'ok'
-      })));
-    } catch (error) {
-      console.error('Failed to load traces:', error);
+    if (error) {
       toast.error('Failed to load traces');
-    } finally {
-      setLoading(false);
     }
-  };
+  }, [error]);
+
+  const traces = useMemo(() => {
+    if (!rawTraces?.ok) return [];
+    
+    const grouped = traceService.groupTraces(rawTraces.value);
+    return Array.from(grouped.entries()).map(([trace_id, spans]) => ({
+      trace_id,
+      spans,
+      root_span: spans.find(s => !s.parent_span_id) || spans[0],
+      ...traceService.calculateStats(spans)
+    }));
+  }, [rawTraces]);
 
   const filteredTraces = traces.filter(trace => 
     trace.trace_id.toLowerCase().includes(searchQuery.toLowerCase()) ||

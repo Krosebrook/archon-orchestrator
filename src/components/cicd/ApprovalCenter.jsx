@@ -1,85 +1,43 @@
-import React, { useState, useEffect } from 'react';
-import { base44 } from '@/api/base44Client';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle2, XCircle, Clock, AlertTriangle } from 'lucide-react';
-import { toast } from 'sonner';
+import { CheckCircle2, XCircle, Clock, RefreshCw } from 'lucide-react';
 import { format } from 'date-fns';
+import { useApprovals } from '../hooks/useApprovals';
+import { approvalService } from '../services/ApprovalService';
 
 export default function ApprovalCenter() {
-  const [requests, setRequests] = useState([]);
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [comments, setComments] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [processing, setProcessing] = useState(false);
 
-  useEffect(() => {
-    loadRequests();
-    const interval = setInterval(loadRequests, 30000); // Refresh every 30s
-    return () => clearInterval(interval);
-  }, []);
-
-  const loadRequests = async () => {
-    try {
-      const data = await base44.entities.ApprovalRequest.filter(
-        { status: 'pending' },
-        '-created_date',
-        50
-      );
-      setRequests(data);
-    } catch (error) {
-      console.error('Failed to load approval requests:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { 
+    requests, 
+    loading, 
+    processing, 
+    canApprove, 
+    approve, 
+    reject, 
+    refresh 
+  } = useApprovals({ 
+    status: 'pending',
+    autoRefresh: true 
+  });
 
   const handleApprove = async (requestId) => {
-    setProcessing(true);
-    try {
-      await base44.functions.invoke('approveDeployment', {
-        request_id: requestId,
-        action: 'approve',
-        comments: comments.trim()
-      });
-      
-      toast.success('Deployment approved');
+    const success = await approve(requestId, comments.trim());
+    if (success) {
       setComments('');
       setSelectedRequest(null);
-      await loadRequests();
-    } catch (error) {
-      console.error('Approval failed:', error);
-      toast.error(error.message || 'Approval failed');
-    } finally {
-      setProcessing(false);
     }
   };
 
   const handleReject = async (requestId) => {
-    if (!comments.trim()) {
-      toast.error('Please provide a reason for rejection');
-      return;
-    }
-
-    setProcessing(true);
-    try {
-      await base44.functions.invoke('approveDeployment', {
-        request_id: requestId,
-        action: 'reject',
-        comments: comments.trim()
-      });
-      
-      toast.success('Deployment rejected');
+    const success = await reject(requestId, comments.trim());
+    if (success) {
       setComments('');
       setSelectedRequest(null);
-      await loadRequests();
-    } catch (error) {
-      console.error('Rejection failed:', error);
-      toast.error(error.message || 'Rejection failed');
-    } finally {
-      setProcessing(false);
     }
   };
 
