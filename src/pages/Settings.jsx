@@ -12,6 +12,9 @@ import ScheduleManager from '../components/scheduling/ScheduleManager';
 import RoleManagement from '../components/settings/RoleManagement';
 import WorkflowAutomationManager from '../components/automation/WorkflowAutomationManager';
 import RefactorScheduler from '../components/refactoring/RefactorScheduler';
+import ProfileSettings from '../components/settings/ProfileSettings';
+import PreferencesSettings from '../components/settings/PreferencesSettings';
+import SecuritySettings from '../components/settings/SecuritySettings';
 
 export default function Settings() {
   return (
@@ -21,16 +24,30 @@ export default function Settings() {
         <p className="text-slate-400">Manage your organization, team, security, and preferences</p>
       </div>
 
-      <Tabs defaultValue="general" className="w-full">
-        <TabsList className="grid w-full grid-cols-7 bg-slate-800 text-slate-400">
+      <Tabs defaultValue="profile" className="w-full">
+        <TabsList className="grid w-full grid-cols-9 bg-slate-800 text-slate-400">
+          <TabsTrigger value="profile">Profile</TabsTrigger>
+          <TabsTrigger value="preferences">Preferences</TabsTrigger>
+          <TabsTrigger value="api">API & Security</TabsTrigger>
           <TabsTrigger value="general">General</TabsTrigger>
           <TabsTrigger value="team">Team</TabsTrigger>
           <TabsTrigger value="roles">Roles</TabsTrigger>
           <TabsTrigger value="automation">Automation</TabsTrigger>
           <TabsTrigger value="scheduling">Scheduling</TabsTrigger>
-          <TabsTrigger value="notifications">Notifications</TabsTrigger>
-          <TabsTrigger value="security">Security</TabsTrigger>
+          <TabsTrigger value="security">Secrets</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="profile" className="mt-6">
+          <ProfileSettings />
+        </TabsContent>
+
+        <TabsContent value="preferences" className="mt-6">
+          <PreferencesSettings />
+        </TabsContent>
+
+        <TabsContent value="api" className="mt-6">
+          <SecuritySettings />
+        </TabsContent>
 
         <TabsContent value="general" className="mt-6">
           <Card className="bg-slate-900 border-slate-800">
@@ -71,30 +88,6 @@ export default function Settings() {
 
         <TabsContent value="scheduling" className="mt-6">
           <ScheduleManager />
-        </TabsContent>
-
-        <TabsContent value="notifications" className="mt-6">
-          <Card className="bg-slate-900 border-slate-800">
-            <CardHeader>
-              <CardTitle className="text-white">Notification Preferences</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {[
-                { label: 'Workflow Failures', description: 'Get notified when workflows fail' },
-                { label: 'Cost Alerts', description: 'Alert when spending exceeds thresholds' },
-                { label: 'Approval Requests', description: 'Notify for pending approvals' },
-                { label: 'Weekly Reports', description: 'Receive weekly activity summaries' }
-              ].map((item) => (
-                <div key={item.label} className="flex items-center justify-between p-4 bg-slate-950 rounded-lg border border-slate-800">
-                  <div>
-                    <div className="text-white font-medium">{item.label}</div>
-                    <div className="text-sm text-slate-400">{item.description}</div>
-                  </div>
-                  <Switch defaultChecked />
-                </div>
-              ))}
-            </CardContent>
-          </Card>
         </TabsContent>
 
         <TabsContent value="security" className="mt-6">
