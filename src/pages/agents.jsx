@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Agent } from '@/entities/Agent';
 import { Button } from '@/components/ui/button';
 import { PlusCircle, Bot, Search } from 'lucide-react';
@@ -11,7 +11,7 @@ import { createPageUrl } from '@/utils';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import AgentForm from '../components/agents/AgentForm';
-import EmptyState from '../components/shared/EmptyState';
+import { EmptyState } from '../components/shared/EmptyState';
 
 const statusColors = {
   active: 'bg-green-500/20 text-green-400 border-green-500/30',
