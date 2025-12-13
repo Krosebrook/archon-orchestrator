@@ -80,3 +80,35 @@
 ::-webkit-scrollbar-thumb:hover {
   background: hsl(var(--muted-foreground) / 0.7);
 }
+
+/* Print styles */
+@media print {
+  /* Hide navigation, sidebars, buttons */
+  aside, nav, header, .no-print {
+    display: none !important;
+  }
+
+  /* Optimize layout */
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  /* Full width for main content */
+  main {
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Ensure proper page breaks */
+  .page-break {
+    page-break-after: always;
+  }
+
+  /* Remove shadows and unnecessary styling */
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+}

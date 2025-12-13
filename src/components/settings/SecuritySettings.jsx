@@ -179,6 +179,39 @@ export default function SecuritySettings() {
           )}
         </CardContent>
       </Card>
+
+      {/* Delete Account */}
+      <Card className="bg-slate-900 border-red-900/20 border">
+        <CardHeader>
+          <CardTitle className="text-red-400">Danger Zone</CardTitle>
+          <CardDescription>
+            Irreversible actions that affect your account
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div>
+              <h4 className="font-medium text-white mb-1">Delete Account</h4>
+              <p className="text-sm text-slate-400 mb-4">
+                Permanently delete your account and all associated data. This action cannot be undone.
+              </p>
+              <Button
+                variant="destructive"
+                onClick={() => {
+                  const confirmed = window.confirm(
+                    'Are you absolutely sure? This will permanently delete your account and all data. Type DELETE to confirm.'
+                  );
+                  if (confirmed) {
+                    toast.error('Account deletion not yet implemented. Contact support.');
+                  }
+                }}
+              >
+                Delete My Account
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
