@@ -9,7 +9,7 @@ import { createPageUrl } from '@/utils';
 import WorkflowCard from '../components/workflows/WorkflowCard';
 import TemplateLibrary from '../components/templates/TemplateLibrary';
 import { Skeleton } from '@/components/ui/skeleton';
-import EmptyState from '../components/shared/EmptyState';
+import { EmptyState } from '../components/shared/EmptyState';
 import { Input } from '@/components/ui/input';
 
 export default function Workflows() {
