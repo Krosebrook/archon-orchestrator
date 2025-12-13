@@ -96,11 +96,10 @@ export default function Workflows() {
         </div>
       ) : filteredWorkflows.length === 0 ? (
         <EmptyState 
-          icon={GitFork}
+          icon={<GitFork className="w-12 h-12" />}
           title="No Workflows Found"
           description="Get started by creating a new workflow from scratch or by using one of our pre-built templates."
-          actionText="Browse Templates"
-          onAction={() => setShowTemplateLibrary(true)}
+          action={{ label: 'Browse Templates', onClick: () => setShowTemplateLibrary(true) }}
         />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
