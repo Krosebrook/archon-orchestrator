@@ -49,6 +49,7 @@ import { AuthProvider, useAuth } from './components/contexts/AuthContext';
 import { ErrorBoundary } from './components/shared/ErrorBoundary';
 import ToastProvider from './components/providers/ToastProvider';
 import PWAInstaller from './components/shared/PWAInstaller';
+import { KeyboardShortcuts } from './components/shared/KeyboardShortcuts';
 
 const navItems = [
   { name: 'Dashboard', icon: LayoutDashboard, path: 'Dashboard', permission: null },
@@ -293,6 +294,7 @@ function AppLayout({ children, currentPageName }) {
     <div className="flex h-screen bg-slate-950 overflow-hidden">
       <ToastProvider />
       <PWAInstaller />
+      <KeyboardShortcuts />
       <CommandPalette />
       <Sidebar 
         isCollapsed={isCollapsed} 
