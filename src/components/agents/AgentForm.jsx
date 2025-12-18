@@ -20,29 +20,30 @@ import { createAuditLog, redactSensitiveData, AuditActions, AuditEntities } from
 import { toast } from 'sonner';
 import { base44 } from '@/api/base44Client';
 
-const emptyAgent = {
+const getEmptyAgent = (orgId) => ({
   name: '',
   version: '1.0.0',
-  status: 'active', // Retaining status in emptyAgent for consistency, even if not shown in form
+  status: 'active',
   config: {
     provider: 'openai',
     model: '',
     temperature: 0.7,
   },
-  org_id: 'org_acme', // Assuming a static org_id for prototype
-};
+  org_id: orgId,
+});
 
 export default function AgentForm({ open, onOpenChange, agent, onSave }) {
-  const [formData, setFormData] = useState(emptyAgent);
+  const { organization } = useAuth();
+  const [formData, setFormData] = useState(() => getEmptyAgent(organization?.id));
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     if (agent) {
       setFormData(agent);
     } else {
-      setFormData(emptyAgent);
+      setFormData(getEmptyAgent(organization?.id));
     }
-  }, [agent, open]);
+  }, [agent, open, organization?.id]);
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));

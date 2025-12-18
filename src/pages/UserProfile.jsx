@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useAuth } from '@/components/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -5,9 +6,15 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
+import { useUserProfile } from '@/components/hooks/useUserProfile';
+import { toast } from 'sonner';
 
 export default function UserProfile() {
   const { user, organization, role } = useAuth();
+  const { profile, updateProfile, saving } = useUserProfile();
+  const [formData, setFormData] = useState({
+    fullName: user?.fullName || '',
+  });
 
   if (!user) {
     return null; // Or a loading state
@@ -52,17 +59,38 @@ export default function UserProfile() {
               <CardDescription className="text-slate-400">Update your account details.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="fullName" className="text-slate-400">Full Name</Label>
-                <Input id="fullName" defaultValue={user.fullName} className="bg-slate-800 border-slate-700" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-slate-400">Email Address</Label>
-                <Input id="email" type="email" defaultValue={user.email} disabled className="bg-slate-800 border-slate-700 cursor-not-allowed" />
-              </div>
-              <div className="flex justify-end">
-                <Button>Save Changes</Button>
-              </div>
+              <form onSubmit={async (e) => {
+                e.preventDefault();
+                const success = await updateProfile({ title: formData.fullName });
+                if (success) {
+                  toast.success('Profile updated successfully');
+                }
+              }} className="space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="fullName" className="text-slate-400">Full Name</Label>
+                  <Input 
+                    id="fullName" 
+                    value={formData.fullName} 
+                    onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                    className="bg-slate-800 border-slate-700" 
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="text-slate-400">Email Address</Label>
+                  <Input 
+                    id="email" 
+                    type="email" 
+                    value={user.email} 
+                    disabled 
+                    className="bg-slate-800 border-slate-700 cursor-not-allowed" 
+                  />
+                </div>
+                <div className="flex justify-end">
+                  <Button type="submit" disabled={saving}>
+                    {saving ? 'Saving...' : 'Save Changes'}
+                  </Button>
+                </div>
+              </form>
             </CardContent>
           </Card>
         </div>
