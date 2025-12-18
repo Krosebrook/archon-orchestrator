@@ -72,6 +72,7 @@ const navItems = [
   { name: 'Skill Marketplace', icon: Zap, path: 'SkillMarketplace', permission: 'workflow.view' },
   { name: 'Skill Management', icon: Sparkles, path: 'SkillManagement', permission: 'workflow.view' },
   { name: 'Integrations', icon: Settings, path: 'IntegrationManagement', permission: 'workflow.edit' },
+  { name: 'Webhooks', icon: Zap, path: 'Webhooks', permission: 'workflow.edit' },
   { name: 'Governance', icon: Shield, path: 'Governance', permission: 'policy.view' },
   { name: 'Refactoring', icon: Wrench, path: 'Refactoring', permission: 'workflow.edit' },
   { name: 'Policies', icon: Shield, path: 'RefactorPolicies', permission: 'policy.view' },

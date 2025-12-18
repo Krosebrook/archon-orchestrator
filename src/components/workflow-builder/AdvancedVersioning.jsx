@@ -12,115 +12,101 @@ import { base44 } from '@/api/base44Client';
 import { useAuth } from '@/components/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
-  GitBranch, GitCommit, GitMerge, History, 
-  RotateCcw, Tag, Plus, ArrowRight, CheckCircle 
+  GitBranch, GitCommit, History, 
+  RotateCcw, Tag, GitCompare
 } from 'lucide-react';
-import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
-import { handleError } from '../utils/api-client';
-import { auditCreate, AuditEntities } from '../utils/audit-logger';
+import BranchManager from '../workflows/BranchManager';
+import VersionComparison from '../workflows/VersionComparison';
 
 export default function AdvancedVersioning({ workflow, onLoadVersion, onCreateBranch }) {
+  const { organization, user } = useAuth();
   const [versions, setVersions] = useState([]);
-  const [branches, setBranches] = useState([]);
-  const [selectedVersion, setSelectedVersion] = useState(null);
-  const [newTagName, setNewTagName] = useState('');
-  const [isTagging, setIsTagging] = useState(false);
+  const [currentBranch, setCurrentBranch] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [comparing, setComparing] = useState({ a: null, b: null });
+  const [showComparison, setShowComparison] = useState(false);
 
   useEffect(() => {
     if (workflow?.id) {
-      loadVersions();
+      loadData();
     }
   }, [workflow?.id]);
 
-  const loadVersions = async () => {
+  const loadData = async () => {
+    setIsLoading(true);
     try {
-      const versionsData = await base44.entities.WorkflowVersion.filter(
-        { workflow_id: workflow.id },
-        '-created_date',
-        50
-      );
-      setVersions(versionsData);
+      const [versionData, branchData] = await Promise.all([
+        base44.entities.WorkflowVersion.filter(
+          { workflow_id: workflow.id },
+          '-version_number',
+          50
+        ),
+        base44.entities.WorkflowBranch.filter(
+          { workflow_id: workflow.id, is_default: true }
+        )
+      ]);
+      setVersions(versionData);
+      setCurrentBranch(branchData[0]);
     } catch (error) {
-      handleError(error);
+      console.error('Failed to load data:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const createTag = async (versionId) => {
-    if (!newTagName.trim()) {
-      toast.error('Please enter a tag name');
+  const handleRollback = async (version) => {
+    if (!confirm(`Rollback to version ${version.version}? This will create a new version with the old specification.`)) {
       return;
     }
 
-    setIsTagging(true);
     try {
-      const user = await base44.auth.me();
-      const version = versions.find(v => v.id === versionId);
+      if (!organization?.id) {
+        toast.error('Organization not found');
+        return;
+      }
 
-      await base44.entities.WorkflowVersion.update(versionId, {
-        tags: [...(version.tags || []), newTagName]
-      });
-
-      // Audit tag creation
-      await auditCreate(AuditEntities.WORKFLOW, workflow.id, {
-        action: 'version_tagged',
-        version: version.version,
-        tag: newTagName
-      });
-
-      setNewTagName('');
-      loadVersions();
-      toast.success('Tag created');
-    } catch (error) {
-      handleError(error);
-    } finally {
-      setIsTagging(false);
-    }
-  };
-
-  const rollbackToVersion = async (version) => {
-    try {
-      const user = await base44.auth.me();
-
-      // Create new version from rollback
-      const newVersion = {
+      // Create new version with old spec
+      const newVersion = await base44.entities.WorkflowVersion.create({
         workflow_id: workflow.id,
-        version: incrementVersion(workflow.version),
+        branch_id: currentBranch?.id,
+        version: incrementVersion(versions[0]?.version || '1.0.0'),
+        version_number: (versions[0]?.version_number || 0) + 1,
         spec: version.spec,
-        change_summary: `Rollback to ${version.version}`,
+        change_summary: `Rolled back to version ${version.version}`,
+        change_type: 'patch',
+        parent_version_id: versions[0]?.id,
         created_by: user.email,
-        org_id: workflow.org_id
-      };
+        org_id: organization.id
+      });
 
-      await base44.entities.WorkflowVersion.create(newVersion);
-      
       // Update workflow
       await base44.entities.Workflow.update(workflow.id, {
         spec: version.spec,
         version: newVersion.version
       });
 
-      // Audit rollback
-      await auditCreate(AuditEntities.WORKFLOW, workflow.id, {
-        action: 'version_rollback',
-        from_version: workflow.version,
-        to_version: version.version
-      });
-
-      if (onLoadVersion) {
-        onLoadVersion(version);
-      }
-
-      loadVersions();
       toast.success(`Rolled back to version ${version.version}`);
+      loadData();
+      onLoadVersion?.(newVersion);
     } catch (error) {
-      handleError(error);
+      console.error('Rollback failed:', error);
+      toast.error('Failed to rollback version');
+    }
+  };
+
+  const handleCompare = (versionA) => {
+    if (!comparing.a) {
+      setComparing({ a: versionA, b: null });
+      toast.info('Select another version to compare');
+    } else {
+      setComparing({ a: comparing.a, b: versionA });
+      setShowComparison(true);
     }
   };
 
@@ -148,128 +134,143 @@ export default function AdvancedVersioning({ workflow, onLoadVersion, onCreateBr
   };
 
   return (
-    <Tabs defaultValue="history" className="h-full flex flex-col">
-      <TabsList className="bg-slate-800">
-        <TabsTrigger value="history">
-          <History className="w-4 h-4 mr-2" />
-          History
-        </TabsTrigger>
-        <TabsTrigger value="branches">
-          <GitBranch className="w-4 h-4 mr-2" />
-          Branches
-        </TabsTrigger>
-        <TabsTrigger value="tags">
-          <Tag className="w-4 h-4 mr-2" />
-          Tags
-        </TabsTrigger>
-      </TabsList>
+    <div className="space-y-4">
+      <BranchManager
+        workflowId={workflow?.id}
+        currentBranchId={currentBranch?.id}
+        onBranchChange={(branch) => {
+          setCurrentBranch(branch);
+          loadData();
+        }}
+      />
 
-      <TabsContent value="history" className="flex-1 mt-4">
-        <ScrollArea className="h-full">
-          <div className="space-y-2 pr-4">
-            {versions.map((version, idx) => {
-              const isLatest = idx === 0;
-              const prevVersion = versions[idx + 1];
-              const diff = prevVersion ? compareVersions(prevVersion, version) : null;
+      {showComparison && comparing.a && comparing.b && (
+        <VersionComparison
+          versionIdA={comparing.a.id}
+          versionIdB={comparing.b.id}
+          onClose={() => {
+            setShowComparison(false);
+            setComparing({ a: null, b: null });
+          }}
+        />
+      )}
 
-              return (
-                <Card key={version.id} className={`bg-slate-900 border-slate-800 ${isLatest ? 'border-purple-500/50' : ''}`}>
-                  <CardContent className="pt-4 space-y-2">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <GitCommit className="w-4 h-4 text-slate-400" />
-                        <span className="text-sm font-mono text-white">{version.version}</span>
-                        {isLatest && (
-                          <Badge className="bg-purple-500/20 text-purple-400 text-xs">LATEST</Badge>
+      <Card className="bg-slate-900 border-slate-800">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-white flex items-center gap-2">
+              <History className="w-5 h-5" />
+              Version History
+            </CardTitle>
+            {comparing.a && !comparing.b && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setComparing({ a: null, b: null })}
+                className="border-slate-700"
+              >
+                Cancel Comparison
+              </Button>
+            )}
+          </div>
+        </CardHeader>
+
+        <CardContent>
+          {isLoading ? (
+            <div className="text-center py-8 text-slate-400">Loading versions...</div>
+          ) : versions.length === 0 ? (
+            <div className="text-center py-8 text-slate-400">
+              No versions yet. Save your workflow to create the first version.
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {versions.map((version, index) => {
+                const isSelected = comparing.a?.id === version.id || comparing.b?.id === version.id;
+                
+                return (
+                  <div
+                    key={version.id}
+                    className={`flex items-start gap-3 p-4 rounded-lg transition-all ${
+                      isSelected
+                        ? 'bg-blue-500/20 border border-blue-500/30'
+                        : 'bg-slate-800 hover:bg-slate-750'
+                    }`}
+                  >
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Badge variant="outline" className="bg-blue-500/20 text-blue-400 border-blue-500/30">
+                          v{version.version}
+                        </Badge>
+                        {version.change_type && (
+                          <Badge variant="outline" className="bg-slate-700 text-slate-300 border-slate-600 capitalize">
+                            {version.change_type}
+                          </Badge>
+                        )}
+                        {version.is_release && (
+                          <Badge variant="outline" className="bg-purple-500/20 text-purple-400 border-purple-500/30">
+                            <Tag className="w-3 h-3 mr-1" />
+                            Release
+                          </Badge>
+                        )}
+                        {index === 0 && (
+                          <Badge variant="outline" className="bg-green-500/20 text-green-400 border-green-500/30">
+                            Current
+                          </Badge>
                         )}
                       </div>
-                      <span className="text-xs text-slate-500">
-                        {format(new Date(version.created_date), 'MMM d, HH:mm')}
-                      </span>
+                      
+                      <p className="text-white text-sm mb-2">{version.change_summary}</p>
+                      
+                      <div className="flex items-center gap-4 text-xs text-slate-400">
+                        <span className="flex items-center gap-1">
+                          <Clock className="w-3 h-3" />
+                          {format(new Date(version.created_date), 'MMM d, yyyy h:mm a')}
+                        </span>
+                        {version.created_by && (
+                          <span>by {version.created_by}</span>
+                        )}
+                      </div>
                     </div>
 
-                    <p className="text-xs text-slate-400">{version.change_summary || 'No description'}</p>
-
-                    {diff && (
-                      <div className="flex gap-2 text-xs">
-                        {diff.nodesAdded > 0 && (
-                          <Badge className="bg-green-500/20 text-green-400">+{diff.nodesAdded} nodes</Badge>
-                        )}
-                        {diff.nodesRemoved > 0 && (
-                          <Badge className="bg-red-500/20 text-red-400">-{diff.nodesRemoved} nodes</Badge>
-                        )}
-                      </div>
-                    )}
-
-                    {version.tags?.map(tag => (
-                      <Badge key={tag} variant="outline" className="text-xs">
-                        <Tag className="w-3 h-3 mr-1" />
-                        {tag}
-                      </Badge>
-                    ))}
-
-                    <div className="flex gap-2 pt-2">
-                      <Button
-                        onClick={() => onLoadVersion(version)}
-                        size="sm"
-                        variant="outline"
-                        className="flex-1 border-slate-700 text-xs"
-                      >
-                        Load
-                      </Button>
-                      {!isLatest && (
-                        <Button
-                          onClick={() => rollbackToVersion(version)}
-                          size="sm"
-                          variant="outline"
-                          className="border-slate-700 text-xs"
-                        >
-                          <RotateCcw className="w-3 h-3 mr-1" />
-                          Rollback
-                        </Button>
+                    <div className="flex gap-1">
+                      {index !== 0 && (
+                        <>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleRollback(version)}
+                            className="border-slate-700"
+                            title="Rollback to this version"
+                          >
+                            <RotateCcw className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => onLoadVersion?.(version)}
+                            className="border-slate-700"
+                          >
+                            Load
+                          </Button>
+                        </>
                       )}
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleCompare(version)}
+                        className={`border-slate-700 ${isSelected ? 'bg-blue-500/30' : ''}`}
+                        title="Compare with another version"
+                      >
+                        <GitCompare className="w-4 h-4" />
+                      </Button>
                     </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        </ScrollArea>
-      </TabsContent>
-
-      <TabsContent value="branches" className="flex-1 mt-4">
-        <div className="text-center py-8 text-slate-400 text-sm">
-          <GitBranch className="w-8 h-8 mx-auto mb-2 opacity-50" />
-          Branch management coming soon
-        </div>
-      </TabsContent>
-
-      <TabsContent value="tags" className="flex-1 mt-4">
-        <ScrollArea className="h-full">
-          <div className="space-y-3 pr-4">
-            {versions.filter(v => v.tags?.length > 0).map(version => (
-              <Card key={version.id} className="bg-slate-900 border-slate-800">
-                <CardContent className="pt-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-mono text-white">{version.version}</span>
-                    <span className="text-xs text-slate-500">
-                      {format(new Date(version.created_date), 'MMM d')}
-                    </span>
                   </div>
-                  <div className="flex flex-wrap gap-1">
-                    {version.tags?.map(tag => (
-                      <Badge key={tag} variant="outline" className="text-xs">
-                        <Tag className="w-3 h-3 mr-1" />
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </ScrollArea>
-      </TabsContent>
-    </Tabs>
+                );
+              })}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
   );
 }
