@@ -201,11 +201,16 @@ export default function VisualWorkflowBuilder() {
           org_id: workflow.org_id
         });
       } else {
+        // Get org_id from auth context
+        const user = await base44.auth.me();
+        if (!user?.organization?.id) {
+          throw new Error('Organization not found');
+        }
         savedWorkflow = await base44.entities.Workflow.create({
           ...workflowData,
-          org_id: 'default-org'
+          org_id: user.organization.id
         });
-        setWorkflow({ ...workflow, id: savedWorkflow.id });
+        setWorkflow({ ...workflow, id: savedWorkflow.id, org_id: user.organization.id });
       }
 
       toast.success('Workflow saved successfully');
@@ -255,12 +260,26 @@ export default function VisualWorkflowBuilder() {
     setActiveTab('monitor');
 
     try {
+      const user = await base44.auth.me();
+      if (!user?.organization?.id) {
+        throw new Error('Organization not found');
+      }
+      
+      // Get agent for run
+      const agentList = await base44.entities.Agent.list('-updated_date', 1);
+      if (agentList.length === 0) {
+        throw new Error('No agents available');
+      }
+
       const run = await base44.entities.Run.create({
         workflow_id: workflow.id,
+        agent_id: agentList[0].id,
         state: 'running',
         started_at: new Date().toISOString(),
-        input: {},
-        org_id: workflow.org_id || 'default-org'
+        org_id: user.organization.id,
+        cost_cents: 0,
+        tokens_in: 0,
+        tokens_out: 0
       });
 
       setActiveRun(run);

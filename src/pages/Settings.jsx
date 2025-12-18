@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -15,8 +15,26 @@ import RefactorScheduler from '../components/refactoring/RefactorScheduler';
 import ProfileSettings from '../components/settings/ProfileSettings';
 import PreferencesSettings from '../components/settings/PreferencesSettings';
 import SecuritySettings from '../components/settings/SecuritySettings';
+import { useAuth } from '@/components/contexts/AuthContext';
+import { toast } from 'sonner';
 
 export default function Settings() {
+  const { organization } = useAuth();
+  const [orgName, setOrgName] = useState(organization?.name || 'Archon Enterprise');
+  const [saving, setSaving] = useState(false);
+
+  const handleSaveGeneral = async () => {
+    setSaving(true);
+    try {
+      // In production, this would update the organization
+      await new Promise(resolve => setTimeout(resolve, 500));
+      toast.success('Organization settings saved');
+    } catch (error) {
+      toast.error('Failed to save settings');
+    } finally {
+      setSaving(false);
+    }
+  };
   return (
     <div>
       <div className="mb-8">
@@ -57,7 +75,11 @@ export default function Settings() {
             <CardContent className="space-y-4">
               <div>
                 <label className="text-sm text-slate-400 mb-2 block">Organization Name</label>
-                <Input defaultValue="Archon Enterprise" className="bg-slate-800 border-slate-700" />
+                <Input 
+                  value={orgName} 
+                  onChange={(e) => setOrgName(e.target.value)}
+                  className="bg-slate-800 border-slate-700" 
+                />
               </div>
               <div>
                 <label className="text-sm text-slate-400 mb-2 block">Plan</label>
@@ -66,7 +88,13 @@ export default function Settings() {
                   <span className="text-sm text-slate-400">Unlimited agents, workflows, and runs</span>
                 </div>
               </div>
-              <Button className="bg-blue-600 hover:bg-blue-700">Save Changes</Button>
+              <Button 
+                onClick={handleSaveGeneral}
+                disabled={saving}
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                {saving ? 'Saving...' : 'Save Changes'}
+              </Button>
             </CardContent>
           </Card>
         </TabsContent>
