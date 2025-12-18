@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { WorkflowTemplate, TemplateUsage, TemplateReview } from '@/entities/all';
+import { base44 } from '@/api/base44Client';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Search, Sparkles, Filter, Wrench, Clock, TrendingUp } from 'lucide-react';
+import { Search, Sparkles, Filter, Wrench, Clock, TrendingUp, Zap, RefreshCw } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import TemplateLibrary from '../components/templates/TemplateLibrary';
@@ -26,9 +26,9 @@ export default function Templates() {
   const loadTemplates = async () => {
     try {
       const [templateData, usageData, reviewData] = await Promise.all([
-        WorkflowTemplate.list('-usage_count'),
-        TemplateUsage.list('-created_date', 50),
-        TemplateReview.list()
+        base44.entities.WorkflowTemplate.list('-usage_count'),
+        base44.entities.TemplateUsage.list('-created_date', 50),
+        base44.entities.TemplateReview.list()
       ]);
       setTemplates(templateData);
       setRecentUsage(usageData);
@@ -38,6 +38,22 @@ export default function Templates() {
       toast.error('Failed to load templates');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleSeedTemplates = async () => {
+    try {
+      toast.info('Creating templates...');
+      const response = await base44.functions.invoke('seedTemplates', {});
+      if (response.success) {
+        toast.success(response.message);
+        loadTemplates();
+      } else {
+        toast.error('Failed to seed templates');
+      }
+    } catch (error) {
+      console.error('Seed error:', error);
+      toast.error('Failed to seed templates');
     }
   };
 
@@ -97,13 +113,25 @@ export default function Templates() {
           </h1>
           <p className="text-slate-400">Pre-built workflow patterns ready to customize</p>
         </div>
-        <Button 
-          onClick={() => navigate(createPageUrl('TemplateCustomizer'))}
-          className="bg-purple-600 hover:bg-purple-700"
-        >
-          <Wrench className="w-4 h-4 mr-2" />
-          Customization Hub
-        </Button>
+        <div className="flex gap-2">
+          {templates.length === 0 && (
+            <Button 
+              onClick={handleSeedTemplates}
+              className="bg-purple-600 hover:bg-purple-700"
+            >
+              <Zap className="w-4 h-4 mr-2" />
+              Load Templates
+            </Button>
+          )}
+          <Button 
+            onClick={() => navigate(createPageUrl('TemplateCustomizer'))}
+            variant="outline"
+            className="border-slate-700"
+          >
+            <Wrench className="w-4 h-4 mr-2" />
+            Customization Hub
+          </Button>
+        </div>
       </div>
 
       <Card className="bg-slate-900 border-slate-800">

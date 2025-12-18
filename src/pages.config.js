@@ -32,11 +32,11 @@ import Templates from './pages/Templates';
 import ToolMarketplace from './pages/ToolMarketplace';
 import UserProfile from './pages/UserProfile';
 import VisualWorkflowBuilder from './pages/VisualWorkflowBuilder';
+import Webhooks from './pages/Webhooks';
 import WorkflowDetail from './pages/WorkflowDetail';
 import WorkflowStudio from './pages/WorkflowStudio';
 import Workflows from './pages/Workflows';
 import agents from './pages/agents';
-import Webhooks from './pages/Webhooks';
 import __Layout from './Layout.jsx';
 
 
@@ -75,11 +75,11 @@ export const PAGES = {
     "ToolMarketplace": ToolMarketplace,
     "UserProfile": UserProfile,
     "VisualWorkflowBuilder": VisualWorkflowBuilder,
+    "Webhooks": Webhooks,
     "WorkflowDetail": WorkflowDetail,
     "WorkflowStudio": WorkflowStudio,
     "Workflows": Workflows,
     "agents": agents,
-    "Webhooks": Webhooks,
 }
 
 export const pagesConfig = {

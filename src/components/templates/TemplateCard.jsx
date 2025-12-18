@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Play, Sparkles, Clock, DollarSign, Loader2, Wrench, Star, MessageSquare } from 'lucide-react';
-import { Workflow, WorkflowTemplate, TemplateUsage, TemplateReview } from '@/entities/all';
+
 import TemplateRating from './TemplateRating';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
@@ -35,7 +35,7 @@ export default function TemplateCard({ template, onRefresh, averageRating, revie
     try {
       const user = await base44.auth.me();
       
-      const newWorkflow = await Workflow.create({
+      const newWorkflow = await base44.entities.Workflow.create({
         name: `${template.name} (from template)`,
         description: template.description,
         spec: template.spec,
@@ -44,10 +44,10 @@ export default function TemplateCard({ template, onRefresh, averageRating, revie
       });
 
       await Promise.all([
-        WorkflowTemplate.update(template.id, {
+        base44.entities.WorkflowTemplate.update(template.id, {
           usage_count: (template.usage_count || 0) + 1
         }),
-        TemplateUsage.create({
+        base44.entities.TemplateUsage.create({
           template_id: template.id,
           user_email: user.email,
           workflow_id: newWorkflow.id,
