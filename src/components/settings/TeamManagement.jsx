@@ -8,6 +8,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { TeamMember } from '@/entities/TeamMember';
 import { UserPlus, MoreHorizontal, Crown, Shield, Eye, Wrench } from 'lucide-react';
+import { useAuth } from '@/components/contexts/AuthContext';
+import { toast } from 'sonner';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -37,6 +39,7 @@ const statusColors = {
 };
 
 export default function TeamManagement() {
+  const { organization } = useAuth();
   const [teamMembers, setTeamMembers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showInviteForm, setShowInviteForm] = useState(false);
@@ -64,35 +67,47 @@ export default function TeamManagement() {
 
   const handleInvite = async (e) => {
     e.preventDefault();
+    if (!organization?.id) {
+      toast.error('Organization not found');
+      return;
+    }
     try {
       await TeamMember.create({
         ...inviteForm,
-        org_id: 'org_acme',
+        org_id: organization.id,
         invited_at: new Date().toISOString(),
+        status: 'pending',
       });
       setInviteForm({ email: '', full_name: '', role: 'viewer' });
       setShowInviteForm(false);
+      toast.success('Invitation sent successfully');
       loadTeamMembers();
     } catch (error) {
       console.error("Failed to invite team member:", error);
+      toast.error('Failed to send invitation');
     }
   };
 
   const changeRole = async (memberId, newRole) => {
     try {
       await TeamMember.update(memberId, { role: newRole });
+      toast.success('Role updated successfully');
       loadTeamMembers();
     } catch (error) {
       console.error("Failed to change role:", error);
+      toast.error('Failed to update role');
     }
   };
 
   const suspendMember = async (memberId) => {
+    if (!confirm('Are you sure you want to suspend this member?')) return;
     try {
       await TeamMember.update(memberId, { status: 'suspended' });
+      toast.success('Member suspended successfully');
       loadTeamMembers();
     } catch (error) {
       console.error("Failed to suspend member:", error);
+      toast.error('Failed to suspend member');
     }
   };
 
