@@ -4,13 +4,20 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Key, Shield, Copy, Eye, EyeOff, RefreshCw } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Key, Shield, Copy, Eye, EyeOff, RefreshCw, Lock } from 'lucide-react';
 import { useUserProfile } from '@/components/hooks/useUserProfile';
 import { toast } from 'sonner';
 
 export default function SecuritySettings() {
-  const { profile, generateApiKey, revokeApiKey, saving } = useUserProfile();
+  const { profile, generateApiKey, revokeApiKey, toggle2FA, saving } = useUserProfile();
   const [showApiKey, setShowApiKey] = useState(false);
+  const [showPasswordDialog, setShowPasswordDialog] = useState(false);
+  const [passwordForm, setPasswordForm] = useState({
+    current: '',
+    new: '',
+    confirm: ''
+  });
 
   const handleCopyApiKey = () => {
     if (profile?.api_key) {
@@ -38,8 +45,108 @@ export default function SecuritySettings() {
     }
   };
 
+  const handle2FAToggle = async () => {
+    const enable = !profile?.two_factor_enabled;
+    const confirmed = window.confirm(
+      enable 
+        ? 'Enable two-factor authentication for enhanced security?'
+        : 'Disable two-factor authentication? This will reduce account security.'
+    );
+    if (confirmed) {
+      await toggle2FA(enable);
+    }
+  };
+
+  const handlePasswordChange = async (e) => {
+    e.preventDefault();
+    
+    if (passwordForm.new !== passwordForm.confirm) {
+      toast.error('New passwords do not match');
+      return;
+    }
+
+    if (passwordForm.new.length < 8) {
+      toast.error('Password must be at least 8 characters');
+      return;
+    }
+
+    // In production, this would call an API endpoint
+    toast.info('Password change not yet implemented. Contact support.');
+    setShowPasswordDialog(false);
+    setPasswordForm({ current: '', new: '', confirm: '' });
+  };
+
   return (
     <div className="space-y-6">
+      {/* Password Management */}
+      <Card className="bg-slate-900 border-slate-800">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Lock className="w-5 h-5" />
+            Password
+          </CardTitle>
+          <CardDescription>
+            Update your password to keep your account secure
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Button onClick={() => setShowPasswordDialog(true)}>
+            Change Password
+          </Button>
+        </CardContent>
+      </Card>
+
+      {/* Password Change Dialog */}
+      <Dialog open={showPasswordDialog} onOpenChange={setShowPasswordDialog}>
+        <DialogContent className="bg-slate-900 border-slate-800">
+          <DialogHeader>
+            <DialogTitle>Change Password</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handlePasswordChange} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="current">Current Password</Label>
+              <Input
+                id="current"
+                type="password"
+                value={passwordForm.current}
+                onChange={(e) => setPasswordForm({ ...passwordForm, current: e.target.value })}
+                className="border-slate-700"
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="new">New Password</Label>
+              <Input
+                id="new"
+                type="password"
+                value={passwordForm.new}
+                onChange={(e) => setPasswordForm({ ...passwordForm, new: e.target.value })}
+                className="border-slate-700"
+                required
+                minLength={8}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="confirm">Confirm New Password</Label>
+              <Input
+                id="confirm"
+                type="password"
+                value={passwordForm.confirm}
+                onChange={(e) => setPasswordForm({ ...passwordForm, confirm: e.target.value })}
+                className="border-slate-700"
+                required
+              />
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setShowPasswordDialog(false)}>
+                Cancel
+              </Button>
+              <Button type="submit">Update Password</Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
       {/* API Key Management */}
       <Card className="bg-slate-900 border-slate-800">
         <CardHeader>
@@ -152,6 +259,8 @@ export default function SecuritySettings() {
             type="button"
             variant={profile?.two_factor_enabled ? 'destructive' : 'default'}
             className="w-full mt-4"
+            onClick={handle2FAToggle}
+            disabled={saving}
           >
             {profile?.two_factor_enabled ? 'Disable' : 'Enable'} 2FA
           </Button>

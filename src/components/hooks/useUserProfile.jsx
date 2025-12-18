@@ -41,11 +41,11 @@ export function useUserProfile() {
   }, [loadProfile]);
 
   const updateProfile = useCallback(async (data) => {
-    if (!user?.email) return false;
+    if (!user?.email || !organization?.id) return false;
 
     setSaving(true);
     try {
-      const result = await userService.updateProfile(user.email, data);
+      const result = await userService.updateProfile(user.email, organization.id, data);
 
       if (result.ok) {
         setProfile(result.value);
@@ -62,7 +62,7 @@ export function useUserProfile() {
     } finally {
       setSaving(false);
     }
-  }, [user?.email]);
+  }, [user?.email, organization?.id]);
 
   const updatePreferences = useCallback(async (data) => {
     if (!user?.email || !organization?.id) return false;
@@ -89,11 +89,11 @@ export function useUserProfile() {
   }, [user?.email, organization?.id]);
 
   const generateApiKey = useCallback(async () => {
-    if (!user?.email) return null;
+    if (!user?.email || !organization?.id) return null;
 
     setSaving(true);
     try {
-      const result = await userService.generateApiKey(user.email);
+      const result = await userService.generateApiKey(user.email, organization.id);
 
       if (result.ok) {
         setProfile(result.value);
@@ -110,14 +110,14 @@ export function useUserProfile() {
     } finally {
       setSaving(false);
     }
-  }, [user?.email]);
+  }, [user?.email, organization?.id]);
 
   const revokeApiKey = useCallback(async () => {
-    if (!user?.email) return false;
+    if (!user?.email || !organization?.id) return false;
 
     setSaving(true);
     try {
-      const result = await userService.revokeApiKey(user.email);
+      const result = await userService.revokeApiKey(user.email, organization.id);
 
       if (result.ok) {
         setProfile(result.value);
@@ -134,7 +134,33 @@ export function useUserProfile() {
     } finally {
       setSaving(false);
     }
-  }, [user?.email]);
+  }, [user?.email, organization?.id]);
+
+  const toggle2FA = useCallback(async (enable) => {
+    if (!user?.email || !organization?.id) return false;
+
+    setSaving(true);
+    try {
+      const result = enable 
+        ? await userService.enable2FA(user.email, organization.id)
+        : await userService.disable2FA(user.email, organization.id);
+
+      if (result.ok) {
+        setProfile(result.value);
+        toast.success(enable ? '2FA enabled' : '2FA disabled');
+        return true;
+      } else {
+        toast.error(result.error.message);
+        return false;
+      }
+    } catch (error) {
+      console.error('[2FA] Toggle error:', error);
+      toast.error('Failed to update 2FA settings');
+      return false;
+    } finally {
+      setSaving(false);
+    }
+  }, [user?.email, organization?.id]);
 
   return {
     profile,
@@ -145,6 +171,7 @@ export function useUserProfile() {
     updatePreferences,
     generateApiKey,
     revokeApiKey,
+    toggle2FA,
     refresh: loadProfile
   };
 }

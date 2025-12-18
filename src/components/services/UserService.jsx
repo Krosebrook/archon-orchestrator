@@ -28,7 +28,7 @@ export class UserService {
   /**
    * Update user profile.
    */
-  async updateProfile(userEmail, data) {
+  async updateProfile(userEmail, orgId, data) {
     try {
       const [existing] = await base44.entities.UserProfile.filter({ user_email: userEmail });
       
@@ -38,6 +38,7 @@ export class UserService {
       } else {
         const created = await base44.entities.UserProfile.create({
           user_email: userEmail,
+          org_id: orgId,
           ...data
         });
         return { ok: true, value: created };
@@ -94,10 +95,10 @@ export class UserService {
   /**
    * Generate API key.
    */
-  async generateApiKey(userEmail) {
+  async generateApiKey(userEmail, orgId) {
     try {
       const key = `archon_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
-      const result = await this.updateProfile(userEmail, { api_key: key });
+      const result = await this.updateProfile(userEmail, orgId, { api_key: key });
       return result;
     } catch (error) {
       return { 
@@ -110,8 +111,22 @@ export class UserService {
   /**
    * Revoke API key.
    */
-  async revokeApiKey(userEmail) {
-    return this.updateProfile(userEmail, { api_key: null });
+  async revokeApiKey(userEmail, orgId) {
+    return this.updateProfile(userEmail, orgId, { api_key: null });
+  }
+
+  /**
+   * Enable 2FA for user.
+   */
+  async enable2FA(userEmail, orgId) {
+    return this.updateProfile(userEmail, orgId, { two_factor_enabled: true });
+  }
+
+  /**
+   * Disable 2FA for user.
+   */
+  async disable2FA(userEmail, orgId) {
+    return this.updateProfile(userEmail, orgId, { two_factor_enabled: false });
   }
 
   /**
