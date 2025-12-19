@@ -33,7 +33,7 @@ export default function Templates() {
   React.useEffect(() => {
     applyFilters({
       searchQuery,
-      category: selectedCategory as any,
+      category: selectedCategory,
     });
   }, [searchQuery, selectedCategory, applyFilters]);
 
