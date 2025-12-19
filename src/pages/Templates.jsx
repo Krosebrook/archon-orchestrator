@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import TemplateLibrary from '../components/templates/TemplateLibrary';
 import { TemplateErrorBoundary } from '../components/templates/TemplateErrorBoundary';
+import { TemplateGridSkeleton } from '../components/templates/TemplateLoadingSkeleton';
 import { useTemplates } from '../components/hooks/useTemplates';
 import { toast } from 'sonner';
 
@@ -66,9 +67,20 @@ export default function Templates() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-full">
-        <div className="text-slate-400">Loading templates...</div>
-      </div>
+      <TemplateErrorBoundary>
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-2">
+                <Sparkles className="w-8 h-8 text-purple-400" />
+                Workflow Templates
+              </h1>
+              <p className="text-slate-400">Pre-built workflow patterns ready to customize</p>
+            </div>
+          </div>
+          <TemplateGridSkeleton count={6} />
+        </div>
+      </TemplateErrorBoundary>
     );
   }
 

@@ -8,9 +8,18 @@ import { Play, Sparkles, Clock, DollarSign, Loader2, Wrench, Star, MessageSquare
 import TemplateRating from './TemplateRating';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
+import { templateService } from '@/components/services/TemplateService';
 import { toast } from 'sonner';
+import type { WorkflowTemplate } from '@/components/types/template';
 
-export default function TemplateCard({ template, onRefresh, averageRating, reviewCount }) {
+interface TemplateCardProps {
+  template: WorkflowTemplate;
+  onRefresh?: () => void;
+  averageRating?: number;
+  reviewCount?: number;
+}
+
+export default function TemplateCard({ template, onRefresh, averageRating = 0, reviewCount = 0 }: TemplateCardProps) {
   const navigate = useNavigate();
   const [isCreating, setIsCreating] = useState(false);
   const [showRating, setShowRating] = useState(false);
