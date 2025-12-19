@@ -173,7 +173,7 @@ export default function Templates() {
       )}
 
       {featuredTemplates.length > 0 && (
-        <div className="space-y-4">
+        <div className="space-y-4" data-tour="template-card">
           <div className="flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-yellow-400" />
             <h2 className="text-xl font-semibold text-white">Featured Templates</h2>
