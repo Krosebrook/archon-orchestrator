@@ -10,27 +10,19 @@ import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 import { templateService } from '@/components/services/TemplateService';
 import { toast } from 'sonner';
-import type { WorkflowTemplate } from '@/components/types/template';
 
-interface TemplateCardProps {
-  template: WorkflowTemplate;
-  onRefresh?: () => void;
-  averageRating?: number;
-  reviewCount?: number;
-}
-
-export default function TemplateCard({ template, onRefresh, averageRating = 0, reviewCount = 0 }: TemplateCardProps) {
+export default function TemplateCard({ template, onRefresh, averageRating = 0, reviewCount = 0 }) {
   const navigate = useNavigate();
   const [isCreating, setIsCreating] = useState(false);
   const [showRating, setShowRating] = useState(false);
 
-  const complexityColors: Record<string, string> = {
+  const complexityColors = {
     beginner: 'bg-green-500/20 text-green-400 border-green-500/30',
     intermediate: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
     advanced: 'bg-red-500/20 text-red-400 border-red-500/30'
   };
 
-  const categoryColors: Record<string, string> = {
+  const categoryColors = {
     customer_service: 'bg-blue-500/20 text-blue-400',
     data_processing: 'bg-purple-500/20 text-purple-400',
     content_generation: 'bg-pink-500/20 text-pink-400',
