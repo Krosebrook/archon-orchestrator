@@ -15,13 +15,13 @@ export default function TemplateCard({ template, onRefresh, averageRating, revie
   const [isCreating, setIsCreating] = useState(false);
   const [showRating, setShowRating] = useState(false);
 
-  const complexityColors = {
+  const complexityColors: Record<string, string> = {
     beginner: 'bg-green-500/20 text-green-400 border-green-500/30',
     intermediate: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
     advanced: 'bg-red-500/20 text-red-400 border-red-500/30'
   };
 
-  const categoryColors = {
+  const categoryColors: Record<string, string> = {
     customer_service: 'bg-blue-500/20 text-blue-400',
     data_processing: 'bg-purple-500/20 text-purple-400',
     content_generation: 'bg-pink-500/20 text-pink-400',
@@ -35,6 +35,11 @@ export default function TemplateCard({ template, onRefresh, averageRating, revie
     try {
       const user = await base44.auth.me();
       
+      if (!user?.organization?.id) {
+        toast.error('Organization not found');
+        return;
+      }
+
       const newWorkflow = await base44.entities.Workflow.create({
         name: `${template.name} (from template)`,
         description: template.description,
@@ -43,11 +48,10 @@ export default function TemplateCard({ template, onRefresh, averageRating, revie
         org_id: user.organization.id
       });
 
-      await Promise.all([
-        base44.entities.WorkflowTemplate.update(template.id, {
-          usage_count: (template.usage_count || 0) + 1
-        }),
-        base44.entities.TemplateUsage.create({
+      // Update usage count and create usage record
+      const [incrementResult, usageResult] = await Promise.all([
+        templateService.incrementUsage(template.id, template.usage_count || 0),
+        templateService.createUsage({
           template_id: template.id,
           user_email: user.email,
           workflow_id: newWorkflow.id,
@@ -55,11 +59,15 @@ export default function TemplateCard({ template, onRefresh, averageRating, revie
         })
       ]);
 
+      if (!incrementResult.ok || !usageResult.ok) {
+        console.warn('[TemplateCard] Usage tracking failed, but workflow created');
+      }
+
       toast.success('Workflow created from template');
       onRefresh?.();
       navigate(createPageUrl(`WorkflowDetail?id=${newWorkflow.id}`));
     } catch (error) {
-      console.error('Failed to create workflow from template:', error);
+      console.error('[TemplateCard] Failed to create workflow:', error);
       toast.error('Failed to create workflow');
     } finally {
       setIsCreating(false);

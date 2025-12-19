@@ -1,45 +1,40 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Search, Sparkles, Filter, Wrench, Clock, TrendingUp, Zap, RefreshCw } from 'lucide-react';
+import { Search, Sparkles, Filter, Wrench, Clock, TrendingUp, Zap } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import TemplateLibrary from '../components/templates/TemplateLibrary';
+import { TemplateErrorBoundary } from '../components/templates/TemplateErrorBoundary';
+import { useTemplates } from '../components/hooks/useTemplates';
 import { toast } from 'sonner';
 
 export default function Templates() {
   const navigate = useNavigate();
-  const [templates, setTemplates] = useState([]);
-  const [recentUsage, setRecentUsage] = useState([]);
-  const [reviews, setReviews] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    loadTemplates();
-  }, []);
+  const {
+    templates,
+    isLoading,
+    filteredTemplates,
+    featuredTemplates,
+    popularTemplates,
+    recentlyUsedTemplates,
+    getTemplateRating,
+    refresh,
+    applyFilters,
+  } = useTemplates();
 
-  const loadTemplates = async () => {
-    try {
-      const [templateData, usageData, reviewData] = await Promise.all([
-        base44.entities.WorkflowTemplate.list('-usage_count'),
-        base44.entities.TemplateUsage.list('-created_date', 50),
-        base44.entities.TemplateReview.list()
-      ]);
-      setTemplates(templateData);
-      setRecentUsage(usageData);
-      setReviews(reviewData);
-    } catch (error) {
-      console.error('Failed to load templates:', error);
-      toast.error('Failed to load templates');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // Apply filters whenever search or category changes
+  React.useEffect(() => {
+    applyFilters({
+      searchQuery,
+      category: selectedCategory as any,
+    });
+  }, [searchQuery, selectedCategory, applyFilters]);
 
   const handleSeedTemplates = async () => {
     try {
@@ -47,7 +42,7 @@ export default function Templates() {
       const response = await base44.functions.invoke('seedTemplates', {});
       if (response.success) {
         toast.success(response.message);
-        loadTemplates();
+        refresh();
       } else {
         toast.error('Failed to seed templates');
       }
@@ -55,13 +50,6 @@ export default function Templates() {
       console.error('Seed error:', error);
       toast.error('Failed to seed templates');
     }
-  };
-
-  const getTemplateRating = (templateId) => {
-    const templateReviews = reviews.filter(r => r.template_id === templateId);
-    if (templateReviews.length === 0) return { average: 0, count: 0 };
-    const sum = templateReviews.reduce((acc, r) => acc + r.rating, 0);
-    return { average: sum / templateReviews.length, count: templateReviews.length };
   };
 
   const categories = [
@@ -74,25 +62,6 @@ export default function Templates() {
     { value: 'analytics', label: 'Analytics' }
   ];
 
-  const filteredTemplates = templates.filter(t => {
-    const matchesSearch = !searchQuery || 
-      t.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      t.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      t.tags?.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
-    
-    const matchesCategory = selectedCategory === 'all' || t.category === selectedCategory;
-    
-    return matchesSearch && matchesCategory;
-  });
-
-  const featuredTemplates = filteredTemplates.filter(t => t.is_featured);
-  const popularTemplates = filteredTemplates
-    .sort((a, b) => (b.usage_count || 0) - (a.usage_count || 0))
-    .slice(0, 6);
-  
-  const recentTemplateIds = [...new Set(recentUsage.map(u => u.template_id))].slice(0, 6);
-  const recentlyUsedTemplates = templates.filter(t => recentTemplateIds.includes(t.id));
-  
   const otherTemplates = filteredTemplates.filter(t => !t.is_featured);
 
   if (isLoading) {
@@ -104,7 +73,8 @@ export default function Templates() {
   }
 
   return (
-    <div className="space-y-6">
+    <TemplateErrorBoundary>
+      <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-2">
@@ -170,7 +140,7 @@ export default function Templates() {
           </div>
           <TemplateLibrary 
             templates={recentlyUsedTemplates} 
-            onRefresh={loadTemplates}
+            onRefresh={refresh}
             getTemplateRating={getTemplateRating}
           />
         </div>
@@ -184,7 +154,7 @@ export default function Templates() {
           </div>
           <TemplateLibrary 
             templates={popularTemplates} 
-            onRefresh={loadTemplates}
+            onRefresh={refresh}
             getTemplateRating={getTemplateRating}
           />
         </div>
@@ -198,7 +168,7 @@ export default function Templates() {
           </div>
           <TemplateLibrary 
             templates={featuredTemplates} 
-            onRefresh={loadTemplates}
+            onRefresh={refresh}
             getTemplateRating={getTemplateRating}
           />
         </div>
@@ -210,7 +180,7 @@ export default function Templates() {
         </h2>
         <TemplateLibrary 
           templates={otherTemplates} 
-          onRefresh={loadTemplates}
+          onRefresh={refresh}
           getTemplateRating={getTemplateRating}
         />
       </div>
@@ -220,6 +190,7 @@ export default function Templates() {
           No templates found matching your criteria
         </div>
       )}
-    </div>
+      </div>
+    </TemplateErrorBoundary>
   );
 }
