@@ -50,19 +50,22 @@ import { ErrorBoundary } from './components/shared/ErrorBoundary';
 import ToastProvider from './components/providers/ToastProvider';
 import PWAInstaller from './components/shared/PWAInstaller';
 import { KeyboardShortcuts } from './components/shared/KeyboardShortcuts';
+import { OnboardingTour } from './components/onboarding/OnboardingTour';
+import { useOnboarding } from './components/hooks/useOnboarding';
+import { HelpCircle } from 'lucide-react';
 
 const navItems = [
-  { name: 'Dashboard', icon: LayoutDashboard, path: 'Dashboard', permission: null },
+  { name: 'Dashboard', icon: LayoutDashboard, path: 'Dashboard', permission: null, dataTour: 'dashboard-link' },
   { name: 'Orchestration', icon: Bot, path: 'OrchestrationHub', permission: 'agent.view' },
   { name: 'Workflow Builder', icon: Zap, path: 'VisualWorkflowBuilder', permission: 'workflow.edit' },
   { name: 'Workflow Studio', icon: Zap, path: 'WorkflowStudio', permission: 'workflow.edit' },
-  { name: 'Templates', icon: FileText, path: 'Templates', permission: 'workflow.view' },
+  { name: 'Templates', icon: FileText, path: 'Templates', permission: 'workflow.view', dataTour: 'templates-link' },
   { name: 'Agents', icon: Bot, path: 'Agents', permission: 'agent.view' },
   { name: 'Agent Workflows', icon: GitFork, path: 'AgentWorkflowDesigner', permission: 'agent.view' },
   { name: 'Collaboration', icon: Users, path: 'AgentCollaboration', permission: 'agent.view' },
-  { name: 'Workflows', icon: GitFork, path: 'Workflows', permission: 'workflow.view' },
+  { name: 'Workflows', icon: GitFork, path: 'Workflows', permission: 'workflow.view', dataTour: 'workflows-link' },
   { name: 'CI/CD', icon: GitFork, path: 'CICD', permission: 'workflow.edit' },
-  { name: 'Runs', icon: PlaySquare, path: 'Runs', permission: 'workflow.view' },
+  { name: 'Runs', icon: PlaySquare, path: 'Runs', permission: 'workflow.view', dataTour: 'runs-link' },
   { name: 'Analytics', icon: BarChart3, path: 'Analytics', permission: 'workflow.view' },
   { name: 'Agent Analytics', icon: Brain, path: 'AgentAnalytics', permission: 'workflow.view' },
   { name: 'Observability', icon: Eye, path: 'Observability', permission: 'workflow.view' },
@@ -81,7 +84,8 @@ const navItems = [
   { name: 'Security Tests', icon: Shield, path: 'SecurityTests', permission: 'audit.view' },
   { name: 'Audit Export', icon: FileText, path: 'AuditExport', permission: 'audit.export' },
   { name: 'Documentation', icon: FileText, path: 'Documentation', permission: null },
-];
+  { name: 'Knowledge Base', icon: FileText, path: 'KnowledgeBase', permission: null },
+  ];
 
 const Sidebar = ({ isCollapsed, isMobileOpen, setIsMobileOpen }) => {
   const location = useLocation();
@@ -154,10 +158,11 @@ const Sidebar = ({ isCollapsed, isMobileOpen, setIsMobileOpen }) => {
                   }
                 `}
                 title={isCollapsed ? item.name : ''}
-              >
+                data-tour={item.dataTour}
+                >
                 <item.icon className="w-5 h-5 flex-shrink-0" />
                 {!isCollapsed && <span>{item.name}</span>}
-              </Link>
+                </Link>
             </RBACGuard>
           ))}
         </nav>
@@ -235,6 +240,16 @@ const Header = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen }) 
       
       <div className="flex items-center gap-4">
         <NotificationCenter />
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          onClick={restartTour}
+          className="text-slate-400 hover:text-white hover:bg-slate-800"
+          data-tour="help-button"
+          title="Help & Knowledge Base"
+        >
+          <HelpCircle className="h-5 w-5" />
+        </Button>
         <Button variant="ghost" size="icon" onClick={toggleTheme} className="text-slate-400 hover:text-white hover:bg-slate-800">
           <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
           <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
@@ -283,6 +298,7 @@ function AppLayout({ children, currentPageName }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const location = useLocation();
+  const { showTour, completeTour, skipTour, restartTour } = useOnboarding();
 
   useEffect(() => {
     if ('serviceWorker' in navigator) {
@@ -297,6 +313,7 @@ function AppLayout({ children, currentPageName }) {
       <PWAInstaller />
       <KeyboardShortcuts />
       <CommandPalette />
+      {showTour && <OnboardingTour onComplete={completeTour} onSkip={skipTour} />}
       <Sidebar 
         isCollapsed={isCollapsed} 
         isMobileOpen={isMobileOpen} 

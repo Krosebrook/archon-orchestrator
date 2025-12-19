@@ -149,6 +149,7 @@ export default function TemplateCard({ template, onRefresh, averageRating = 0, r
             onClick={() => navigate(createPageUrl(`TemplateCustomizer?template=${template.id}`))}
             variant="outline"
             className="flex-1 border-slate-700"
+            data-tour="customize-button"
           >
             <Wrench className="w-4 h-4 mr-2" />
             Customize
