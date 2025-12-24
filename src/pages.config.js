@@ -15,6 +15,7 @@ import Governance from './pages/Governance';
 import Home from './pages/Home';
 import IntegrationManagement from './pages/IntegrationManagement';
 import Integrations from './pages/Integrations';
+import KnowledgeBase from './pages/KnowledgeBase';
 import Monitoring from './pages/Monitoring';
 import Observability from './pages/Observability';
 import OrchestrationHub from './pages/OrchestrationHub';
@@ -37,7 +38,6 @@ import WorkflowDetail from './pages/WorkflowDetail';
 import WorkflowStudio from './pages/WorkflowStudio';
 import Workflows from './pages/Workflows';
 import agents from './pages/agents';
-import KnowledgeBase from './pages/KnowledgeBase';
 import __Layout from './Layout.jsx';
 
 
@@ -59,6 +59,7 @@ export const PAGES = {
     "Home": Home,
     "IntegrationManagement": IntegrationManagement,
     "Integrations": Integrations,
+    "KnowledgeBase": KnowledgeBase,
     "Monitoring": Monitoring,
     "Observability": Observability,
     "OrchestrationHub": OrchestrationHub,
@@ -81,7 +82,6 @@ export const PAGES = {
     "WorkflowStudio": WorkflowStudio,
     "Workflows": Workflows,
     "agents": agents,
-    "KnowledgeBase": KnowledgeBase,
 }
 
 export const pagesConfig = {

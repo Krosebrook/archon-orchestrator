@@ -190,7 +190,7 @@ const Sidebar = ({ isCollapsed, isMobileOpen, setIsMobileOpen }) => {
   );
 };
 
-const Header = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen }) => {
+const Header = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen, restartTour }) => {
   const { user, organization, role } = useAuth();
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark');
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
@@ -325,6 +325,7 @@ function AppLayout({ children, currentPageName }) {
           setIsCollapsed={setIsCollapsed}
           isMobileOpen={isMobileOpen}
           setIsMobileOpen={setIsMobileOpen}
+          restartTour={restartTour}
         />
         <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 text-white">
           <ErrorBoundary>
