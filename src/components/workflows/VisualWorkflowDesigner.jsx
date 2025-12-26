@@ -17,6 +17,7 @@ import {
   Users,
   Brain
 } from 'lucide-react';
+import CollaborationEdge from './CollaborationEdge';
 import WorkflowNodePanel from './WorkflowNodePanel';
 import AgentCollaborationNode from './AgentCollaborationNode';
 import MemoryNode from './MemoryNode';
