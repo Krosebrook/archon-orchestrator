@@ -10,6 +10,7 @@ import ErrorTrendAnalysis from '../components/analytics/ErrorTrendAnalysis';
 import BottleneckDetection from '../components/analytics/BottleneckDetection';
 import PredictiveInsights from '../components/analytics/PredictiveInsights';
 import AIAuditInsights from '../components/analytics/AIAuditInsights';
+import WorkflowAnalyticsDashboard from '../components/analytics/WorkflowAnalyticsDashboard';
 import { toast } from 'sonner';
 
 export default function Analytics() {
@@ -162,10 +163,7 @@ export default function Analytics() {
         </TabsList>
 
         <TabsContent value="overview" className="mt-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <PerformanceCharts runs={runs} metrics={metrics} />
-            <CostBreakdown runs={runs} agents={agents} workflows={workflows} />
-          </div>
+          <WorkflowAnalyticsDashboard />
         </TabsContent>
 
         <TabsContent value="history" className="mt-6">
