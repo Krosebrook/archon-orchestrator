@@ -18,9 +18,11 @@ import {
   Brain
 } from 'lucide-react';
 import CollaborationEdge from './CollaborationEdge';
+import { toast } from 'sonner';
 import WorkflowNodePanel from './WorkflowNodePanel';
 import AgentCollaborationNode from './AgentCollaborationNode';
 import MemoryNode from './MemoryNode';
+import AIWorkflowGenerator from './AIWorkflowGenerator';
 
 const nodeTypes = {
   agent: { icon: Bot, color: 'bg-blue-500', label: 'AI Agent' },
@@ -94,6 +96,7 @@ export default function VisualWorkflowDesigner({ workflow, agents, tools, onSave
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [editingCollabNode, setEditingCollabNode] = useState(null);
   const [editingMemoryNode, setEditingMemoryNode] = useState(null);
+  const [showAIGenerator, setShowAIGenerator] = useState(false);
 
   const onNodeClick = useCallback((node) => {
     if (node.data.type === 'agent_collaboration') {
@@ -145,6 +148,13 @@ export default function VisualWorkflowDesigner({ workflow, agents, tools, onSave
     onSave?.(workflowData);
   };
 
+  const handleAIGenerated = (generatedWorkflow) => {
+    if (generatedWorkflow?.nodes) {
+      setNodes(generatedWorkflow.nodes);
+      toast.success('AI-generated workflow applied!');
+    }
+  };
+
   return (
     <div className="h-full w-full relative bg-slate-950 overflow-hidden">
       <div className="h-full flex flex-col">
@@ -159,6 +169,14 @@ export default function VisualWorkflowDesigner({ workflow, agents, tools, onSave
               <Button size="sm" variant="outline" className="bg-slate-700 border-slate-600">
                 <Play className="w-4 h-4 mr-2" />
                 Test Run
+              </Button>
+              <Button 
+                size="sm" 
+                onClick={() => setShowAIGenerator(true)}
+                className="bg-purple-600 hover:bg-purple-700"
+              >
+                <Bot className="w-4 h-4 mr-2" />
+                AI Generate
               </Button>
               <div className="h-4 w-px bg-slate-600" />
               <div className="text-sm text-slate-300 flex items-center gap-2">
@@ -258,6 +276,13 @@ export default function VisualWorkflowDesigner({ workflow, agents, tools, onSave
           }}
         />
       )}
+
+      <AIWorkflowGenerator
+        open={showAIGenerator}
+        onOpenChange={setShowAIGenerator}
+        onWorkflowGenerated={handleAIGenerated}
+        onSaveAsTemplate={() => toast.success('Template saved!')}
+      />
     </div>
   );
 }
