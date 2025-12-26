@@ -3,7 +3,8 @@ import { base44 } from '@/api/base44Client';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Search, Sparkles, Filter, Wrench, Clock, TrendingUp, Zap } from 'lucide-react';
+import { Search, Sparkles, Filter, Wrench, Clock, TrendingUp, Zap, Wand2 } from 'lucide-react';
+import AIWorkflowGenerator from '../components/workflows/AIWorkflowGenerator';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import TemplateLibrary from '../components/templates/TemplateLibrary';
@@ -114,6 +115,13 @@ export default function Templates() {
             <Wrench className="w-4 h-4 mr-2" />
             Customization Hub
           </Button>
+          <Button 
+            onClick={() => setShowAIGenerator(true)}
+            className="bg-purple-600 hover:bg-purple-700"
+          >
+            <Wand2 className="w-4 h-4 mr-2" />
+            Generate with AI
+          </Button>
         </div>
       </div>
 
@@ -203,6 +211,16 @@ export default function Templates() {
           No templates found matching your criteria
         </div>
       )}
+
+      <AIWorkflowGenerator
+        open={showAIGenerator}
+        onOpenChange={setShowAIGenerator}
+        onWorkflowGenerated={(workflow) => {
+          setShowAIGenerator(false);
+          refresh();
+        }}
+        onSaveAsTemplate={refresh}
+      />
       </div>
     </TemplateErrorBoundary>
   );
