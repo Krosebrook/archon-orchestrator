@@ -57,6 +57,7 @@ import { HelpCircle } from 'lucide-react';
 const navItems = [
   { name: 'Dashboard', icon: LayoutDashboard, path: 'Dashboard', permission: null, dataTour: 'dashboard-link' },
   { name: 'Orchestration', icon: Bot, path: 'OrchestrationHub', permission: 'agent.view' },
+  { name: 'Advanced Orchestration', icon: Activity, path: 'AdvancedOrchestration', permission: 'agent.view' },
   { name: 'Workflow Builder', icon: Zap, path: 'VisualWorkflowBuilder', permission: 'workflow.edit' },
   { name: 'Workflow Studio', icon: Zap, path: 'WorkflowStudio', permission: 'workflow.edit' },
   { name: 'Templates', icon: FileText, path: 'Templates', permission: 'workflow.view', dataTour: 'templates-link' },
