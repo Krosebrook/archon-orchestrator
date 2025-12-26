@@ -1,3 +1,4 @@
+import AdvancedOrchestration from './pages/AdvancedOrchestration';
 import AgentAnalytics from './pages/AgentAnalytics';
 import AgentCollaboration from './pages/AgentCollaboration';
 import AgentDebugger from './pages/AgentDebugger';
@@ -38,11 +39,11 @@ import WorkflowDetail from './pages/WorkflowDetail';
 import WorkflowStudio from './pages/WorkflowStudio';
 import Workflows from './pages/Workflows';
 import agents from './pages/agents';
-import AdvancedOrchestration from './pages/AdvancedOrchestration';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
+    "AdvancedOrchestration": AdvancedOrchestration,
     "AgentAnalytics": AgentAnalytics,
     "AgentCollaboration": AgentCollaboration,
     "AgentDebugger": AgentDebugger,
@@ -83,7 +84,6 @@ export const PAGES = {
     "WorkflowStudio": WorkflowStudio,
     "Workflows": Workflows,
     "agents": agents,
-    "AdvancedOrchestration": AdvancedOrchestration,
 }
 
 export const pagesConfig = {
