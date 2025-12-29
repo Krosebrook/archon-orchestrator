@@ -43,6 +43,7 @@ import WorkflowStudio from './pages/WorkflowStudio';
 import Workflows from './pages/Workflows';
 import agents from './pages/agents';
 import ConnectorMarketplace from './pages/ConnectorMarketplace';
+import ConnectorBuilder from './pages/ConnectorBuilder';
 import __Layout from './Layout.jsx';
 
 
@@ -92,6 +93,7 @@ export const PAGES = {
     "Workflows": Workflows,
     "agents": agents,
     "ConnectorMarketplace": ConnectorMarketplace,
+    "ConnectorBuilder": ConnectorBuilder,
 }
 
 export const pagesConfig = {

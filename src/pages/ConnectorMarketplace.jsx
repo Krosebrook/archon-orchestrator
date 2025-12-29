@@ -4,6 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Link } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 import {
   Plug,
   Search,
@@ -81,10 +83,12 @@ export default function ConnectorMarketplace() {
             Connect Archon with your favorite tools and services
           </p>
         </div>
-        <Button className="bg-purple-600 hover:bg-purple-700">
-          <Plus className="w-4 h-4 mr-2" />
-          Build Custom Connector
-        </Button>
+        <Link to={createPageUrl('ConnectorBuilder')}>
+          <Button className="bg-purple-600 hover:bg-purple-700">
+            <Plus className="w-4 h-4 mr-2" />
+            Build Custom Connector
+          </Button>
+        </Link>
       </div>
 
       {/* Stats */}
