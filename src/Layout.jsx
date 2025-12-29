@@ -83,6 +83,7 @@ const navItems = [
   { name: 'Policies', icon: Shield, path: 'RefactorPolicies', permission: 'policy.view' },
   { name: 'AI Debugger', icon: Bug, path: 'AgentDebugger', permission: 'workflow.edit' },
   { name: 'Agent Training', icon: GraduationCap, path: 'AgentTraining', permission: 'agent.view' },
+  { name: 'RAG & Knowledge', icon: Database, path: 'RAGManagement', permission: 'workflow.view' },
   { name: 'Security Tests', icon: Shield, path: 'SecurityTests', permission: 'audit.view' },
   { name: 'Audit Export', icon: FileText, path: 'AuditExport', permission: 'audit.export' },
   { name: 'Documentation', icon: FileText, path: 'Documentation', permission: null },
