@@ -41,6 +41,7 @@ import WorkflowStudio from './pages/WorkflowStudio';
 import Workflows from './pages/Workflows';
 import agents from './pages/agents';
 import CostManagement from './pages/CostManagement';
+import ComplianceDashboard from './pages/ComplianceDashboard';
 import __Layout from './Layout.jsx';
 
 
@@ -88,6 +89,7 @@ export const PAGES = {
     "Workflows": Workflows,
     "agents": agents,
     "CostManagement": CostManagement,
+    "ComplianceDashboard": ComplianceDashboard,
 }
 
 export const pagesConfig = {
