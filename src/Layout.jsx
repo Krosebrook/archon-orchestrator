@@ -32,6 +32,8 @@ import {
   GraduationCap,
   Activity,
   Database,
+  DollarSign,
+  Plug,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -76,6 +78,7 @@ const navItems = [
   { name: 'Monitoring', icon: Eye, path: 'Monitoring', permission: 'workflow.view' },
   { name: 'Approvals', icon: CheckSquare, path: 'Approvals', permission: 'workflow.run' },
   { name: 'Tool Marketplace', icon: Store, path: 'ToolMarketplace', permission: 'workflow.view' },
+  { name: 'Connectors', icon: Plug, path: 'ConnectorMarketplace', permission: 'workflow.view' },
   { name: 'Skill Marketplace', icon: Zap, path: 'SkillMarketplace', permission: 'workflow.view' },
   { name: 'Skill Management', icon: Sparkles, path: 'SkillManagement', permission: 'workflow.view' },
   { name: 'Integrations', icon: Settings, path: 'IntegrationManagement', permission: 'workflow.edit' },

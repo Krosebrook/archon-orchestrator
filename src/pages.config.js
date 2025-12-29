@@ -10,6 +10,8 @@ import Analytics from './pages/Analytics';
 import Approvals from './pages/Approvals';
 import AuditExport from './pages/AuditExport';
 import CICD from './pages/CICD';
+import ComplianceDashboard from './pages/ComplianceDashboard';
+import CostManagement from './pages/CostManagement';
 import Dashboard from './pages/Dashboard';
 import Documentation from './pages/Documentation';
 import Governance from './pages/Governance';
@@ -40,8 +42,7 @@ import WorkflowDetail from './pages/WorkflowDetail';
 import WorkflowStudio from './pages/WorkflowStudio';
 import Workflows from './pages/Workflows';
 import agents from './pages/agents';
-import CostManagement from './pages/CostManagement';
-import ComplianceDashboard from './pages/ComplianceDashboard';
+import ConnectorMarketplace from './pages/ConnectorMarketplace';
 import __Layout from './Layout.jsx';
 
 
@@ -58,6 +59,8 @@ export const PAGES = {
     "Approvals": Approvals,
     "AuditExport": AuditExport,
     "CICD": CICD,
+    "ComplianceDashboard": ComplianceDashboard,
+    "CostManagement": CostManagement,
     "Dashboard": Dashboard,
     "Documentation": Documentation,
     "Governance": Governance,
@@ -88,8 +91,7 @@ export const PAGES = {
     "WorkflowStudio": WorkflowStudio,
     "Workflows": Workflows,
     "agents": agents,
-    "CostManagement": CostManagement,
-    "ComplianceDashboard": ComplianceDashboard,
+    "ConnectorMarketplace": ConnectorMarketplace,
 }
 
 export const pagesConfig = {
