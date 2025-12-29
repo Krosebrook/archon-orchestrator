@@ -71,6 +71,7 @@ const navItems = [
   { name: 'Runs', icon: PlaySquare, path: 'Runs', permission: 'workflow.view', dataTour: 'runs-link' },
   { name: 'Analytics', icon: BarChart3, path: 'Analytics', permission: 'workflow.view' },
   { name: 'Agent Analytics', icon: Brain, path: 'AgentAnalytics', permission: 'workflow.view' },
+  { name: 'Cost Management', icon: DollarSign, path: 'CostManagement', permission: 'workflow.view' },
   { name: 'Observability', icon: Eye, path: 'Observability', permission: 'workflow.view' },
   { name: 'Monitoring', icon: Eye, path: 'Monitoring', permission: 'workflow.view' },
   { name: 'Approvals', icon: CheckSquare, path: 'Approvals', permission: 'workflow.run' },
