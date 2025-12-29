@@ -16,6 +16,7 @@ import { Play, Copy } from 'lucide-react';
 import { toast } from 'sonner';
 import { createPageUrl } from '@/utils';
 import ReactMarkdown from 'react-markdown';
+import AIInsightsDashboard from '../ai/AIInsightsDashboard';
 
 export default function WorkflowDetailView() {
   const { id } = useParams();
@@ -175,6 +176,10 @@ export default function WorkflowDetailView() {
         resourceName={workflow.name}
         trigger={<div style={{ display: 'none' }} />}
       />
+
+      <div className="mt-6">
+        <AIInsightsDashboard workflowId={workflow.id} />
+      </div>
     </>
   );
 }
