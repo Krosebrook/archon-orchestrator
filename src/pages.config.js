@@ -20,6 +20,7 @@ import KnowledgeBase from './pages/KnowledgeBase';
 import Monitoring from './pages/Monitoring';
 import Observability from './pages/Observability';
 import OrchestrationHub from './pages/OrchestrationHub';
+import RAGManagement from './pages/RAGManagement';
 import RefactorPolicies from './pages/RefactorPolicies';
 import Refactoring from './pages/Refactoring';
 import RunDetail from './pages/RunDetail';
@@ -39,7 +40,6 @@ import WorkflowDetail from './pages/WorkflowDetail';
 import WorkflowStudio from './pages/WorkflowStudio';
 import Workflows from './pages/Workflows';
 import agents from './pages/agents';
-import RAGManagement from './pages/RAGManagement';
 import __Layout from './Layout.jsx';
 
 
@@ -66,6 +66,7 @@ export const PAGES = {
     "Monitoring": Monitoring,
     "Observability": Observability,
     "OrchestrationHub": OrchestrationHub,
+    "RAGManagement": RAGManagement,
     "RefactorPolicies": RefactorPolicies,
     "Refactoring": Refactoring,
     "RunDetail": RunDetail,
@@ -85,7 +86,6 @@ export const PAGES = {
     "WorkflowStudio": WorkflowStudio,
     "Workflows": Workflows,
     "agents": agents,
-    "RAGManagement": RAGManagement,
 }
 
 export const pagesConfig = {
