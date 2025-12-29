@@ -9,6 +9,7 @@ Archon Orchestrator is a comprehensive platform for managing, training, monitori
 - **[Product Requirements Document (PRD.md)](./PRD.md)** - Comprehensive product overview, technical architecture, and feature specifications
 - **[Feature Roadmap (ROADMAP.md)](./ROADMAP.md)** - 6-phase development roadmap with timeline and priorities
 - **[Codebase Audit (AUDIT.md)](./AUDIT.md)** - Technical assessment, recommendations, and analysis
+- **[Recommendations (RECOMMENDATIONS.md)](./RECOMMENDATIONS.md)** - Best practices, reference repositories, and context-engineered prompts for GitHub Agents and Copilot
 
 ## 🚀 Quick Start
 
