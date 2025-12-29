@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/select';
 import { Code, Play, Save, TestTube, Zap } from 'lucide-react';
 import { toast } from 'sonner';
+import ConnectorDevTools from './ConnectorDevTools';
 
 /**
  * Interactive Connector Builder
@@ -332,31 +333,7 @@ async function ${op.id}(client, params = {}) {
             </TabsContent>
 
             <TabsContent value="test">
-              <div className="space-y-4">
-                <Button onClick={testConnector} className="bg-blue-600">
-                  <TestTube className="w-4 h-4 mr-2" />
-                  Run Tests
-                </Button>
-
-                {testResult && (
-                  <div className="space-y-2">
-                    {testResult.status === 'testing' && (
-                      <p className="text-slate-400">Running tests...</p>
-                    )}
-                    {testResult.tests?.map((test, idx) => (
-                      <div key={idx} className="p-3 bg-slate-800 rounded flex items-center justify-between">
-                        <span className="text-white">{test.name}</span>
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs text-slate-500">{test.duration}ms</span>
-                          <Badge className={test.passed ? 'bg-green-900/30 text-green-300' : 'bg-red-900/30 text-red-300'}>
-                            {test.passed ? 'Passed' : 'Failed'}
-                          </Badge>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
+              <ConnectorDevTools connector={connector} />
             </TabsContent>
           </Tabs>
         </CardContent>

@@ -361,12 +361,472 @@ export class RetryHandler {
 }
 
 /**
+ * GraphQL Client
+ * Simplifies GraphQL queries and mutations
+ */
+export class GraphQLClient {
+  constructor(config) {
+    this.endpoint = config.endpoint;
+    this.credentials = config.credentials;
+    this.defaultHeaders = config.headers || {};
+  }
+
+  async query(query, variables = {}, options = {}) {
+    return await this.request(query, variables, options);
+  }
+
+  async mutation(mutation, variables = {}, options = {}) {
+    return await this.request(mutation, variables, options);
+  }
+
+  async request(query, variables, options) {
+    const headers = {
+      'Content-Type': 'application/json',
+      ...this.defaultHeaders,
+      ...this.getAuthHeaders(),
+      ...options.headers,
+    };
+
+    const response = await fetch(this.endpoint, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        query,
+        variables,
+        operationName: options.operationName,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`GraphQL HTTP error: ${response.status}`);
+    }
+
+    const result = await response.json();
+
+    if (result.errors) {
+      throw new Error(`GraphQL errors: ${JSON.stringify(result.errors)}`);
+    }
+
+    return result.data;
+  }
+
+  async batchQuery(queries) {
+    const promises = queries.map(({ query, variables, options }) =>
+      this.query(query, variables, options)
+    );
+    return await Promise.all(promises);
+  }
+
+  getAuthHeaders() {
+    if (this.credentials?.bearer) {
+      return { 'Authorization': `Bearer ${this.credentials.bearer}` };
+    }
+    if (this.credentials?.apiKey) {
+      return { 'X-API-Key': this.credentials.apiKey };
+    }
+    return {};
+  }
+}
+
+/**
+ * Data Transformation Utilities
+ */
+export class DataTransformer {
+  /**
+   * XML to JSON conversion
+   */
+  static xmlToJson(xml) {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(xml, 'text/xml');
+    
+    function parseNode(node) {
+      if (node.nodeType === Node.TEXT_NODE) {
+        return node.textContent.trim() || null;
+      }
+
+      const obj = {};
+      
+      // Attributes
+      if (node.attributes?.length > 0) {
+        obj['@attributes'] = {};
+        for (const attr of node.attributes) {
+          obj['@attributes'][attr.name] = attr.value;
+        }
+      }
+
+      // Child nodes
+      const children = Array.from(node.childNodes);
+      const textContent = children
+        .filter(n => n.nodeType === Node.TEXT_NODE)
+        .map(n => n.textContent.trim())
+        .join('');
+
+      if (textContent && children.length === 1) {
+        return textContent;
+      }
+
+      for (const child of children) {
+        if (child.nodeType === Node.ELEMENT_NODE) {
+          const childData = parseNode(child);
+          
+          if (obj[child.nodeName]) {
+            if (!Array.isArray(obj[child.nodeName])) {
+              obj[child.nodeName] = [obj[child.nodeName]];
+            }
+            obj[child.nodeName].push(childData);
+          } else {
+            obj[child.nodeName] = childData;
+          }
+        }
+      }
+
+      return obj;
+    }
+
+    return parseNode(doc.documentElement);
+  }
+
+  /**
+   * JSON to XML conversion
+   */
+  static jsonToXml(json, rootName = 'root') {
+    function buildXml(obj, name) {
+      if (obj === null || obj === undefined) return '';
+      
+      if (typeof obj !== 'object') {
+        return `<${name}>${escapeXml(String(obj))}</${name}>`;
+      }
+
+      if (Array.isArray(obj)) {
+        return obj.map(item => buildXml(item, name)).join('');
+      }
+
+      const attributes = obj['@attributes'] || {};
+      const attrStr = Object.entries(attributes)
+        .map(([k, v]) => `${k}="${escapeXml(String(v))}"`)
+        .join(' ');
+
+      let inner = '';
+      for (const [key, value] of Object.entries(obj)) {
+        if (key !== '@attributes') {
+          inner += buildXml(value, key);
+        }
+      }
+
+      return `<${name}${attrStr ? ' ' + attrStr : ''}>${inner}</${name}>`;
+    }
+
+    function escapeXml(str) {
+      return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&apos;');
+    }
+
+    return `<?xml version="1.0" encoding="UTF-8"?>${buildXml(json, rootName)}`;
+  }
+
+  /**
+   * CSV to JSON conversion
+   */
+  static csvToJson(csv, options = {}) {
+    const { delimiter = ',', headers = null } = options;
+    const lines = csv.trim().split('\n');
+    const headerLine = headers || lines[0].split(delimiter).map(h => h.trim());
+    const startIndex = headers ? 0 : 1;
+
+    return lines.slice(startIndex).map(line => {
+      const values = line.split(delimiter).map(v => v.trim());
+      const obj = {};
+      headerLine.forEach((header, i) => {
+        obj[header] = values[i] || '';
+      });
+      return obj;
+    });
+  }
+
+  /**
+   * JSON to CSV conversion
+   */
+  static jsonToCsv(json, options = {}) {
+    if (!json.length) return '';
+    
+    const { delimiter = ',', headers = null } = options;
+    const keys = headers || Object.keys(json[0]);
+    
+    const headerRow = keys.join(delimiter);
+    const dataRows = json.map(obj => 
+      keys.map(key => {
+        const value = obj[key] || '';
+        return String(value).includes(delimiter) ? `"${value}"` : value;
+      }).join(delimiter)
+    );
+
+    return [headerRow, ...dataRows].join('\n');
+  }
+
+  /**
+   * Flatten nested object
+   */
+  static flatten(obj, prefix = '') {
+    const result = {};
+    
+    for (const [key, value] of Object.entries(obj)) {
+      const newKey = prefix ? `${prefix}.${key}` : key;
+      
+      if (value && typeof value === 'object' && !Array.isArray(value)) {
+        Object.assign(result, this.flatten(value, newKey));
+      } else {
+        result[newKey] = value;
+      }
+    }
+    
+    return result;
+  }
+
+  /**
+   * Unflatten object
+   */
+  static unflatten(obj) {
+    const result = {};
+    
+    for (const [key, value] of Object.entries(obj)) {
+      const keys = key.split('.');
+      let current = result;
+      
+      for (let i = 0; i < keys.length - 1; i++) {
+        if (!current[keys[i]]) {
+          current[keys[i]] = {};
+        }
+        current = current[keys[i]];
+      }
+      
+      current[keys[keys.length - 1]] = value;
+    }
+    
+    return result;
+  }
+
+  /**
+   * Transform keys (camelCase, snake_case, etc.)
+   */
+  static transformKeys(obj, transformer) {
+    if (Array.isArray(obj)) {
+      return obj.map(item => this.transformKeys(item, transformer));
+    }
+    
+    if (obj && typeof obj === 'object') {
+      const result = {};
+      for (const [key, value] of Object.entries(obj)) {
+        result[transformer(key)] = this.transformKeys(value, transformer);
+      }
+      return result;
+    }
+    
+    return obj;
+  }
+
+  static toCamelCase(str) {
+    return str.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
+  }
+
+  static toSnakeCase(str) {
+    return str.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
+  }
+}
+
+/**
+ * Connector Debugger
+ * Development and debugging utilities
+ */
+export class ConnectorDebugger {
+  constructor(options = {}) {
+    this.logs = [];
+    this.metrics = [];
+    this.verbose = options.verbose || false;
+  }
+
+  log(level, message, data = {}) {
+    const entry = {
+      timestamp: new Date().toISOString(),
+      level,
+      message,
+      data,
+    };
+    
+    this.logs.push(entry);
+    
+    if (this.verbose) {
+      console[level === 'error' ? 'error' : 'log'](`[${level}]`, message, data);
+    }
+  }
+
+  startTimer(label) {
+    const start = performance.now();
+    return () => {
+      const duration = performance.now() - start;
+      this.metrics.push({ label, duration });
+      return duration;
+    };
+  }
+
+  async trace(fn, label) {
+    const stopTimer = this.startTimer(label);
+    this.log('info', `Starting: ${label}`);
+    
+    try {
+      const result = await fn();
+      const duration = stopTimer();
+      this.log('info', `Completed: ${label}`, { duration: `${duration.toFixed(2)}ms` });
+      return result;
+    } catch (error) {
+      stopTimer();
+      this.log('error', `Failed: ${label}`, { error: error.message });
+      throw error;
+    }
+  }
+
+  async inspectRequest(url, options) {
+    this.log('info', 'HTTP Request', {
+      url,
+      method: options.method || 'GET',
+      headers: options.headers,
+      body: options.body,
+    });
+
+    const stopTimer = this.startTimer(`Request: ${url}`);
+    
+    try {
+      const response = await fetch(url, options);
+      const duration = stopTimer();
+      
+      const body = await response.clone().text();
+      
+      this.log('info', 'HTTP Response', {
+        status: response.status,
+        statusText: response.statusText,
+        headers: Object.fromEntries(response.headers.entries()),
+        body: body.slice(0, 500),
+        duration: `${duration.toFixed(2)}ms`,
+      });
+
+      return response;
+    } catch (error) {
+      stopTimer();
+      this.log('error', 'HTTP Error', { error: error.message });
+      throw error;
+    }
+  }
+
+  getLogs(filter = {}) {
+    let filtered = this.logs;
+    
+    if (filter.level) {
+      filtered = filtered.filter(log => log.level === filter.level);
+    }
+    
+    if (filter.since) {
+      filtered = filtered.filter(log => new Date(log.timestamp) >= filter.since);
+    }
+    
+    return filtered;
+  }
+
+  getMetrics() {
+    return {
+      total: this.metrics.length,
+      average: this.metrics.reduce((sum, m) => sum + m.duration, 0) / this.metrics.length,
+      min: Math.min(...this.metrics.map(m => m.duration)),
+      max: Math.max(...this.metrics.map(m => m.duration)),
+      breakdown: this.metrics,
+    };
+  }
+
+  exportReport() {
+    return {
+      summary: {
+        totalLogs: this.logs.length,
+        errors: this.logs.filter(l => l.level === 'error').length,
+        warnings: this.logs.filter(l => l.level === 'warn').length,
+      },
+      metrics: this.getMetrics(),
+      logs: this.logs,
+    };
+  }
+
+  clear() {
+    this.logs = [];
+    this.metrics = [];
+  }
+}
+
+/**
+ * Mock Server for Local Development
+ */
+export class MockServer {
+  constructor() {
+    this.routes = new Map();
+    this.requestLog = [];
+  }
+
+  mock(method, path, handler) {
+    const key = `${method}:${path}`;
+    this.routes.set(key, handler);
+  }
+
+  async handleRequest(method, path, body, headers) {
+    const key = `${method}:${path}`;
+    
+    this.requestLog.push({
+      timestamp: new Date().toISOString(),
+      method,
+      path,
+      body,
+      headers,
+    });
+
+    const handler = this.routes.get(key);
+    
+    if (!handler) {
+      return {
+        status: 404,
+        body: { error: 'Route not found' },
+      };
+    }
+
+    try {
+      const result = await handler({ body, headers, path });
+      return {
+        status: 200,
+        body: result,
+      };
+    } catch (error) {
+      return {
+        status: 500,
+        body: { error: error.message },
+      };
+    }
+  }
+
+  getRequestLog() {
+    return this.requestLog;
+  }
+
+  clearLog() {
+    this.requestLog = [];
+  }
+}
+
+/**
  * Connector Testing Utilities
  */
 export class ConnectorTester {
   constructor(connector) {
     this.connector = connector;
     this.results = [];
+    this.debugger = new ConnectorDebugger({ verbose: true });
   }
 
   async testConnection(credentials) {
@@ -377,7 +837,10 @@ export class ConnectorTester {
     };
 
     try {
-      await this.connector.testConnection(credentials);
+      await this.debugger.trace(
+        () => this.connector.testConnection(credentials),
+        'Connection Test'
+      );
       test.status = 'passed';
     } catch (error) {
       test.status = 'failed';
@@ -385,6 +848,7 @@ export class ConnectorTester {
     }
 
     test.duration = Date.now() - test.startTime;
+    test.logs = this.debugger.getLogs();
     this.results.push(test);
     return test;
   }
@@ -397,7 +861,10 @@ export class ConnectorTester {
     };
 
     try {
-      const result = await this.connector.execute(operation, params, credentials);
+      const result = await this.debugger.trace(
+        () => this.connector.execute(operation, params, credentials),
+        operation
+      );
       test.status = 'passed';
       test.result = result;
     } catch (error) {
@@ -406,6 +873,8 @@ export class ConnectorTester {
     }
 
     test.duration = Date.now() - test.startTime;
+    test.logs = this.debugger.getLogs();
+    test.metrics = this.debugger.getMetrics();
     this.results.push(test);
     return test;
   }
@@ -422,6 +891,7 @@ export class ConnectorTester {
         successRate: (passed / this.results.length * 100).toFixed(2) + '%',
       },
       tests: this.results,
+      debugReport: this.debugger.exportReport(),
     };
   }
 }
