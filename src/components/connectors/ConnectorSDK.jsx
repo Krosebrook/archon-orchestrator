@@ -211,17 +211,133 @@ export class WebhookValidator {
 }
 
 /**
- * API Request Builder
- * Simplifies making authenticated API requests
+ * API Request Builder with Advanced Features
+ * Simplifies making authenticated API requests with OAuth2 refresh, rate limiting, and WebSocket support
  */
 export class APIClient {
   constructor(config) {
     this.baseURL = config.baseURL;
     this.credentials = config.credentials;
     this.defaultHeaders = config.headers || {};
+    this.oauth2Config = config.oauth2 || null;
+    this.tokenRefreshHandler = config.tokenRefreshHandler || null;
+    this.tokenExpiresAt = config.tokenExpiresAt || null;
+    this.refreshPromise = null;
+    
+    // Rate limiting configuration
+    this.rateLimitConfig = config.rateLimit || {
+      strategy: 'token-bucket',
+      maxRequests: 100,
+      windowMs: 60000,
+      backoffPolicy: 'exponential',
+      maxRetries: 3,
+    };
+    this.rateLimiter = this._initializeRateLimiter();
+    
+    // WebSocket connections pool
+    this.wsConnections = new Map();
   }
 
+  /**
+   * Initialize rate limiter based on strategy
+   */
+  _initializeRateLimiter() {
+    if (this.rateLimitConfig.strategy === 'token-bucket') {
+      return new TokenBucketLimiter(
+        this.rateLimitConfig.maxRequests,
+        this.rateLimitConfig.windowMs
+      );
+    } else if (this.rateLimitConfig.strategy === 'sliding-window') {
+      return new SlidingWindowLimiter(
+        this.rateLimitConfig.maxRequests,
+        this.rateLimitConfig.windowMs
+      );
+    }
+    return new TokenBucketLimiter(100, 60000);
+  }
+
+  /**
+   * Check if token needs refresh and refresh if necessary
+   */
+  async _ensureValidToken() {
+    if (!this.oauth2Config || !this.tokenExpiresAt) {
+      return;
+    }
+
+    const bufferTime = 60000; // 1 minute buffer
+    const now = Date.now();
+
+    if (now + bufferTime >= this.tokenExpiresAt) {
+      // Token about to expire or expired
+      if (this.refreshPromise) {
+        // Already refreshing, wait for it
+        return await this.refreshPromise;
+      }
+
+      this.refreshPromise = this._refreshToken();
+      try {
+        await this.refreshPromise;
+      } finally {
+        this.refreshPromise = null;
+      }
+    }
+  }
+
+  /**
+   * Refresh OAuth2 access token
+   */
+  async _refreshToken() {
+    if (!this.oauth2Config || !this.credentials.refreshToken) {
+      throw new Error('OAuth2 configuration or refresh token missing');
+    }
+
+    try {
+      const tokenData = await OAuth2PKCE.refreshToken({
+        tokenUrl: this.oauth2Config.tokenUrl,
+        clientId: this.oauth2Config.clientId,
+        clientSecret: this.oauth2Config.clientSecret,
+        refreshToken: this.credentials.refreshToken,
+      });
+
+      // Update credentials
+      this.credentials.bearer = tokenData.access_token;
+      if (tokenData.refresh_token) {
+        this.credentials.refreshToken = tokenData.refresh_token;
+      }
+
+      // Calculate expiration time
+      if (tokenData.expires_in) {
+        this.tokenExpiresAt = Date.now() + tokenData.expires_in * 1000;
+      }
+
+      // Call custom handler if provided
+      if (this.tokenRefreshHandler) {
+        await this.tokenRefreshHandler(tokenData);
+      }
+
+      return tokenData;
+    } catch (error) {
+      throw new Error(`Token refresh failed: ${error.message}`);
+    }
+  }
+
+  /**
+   * Make HTTP request with automatic token refresh and rate limiting
+   */
   async request(method, path, options = {}) {
+    // Apply backoff policy if retry attempt
+    if (options._retryCount > 0) {
+      await this._applyBackoff(options._retryCount);
+    }
+
+    // Ensure token is valid
+    await this._ensureValidToken();
+
+    // Rate limiting
+    if (!options.skipRateLimit) {
+      await this.rateLimiter.acquire();
+    }
+
     const url = `${this.baseURL}${path}`;
     const headers = {
       ...this.defaultHeaders,
@@ -241,16 +357,175 @@ export class APIClient {
 
     if (options.params) {
       const params = new URLSearchParams(options.params);
-      url += `?${params.toString()}`;
+      const fullUrl = `${url}?${params.toString()}`;
+      const response = await this._executeRequest(fullUrl, config, options);
+      return response;
     }
 
-    const response = await fetch(url, config);
-    
-    if (!response.ok) {
-      throw new Error(`API error: ${response.status} ${response.statusText}`);
+    const response = await this._executeRequest(url, config, options);
+    return response;
+  }
+
+  /**
+   * Execute request with retry logic
+   */
+  async _executeRequest(url, config, options) {
+    try {
+      const response = await fetch(url, config);
+
+      // Handle rate limit responses
+      if (response.status === 429) {
+        const retryAfter = response.headers.get('Retry-After');
+        const retryCount = options._retryCount || 0;
+
+        if (retryCount < this.rateLimitConfig.maxRetries) {
+          const waitTime = retryAfter ? parseInt(retryAfter) * 1000 : this._calculateBackoff(retryCount);
+          await new Promise(resolve => setTimeout(resolve, waitTime));
+          return await this.request(config.method, url.replace(this.baseURL, ''), {
+            ...options,
+            _retryCount: retryCount + 1,
+          });
+        }
+        throw new Error('Rate limit exceeded, max retries reached');
+      }
+
+      // Handle token expiration
+      if (response.status === 401 && this.oauth2Config) {
+        const retryCount = options._retryCount || 0;
+        if (retryCount === 0) {
+          await this._refreshToken();
+          return await this.request(config.method, url.replace(this.baseURL, ''), {
+            ...options,
+            _retryCount: 1,
+          });
+        }
+      }
+
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status} ${response.statusText}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      // Network errors - retry if configured
+      const retryCount = options._retryCount || 0;
+      if (retryCount < this.rateLimitConfig.maxRetries && this._isRetryableError(error)) {
+        return await this.request(config.method, url.replace(this.baseURL, ''), {
+          ...options,
+          _retryCount: retryCount + 1,
+        });
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * Check if error is retryable
+   */
+  _isRetryableError(error) {
+    return error.message.includes('network') || 
+           error.message.includes('timeout') ||
+           error.message.includes('ECONNRESET');
+  }
+
+  /**
+   * Apply backoff policy
+   */
+  async _applyBackoff(retryCount) {
+    const { backoffPolicy } = this.rateLimitConfig;
+    let delay = 0;
+
+    if (backoffPolicy === 'exponential') {
+      delay = Math.min(1000 * Math.pow(2, retryCount), 30000);
+    } else if (backoffPolicy === 'linear') {
+      delay = 1000 * retryCount;
+    } else if (backoffPolicy === 'fibonacci') {
+      delay = this._fibonacci(retryCount + 1) * 1000;
     }
 
-    return await response.json();
+    // Add jitter
+    delay = delay * (0.5 + Math.random() * 0.5);
+
+    await new Promise(resolve => setTimeout(resolve, delay));
+  }
+
+  /**
+   * Calculate Fibonacci number for backoff
+   */
+  _fibonacci(n) {
+    if (n <= 1) return n;
+    let a = 0, b = 1;
+    for (let i = 2; i <= n; i++) {
+      [a, b] = [b, a + b];
+    }
+    return b;
+  }
+
+  /**
+   * Calculate exponential backoff
+   */
+  _calculateBackoff(retryCount) {
+    return Math.min(1000 * Math.pow(2, retryCount), 30000) * (0.5 + Math.random() * 0.5);
+  }
+
+  /**
+   * Create WebSocket connection for real-time streaming
+   */
+  createWebSocket(path, options = {}) {
+    const wsUrl = this.baseURL.replace(/^http/, 'ws') + path;
+    const connectionId = options.id || `ws_${Date.now()}`;
+
+    // Check if connection already exists
+    if (this.wsConnections.has(connectionId)) {
+      return this.wsConnections.get(connectionId);
+    }
+
+    const ws = new WebSocket(wsUrl);
+    const connection = new WebSocketConnection(ws, {
+      ...options,
+      id: connectionId,
+      autoReconnect: options.autoReconnect !== false,
+      reconnectInterval: options.reconnectInterval || 5000,
+      maxReconnectAttempts: options.maxReconnectAttempts || 5,
+      auth: this.credentials,
+    });
+
+    this.wsConnections.set(connectionId, connection);
+
+    // Cleanup on close
+    connection.on('close', () => {
+      this.wsConnections.delete(connectionId);
+    });
+
+    return connection;
+  }
+
+  /**
+   * Get existing WebSocket connection
+   */
+  getWebSocket(connectionId) {
+    return this.wsConnections.get(connectionId);
+  }
+
+  /**
+   * Close WebSocket connection
+   */
+  closeWebSocket(connectionId) {
+    const connection = this.wsConnections.get(connectionId);
+    if (connection) {
+      connection.close();
+      this.wsConnections.delete(connectionId);
+    }
+  }
+
+  /**
+   * Close all WebSocket connections
+   */
+  closeAllWebSockets() {
+    for (const connection of this.wsConnections.values()) {
+      connection.close();
+    }
+    this.wsConnections.clear();
   }
 
   getAuthHeaders() {
@@ -284,6 +559,218 @@ export class APIClient {
 
   delete(path, options) {
     return this.request('DELETE', path, options);
+  }
+}
+
+/**
+ * WebSocket Connection Wrapper with Auto-Reconnect
+ */
+export class WebSocketConnection {
+  constructor(ws, options = {}) {
+    this.ws = ws;
+    this.options = options;
+    this.eventHandlers = new Map();
+    this.reconnectAttempts = 0;
+    this.isManualClose = false;
+    this.pingInterval = null;
+
+    this._setupEventHandlers();
+    this._startHeartbeat();
+  }
+
+  _setupEventHandlers() {
+    this.ws.onopen = (event) => {
+      this.reconnectAttempts = 0;
+      this._emit('open', event);
+
+      // Send authentication if provided
+      if (this.options.auth) {
+        this.send({ type: 'auth', token: this.options.auth.bearer || this.options.auth.apiKey });
+      }
+    };
+
+    this.ws.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        this._emit('message', data);
+      } catch (error) {
+        this._emit('message', event.data);
+      }
+    };
+
+    this.ws.onerror = (event) => {
+      this._emit('error', event);
+    };
+
+    this.ws.onclose = (event) => {
+      this._stopHeartbeat();
+      this._emit('close', event);
+
+      // Auto-reconnect if not manual close
+      if (!this.isManualClose && this.options.autoReconnect) {
+        this._attemptReconnect();
+      }
+    };
+  }
+
+  _startHeartbeat() {
+    if (this.options.heartbeatInterval) {
+      this.pingInterval = setInterval(() => {
+        if (this.ws.readyState === WebSocket.OPEN) {
+          this.send({ type: 'ping' });
+        }
+      }, this.options.heartbeatInterval);
+    }
+  }
+
+  _stopHeartbeat() {
+    if (this.pingInterval) {
+      clearInterval(this.pingInterval);
+      this.pingInterval = null;
+    }
+  }
+
+  _attemptReconnect() {
+    if (this.reconnectAttempts >= this.options.maxReconnectAttempts) {
+      this._emit('max-reconnect-reached');
+      return;
+    }
+
+    this.reconnectAttempts++;
+    const delay = this.options.reconnectInterval * Math.pow(2, this.reconnectAttempts - 1);
+
+    setTimeout(() => {
+      this._emit('reconnecting', { attempt: this.reconnectAttempts });
+      this.ws = new WebSocket(this.ws.url);
+      this._setupEventHandlers();
+      this._startHeartbeat();
+    }, delay);
+  }
+
+  _emit(event, data) {
+    const handlers = this.eventHandlers.get(event);
+    if (handlers) {
+      handlers.forEach(handler => handler(data));
+    }
+  }
+
+  on(event, handler) {
+    if (!this.eventHandlers.has(event)) {
+      this.eventHandlers.set(event, []);
+    }
+    this.eventHandlers.get(event).push(handler);
+    return this;
+  }
+
+  off(event, handler) {
+    const handlers = this.eventHandlers.get(event);
+    if (handlers) {
+      const index = handlers.indexOf(handler);
+      if (index > -1) {
+        handlers.splice(index, 1);
+      }
+    }
+    return this;
+  }
+
+  send(data) {
+    if (this.ws.readyState === WebSocket.OPEN) {
+      const message = typeof data === 'string' ? data : JSON.stringify(data);
+      this.ws.send(message);
+    } else {
+      throw new Error('WebSocket is not open');
+    }
+  }
+
+  close() {
+    this.isManualClose = true;
+    this._stopHeartbeat();
+    this.ws.close();
+  }
+
+  get readyState() {
+    return this.ws.readyState;
+  }
+
+  get isOpen() {
+    return this.ws.readyState === WebSocket.OPEN;
+  }
+}
+
+/**
+ * Token Bucket Rate Limiter
+ */
+export class TokenBucketLimiter {
+  constructor(maxRequests, windowMs) {
+    this.capacity = maxRequests;
+    this.tokens = maxRequests;
+    this.windowMs = windowMs;
+    this.lastRefill = Date.now();
+    this.refillRate = maxRequests / windowMs;
+  }
+
+  async acquire(tokens = 1) {
+    this._refill();
+
+    while (this.tokens < tokens) {
+      const waitTime = (tokens - this.tokens) / this.refillRate;
+      await new Promise(resolve => setTimeout(resolve, waitTime));
+      this._refill();
+    }
+
+    this.tokens -= tokens;
+  }
+
+  _refill() {
+    const now = Date.now();
+    const timePassed = now - this.lastRefill;
+    const tokensToAdd = timePassed * this.refillRate;
+
+    this.tokens = Math.min(this.capacity, this.tokens + tokensToAdd);
+    this.lastRefill = now;
+  }
+
+  getAvailableTokens() {
+    this._refill();
+    return this.tokens;
+  }
+}
+
+/**
+ * Sliding Window Rate Limiter
+ */
+export class SlidingWindowLimiter {
+  constructor(maxRequests, windowMs) {
+    this.maxRequests = maxRequests;
+    this.windowMs = windowMs;
+    this.requests = [];
+  }
+
+  async acquire() {
+    this._cleanOldRequests();
+
+    if (this.requests.length >= this.maxRequests) {
+      const oldestRequest = this.requests[0];
+      const waitTime = this.windowMs - (Date.now() - oldestRequest);
+      
+      if (waitTime > 0) {
+        await new Promise(resolve => setTimeout(resolve, waitTime));
+        this._cleanOldRequests();
+      }
+    }
+
+    this.requests.push(Date.now());
+  }
+
+  _cleanOldRequests() {
+    const now = Date.now();
+    const cutoff = now - this.windowMs;
+    this.requests = this.requests.filter(timestamp => timestamp > cutoff);
+  }
+
+  getRequestCount() {
+    this._cleanOldRequests();
+    return this.requests.length;
   }
 }
 
