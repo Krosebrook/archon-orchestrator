@@ -481,7 +481,7 @@ Deno.serve(async (req) => {
 ### This Repository: `Krosebrook/archon-orchestrator`
 
 **Tech Stack:**
-- **Frontend**: React 18 + Vite 6 + TypeScript 5.8 + Tailwind CSS + Radix UI
+- **Frontend**: React 18.2 + Vite 6.1 + TypeScript 5.8 + Tailwind CSS 3.4 + Radix UI
 - **Backend**: Base44 SDK (50+ serverless Deno/TypeScript functions)
 - **State**: React Context + TanStack Query
 - **Routing**: React Router 6
@@ -493,11 +493,13 @@ Deno.serve(async (req) => {
 - **Styling**: Tailwind utility classes with custom theme
 - **Components**: Radix UI primitives + custom wrappers in `src/components/ui/`
 - **Data Fetching**: TanStack Query with Base44 SDK
+- **SDK Versions**: Backend functions use varying Base44 SDK versions (0.8.4-0.8.6 primarily)
 
 **Known Constraints:**
 - ⚠️ **Testing infrastructure being developed**: Vitest planned, manual testing currently required
 - ⚠️ **Frontend TypeScript migration in progress**: Some files are .jsx, migration to .tsx ongoing
 - ⚠️ **Build may have known issues**: See KNOWN_ISSUES.md for details
+- ⚠️ **SDK version variance**: Backend functions use 0.8.4-0.8.6 (package.json specifies ^0.8.3)
 - ⚠️ **100+ ESLint warnings**: Ongoing cleanup, run `npm run lint:fix` for auto-fixes
 
 **Build Commands:**
