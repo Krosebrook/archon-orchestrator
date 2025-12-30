@@ -413,7 +413,9 @@ npm run dev
 
 **Patterns to Follow:**
 ```typescript
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.3';
+// Note: Use version matching package.json (^0.8.3 allows 0.8.3+)
+// Existing functions use 0.8.4+ - match the pattern in similar functions
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
 
 Deno.serve(async (req) => {
   const trace_id = crypto.randomUUID();
