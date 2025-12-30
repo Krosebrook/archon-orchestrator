@@ -8,20 +8,40 @@ Thank you for your interest in contributing to Archon Orchestrator! This documen
 
 1. [Code of Conduct](#code-of-conduct)
 2. [Getting Started](#getting-started)
-3. [Development Workflow](#development-workflow)
-4. [Coding Standards](#coding-standards)
-5. [Testing Requirements](#testing-requirements)
-6. [Documentation](#documentation)
+3. [Development Setup](#development-setup)
+4. [How to Contribute](#how-to-contribute)
+5. [Coding Standards](#coding-standards)
+6. [Commit Guidelines](#commit-guidelines)
 7. [Pull Request Process](#pull-request-process)
-8. [Reporting Bugs](#reporting-bugs)
-9. [Feature Requests](#feature-requests)
+8. [Testing Guidelines](#testing-guidelines)
+9. [Documentation](#documentation)
 10. [Community](#community)
 
 ---
 
 ## Code of Conduct
 
-This project adheres to a Code of Conduct that all contributors are expected to follow. Please read [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md) before contributing.
+### Our Pledge
+
+We are committed to providing a welcoming and inclusive environment for all contributors. We pledge to:
+
+- Be respectful and considerate
+- Welcome diverse perspectives and experiences
+- Accept constructive criticism gracefully
+- Focus on what's best for the community
+- Show empathy towards other community members
+
+### Unacceptable Behavior
+
+- Harassment, trolling, or discriminatory language
+- Personal attacks or insults
+- Publishing private information without permission
+- Spam or excessive self-promotion
+- Any conduct that could be considered inappropriate
+
+### Reporting
+
+If you experience or witness unacceptable behavior, please report it to [Add contact email].
 
 ---
 
@@ -29,315 +49,323 @@ This project adheres to a Code of Conduct that all contributors are expected to 
 
 ### Prerequisites
 
-- **Node.js** 20+ and npm
-- **Deno** 1.40+ (for backend functions)
+Before contributing, ensure you have:
+
+- **Node.js** 18+ and npm installed
+- **Deno** 1.40+ installed (for backend functions)
 - **Git** for version control
-- **Base44 Account** for SDK access
+- A **Base44 account** for testing
+- Familiarity with React, TypeScript, and modern web development
 
-### Setting Up Development Environment
+### Finding Issues to Work On
 
-1. **Fork the repository**
-   ```bash
-   # Click "Fork" on GitHub, then:
-   git clone https://github.com/YOUR_USERNAME/archon-orchestrator.git
-   cd archon-orchestrator
-   ```
+1. Check the [Issues](https://github.com/Krosebrook/archon-orchestrator/issues) page
+2. Look for issues labeled:
+   - `good first issue` - Great for newcomers
+   - `help wanted` - Community contributions welcome
+   - `bug` - Bug fixes needed
+   - `enhancement` - Feature requests
+   - `documentation` - Documentation improvements
 
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Set up environment variables**
-   ```bash
-   cp .env.example .env
-   # Edit .env with your Base44 credentials
-   ```
-
-4. **Run development server**
-   ```bash
-   npm run dev
-   ```
-
-5. **Verify setup**
-   ```bash
-   # Open http://localhost:5173
-   # You should see the Archon Orchestrator dashboard
-   ```
+3. Comment on the issue to express interest and get assigned
 
 ---
 
-## Development Workflow
+## Development Setup
 
-### Branching Strategy
-
-We follow a modified Git Flow:
-
-- `main` - Production-ready code
-- `develop` - Integration branch for features
-- `feature/*` - New features
-- `bugfix/*` - Bug fixes
-- `hotfix/*` - Urgent production fixes
-
-### Creating a Feature Branch
+### 1. Fork and Clone
 
 ```bash
-# Update develop
-git checkout develop
-git pull origin develop
+# Fork the repository on GitHub, then clone your fork
+git clone https://github.com/YOUR_USERNAME/archon-orchestrator.git
+cd archon-orchestrator
 
-# Create feature branch
-git checkout -b feature/your-feature-name
-
-# Make changes and commit
-git add .
-git commit -m "Add: description of changes"
-
-# Push to your fork
-git push origin feature/your-feature-name
+# Add upstream remote
+git remote add upstream https://github.com/Krosebrook/archon-orchestrator.git
 ```
 
-### Commit Message Guidelines
+### 2. Install Dependencies
 
-Follow [Conventional Commits](https://www.conventionalcommits.org/):
-
-```
-<type>: <description>
-
-[optional body]
-
-[optional footer]
-```
-
-**Types:**
-- `feat`: New feature
-- `fix`: Bug fix
-- `docs`: Documentation changes
-- `style`: Code style changes (formatting)
-- `refactor`: Code refactoring
-- `test`: Adding or updating tests
-- `chore`: Build process or auxiliary tool changes
-
-**Examples:**
 ```bash
-feat: add agent collaboration feature
-fix: resolve memory leak in workflow execution
-docs: update API documentation for training endpoints
-test: add unit tests for agent creation
-refactor: improve error handling in backend functions
+# Install frontend dependencies
+npm install
+
+# Verify Deno installation
+deno --version
 ```
+
+### 3. Configure Environment
+
+```bash
+# Create .env file
+cp .env.example .env
+
+# Edit .env with your Base44 credentials
+# VITE_BASE44_PROJECT_ID=your_project_id
+# VITE_BASE44_API_URL=https://api.base44.com
+```
+
+### 4. Start Development Server
+
+```bash
+# Start frontend dev server
+npm run dev
+
+# Open http://localhost:5173
+```
+
+### 5. Verify Setup
+
+```bash
+# Run linting
+npm run lint
+
+# Build project
+npm run build
+```
+
+---
+
+## How to Contribute
+
+### Types of Contributions
+
+1. **Bug Fixes** - Fix reported bugs or issues you discover
+2. **Features** - Implement new features from the roadmap or your ideas
+3. **Documentation** - Improve docs, add examples, fix typos
+4. **Tests** - Add test coverage (we need this!)
+5. **Performance** - Optimize code, reduce bundle size
+6. **UI/UX** - Improve user interface and experience
+7. **Refactoring** - Code quality improvements
+
+### Contribution Workflow
+
+1. **Create a branch**
+   ```bash
+   git checkout -b feature/your-feature-name
+   # or
+   git checkout -b fix/bug-description
+   ```
+
+2. **Make your changes**
+   - Write clean, well-documented code
+   - Follow coding standards (see below)
+   - Add tests if applicable
+   - Update documentation
+
+3. **Test your changes**
+   ```bash
+   npm run lint
+   npm run build
+   # Run any tests
+   ```
+
+4. **Commit your changes**
+   ```bash
+   git add .
+   git commit -m "feat: add amazing feature"
+   # Follow commit guidelines (see below)
+   ```
+
+5. **Keep your branch updated**
+   ```bash
+   git fetch upstream
+   git rebase upstream/main
+   ```
+
+6. **Push to your fork**
+   ```bash
+   git push origin feature/your-feature-name
+   ```
+
+7. **Create Pull Request**
+   - Go to GitHub and create a PR
+   - Fill out the PR template completely
+   - Link related issues
+   - Request review
 
 ---
 
 ## Coding Standards
 
-### Frontend (React/JavaScript)
+### General Principles
 
-**File Structure:**
-```
-src/
-├── components/
-│   ├── ui/              # Reusable UI components
-│   └── [feature]/       # Feature-specific components
-├── pages/               # Page components
-├── hooks/               # Custom React hooks
-├── lib/                 # Utilities and SDK setup
-├── types/               # TypeScript type definitions
-└── utils/               # Helper functions
+1. **Keep it Simple** - Prefer simple, readable code over clever solutions
+2. **DRY (Don't Repeat Yourself)** - Extract reusable logic
+3. **Single Responsibility** - Each function/component should do one thing well
+4. **Consistent Naming** - Use clear, descriptive names
+5. **Comments** - Comment complex logic, not obvious code
+
+### JavaScript/TypeScript Style
+
+```javascript
+// ✅ Good
+function calculateTotalCost(items) {
+  return items.reduce((sum, item) => sum + item.price, 0);
+}
+
+// ❌ Bad
+function calc(i) {
+  let s = 0;
+  for (let x of i) s += x.price;
+  return s;
+}
 ```
 
-**Component Guidelines:**
+### React Component Style
 
 ```jsx
-// Use functional components with hooks
-import React from 'react';
+// ✅ Good - Functional component with clear structure
+import { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
 
-const MyComponent = ({ prop1, prop2 }) => {
-  // Component logic
+export function AgentCard({ agent, onExecute }) {
+  const [isExecuting, setIsExecuting] = useState(false);
+  
+  const handleExecute = async () => {
+    setIsExecuting(true);
+    try {
+      await onExecute(agent.id);
+    } finally {
+      setIsExecuting(false);
+    }
+  };
   
   return (
-    <div className="container">
-      {/* JSX */}
+    <div className="p-4 border rounded">
+      <h3 className="text-lg font-semibold">{agent.name}</h3>
+      <p className="text-sm text-muted-foreground">{agent.description}</p>
+      <Button onClick={handleExecute} disabled={isExecuting}>
+        {isExecuting ? 'Executing...' : 'Execute'}
+      </Button>
     </div>
   );
+}
+
+// ❌ Bad - Unclear, inconsistent
+export default ({ a, e }) => {
+  const [x, setX] = useState(false);
+  return <div onClick={() => { setX(true); e(a.id); }}>
+    <h3>{a.name}</h3>
+  </div>;
 };
-
-export default MyComponent;
 ```
 
-**Styling:**
-- Use Tailwind CSS for styling
-- Follow existing patterns for consistency
-- Keep responsive design in mind (mobile-first)
+### Naming Conventions
 
-**State Management:**
-- Use React Query for server state
-- Use Context API for shared UI state
-- Keep state as local as possible
+| Type | Convention | Example |
+|------|-----------|---------|
+| Components | PascalCase | `AgentCard`, `WorkflowBuilder` |
+| Functions | camelCase | `executeAgent`, `calculateCost` |
+| Variables | camelCase | `isLoading`, `totalCost` |
+| Constants | UPPER_SNAKE_CASE | `MAX_RETRIES`, `API_URL` |
+| Files (Components) | PascalCase | `AgentCard.jsx` |
+| Files (Utils) | camelCase | `apiClient.js`, `validation.js` |
+| CSS Classes | kebab-case | `agent-card`, `workflow-node` |
 
-### Backend (Deno/TypeScript)
+### File Organization
 
-**File Structure:**
 ```
-functions/
-├── [functionName].ts    # Individual function files
-└── connectors/          # External service connectors
-```
-
-**Function Template:**
-
-```typescript
-import { sdk } from '@base44/sdk';
-
-interface Input {
-  // Define input type
-}
-
-interface Output {
-  // Define output type
-}
-
-export default async function functionName(input: Input): Promise<Output> {
-  try {
-    // Validate input
-    if (!input.required Field) {
-      throw new Error('requiredField is required');
-    }
-    
-    // Function logic
-    const result = await performOperation(input);
-    
-    // Return output
-    return {
-      success: true,
-      data: result
-    };
-  } catch (error) {
-    console.error('Error in functionName:', error);
-    return {
-      success: false,
-      error: error.message
-    };
-  }
-}
+src/components/feature-name/
+├── FeatureComponent.jsx      # Main component
+├── FeatureComponent.css       # Styles (if needed)
+├── FeatureComponent.test.jsx  # Tests
+├── useFeatureHook.js          # Custom hooks
+├── featureUtils.js            # Utility functions
+└── index.js                   # Public exports
 ```
 
-**Error Handling:**
-- Always use try-catch blocks
-- Log errors with context
-- Return descriptive error messages
-- Don't expose sensitive information in errors
+### Import Order
+
+```javascript
+// 1. React imports
+import { useState, useEffect } from 'react';
+
+// 2. Third-party libraries
+import { useQuery } from '@tanstack/react-query';
+
+// 3. UI components
+import { Button } from '@/components/ui/button';
+import { Dialog } from '@/components/ui/dialog';
+
+// 4. Internal components
+import { AgentCard } from '@/components/dashboard/AgentCard';
+
+// 5. Utilities and helpers
+import { formatDate } from '@/utils/date';
+import { validateAgent } from '@/utils/validation';
+
+// 6. Styles
+import './styles.css';
+```
 
 ---
 
-## Testing Requirements
+## Commit Guidelines
 
-### Writing Tests
+We follow [Conventional Commits](https://www.conventionalcommits.org/) for clear, semantic commit messages.
 
-**Unit Tests:**
-```javascript
-// src/__tests__/unit/agentUtils.test.js
-import { describe, it, expect } from 'vitest';
-import { validateAgentConfig } from '@/utils/agentUtils';
+### Commit Message Format
 
-describe('validateAgentConfig', () => {
-  it('should validate valid config', () => {
-    const config = {
-      name: 'Test Agent',
-      type: 'task'
-    };
-    expect(validateAgentConfig(config)).toBe(true);
-  });
-  
-  it('should reject invalid config', () => {
-    const config = {};
-    expect(() => validateAgentConfig(config)).toThrow();
-  });
-});
+```
+<type>(<scope>): <subject>
+
+<body>
+
+<footer>
 ```
 
-**Component Tests:**
-```javascript
-// src/__tests__/integration/AgentCard.test.jsx
-import { render, screen } from '@testing-library/react';
-import { AgentCard } from '@/components/agents/AgentCard';
+### Types
 
-describe('AgentCard', () => {
-  it('should render agent information', () => {
-    const agent = {
-      name: 'Test Agent',
-      status: 'active'
-    };
-    
-    render(<AgentCard agent={agent} />);
-    
-    expect(screen.getByText('Test Agent')).toBeInTheDocument();
-    expect(screen.getByText('active')).toBeInTheDocument();
-  });
-});
-```
+- **feat**: New feature
+- **fix**: Bug fix
+- **docs**: Documentation changes
+- **style**: Code style changes (formatting, no logic change)
+- **refactor**: Code refactoring (no feature change)
+- **perf**: Performance improvements
+- **test**: Adding or updating tests
+- **chore**: Build process, dependencies, tooling
+- **ci**: CI/CD changes
 
-### Running Tests
+### Examples
 
 ```bash
-# Run all tests
-npm test
+# Feature
+feat(agents): add agent cloning functionality
 
-# Run with coverage
-npm run test:coverage
+Allows users to duplicate existing agents with new names.
+Includes validation to prevent name conflicts.
 
-# Run specific test file
-npm test agentUtils.test.js
+Closes #123
 
-# Watch mode
-npm run test:watch
+# Bug fix
+fix(workflow): resolve execution timeout issue
+
+Increased timeout from 30s to 60s for complex workflows.
+Added better error messaging for timeout scenarios.
+
+Fixes #456
+
+# Documentation
+docs(readme): update installation instructions
+
+Added prerequisites section and troubleshooting guide.
+
+# Refactoring
+refactor(api): extract common validation logic
+
+Moved validation to utils/validation.js to reduce duplication
+across multiple API client functions.
 ```
 
-### Coverage Requirements
+### Commit Best Practices
 
-- **Minimum**: 60% overall coverage
-- **Target**: 80% coverage
-- **Critical paths**: 100% coverage
-
----
-
-## Documentation
-
-### Documentation Standards
-
-1. **Code Comments:**
-   - Use JSDoc for functions and classes
-   - Comment complex logic
-   - Keep comments up-to-date
-
-```javascript
-/**
- * Validates agent configuration
- * @param {Object} config - Agent configuration object
- * @param {string} config.name - Agent name
- * @param {string} config.type - Agent type
- * @returns {boolean} True if valid
- * @throws {Error} If configuration is invalid
- */
-function validateAgentConfig(config) {
-  // Implementation
-}
-```
-
-2. **README Updates:**
-   - Update README.md if adding new features
-   - Keep installation instructions current
-   - Document new environment variables
-
-3. **API Documentation:**
-   - Document new API endpoints
-   - Include request/response examples
-   - Note any breaking changes
-
-4. **Runbooks:**
-   - Update operational runbooks for new features
-   - Add troubleshooting steps
-   - Document common issues
+1. **Use present tense** - "add feature" not "added feature"
+2. **Be concise** - Subject line under 72 characters
+3. **Explain why** - Body explains reasoning, not what (code shows what)
+4. **Reference issues** - Use "Closes #123" or "Fixes #456"
+5. **One logical change** - One commit per logical change
+6. **Test before committing** - Ensure code works
 
 ---
 
@@ -345,211 +373,203 @@ function validateAgentConfig(config) {
 
 ### Before Submitting
 
-1. **Update your branch**
-   ```bash
-   git checkout develop
-   git pull origin develop
-   git checkout your-feature-branch
-   git rebase develop
-   ```
+- [ ] Code follows style guidelines
+- [ ] Self-review completed
+- [ ] Comments added for complex logic
+- [ ] Documentation updated
+- [ ] No unnecessary files included
+- [ ] All tests pass (when tests exist)
+- [ ] Linting passes (`npm run lint`)
+- [ ] Build succeeds (`npm run build`)
 
-2. **Run tests**
-   ```bash
-   npm test
-   npm run lint
-   npm run typecheck  # If using TypeScript
-   ```
+### PR Template
 
-3. **Update documentation**
-   - Update CHANGELOG.md
-   - Update relevant docs
-   - Add JSDoc comments
+```markdown
+## Description
+Brief description of changes
 
-4. **Self-review**
-   - Review your own code
-   - Check for console.logs or debug code
-   - Verify no sensitive data
+## Type of Change
+- [ ] Bug fix
+- [ ] New feature
+- [ ] Documentation
+- [ ] Refactoring
+- [ ] Performance improvement
 
-### Creating a Pull Request
+## Related Issues
+Closes #123
 
-1. **Push your branch**
-   ```bash
-   git push origin your-feature-branch
-   ```
+## Changes Made
+- Added X feature
+- Fixed Y bug
+- Updated Z documentation
 
-2. **Open PR on GitHub**
-   - Go to the repository
-   - Click "New Pull Request"
-   - Select your branch
-   - Fill out PR template
+## Testing
+How to test these changes:
+1. Step 1
+2. Step 2
+3. Expected result
 
-3. **PR Title Format**
-   ```
-   [Type] Short description
-   
-   Examples:
-   [Feature] Add agent collaboration
-   [Fix] Resolve workflow timeout issue
-   [Docs] Update API documentation
-   ```
+## Screenshots (if applicable)
+[Add screenshots for UI changes]
 
-4. **PR Description Template**
-   ```markdown
-   ## Description
-   Brief description of changes
-   
-   ## Type of Change
-   - [ ] Bug fix
-   - [ ] New feature
-   - [ ] Breaking change
-   - [ ] Documentation update
-   
-   ## Testing
-   - [ ] Unit tests added/updated
-   - [ ] Integration tests added/updated
-   - [ ] Manual testing completed
-   
-   ## Checklist
-   - [ ] Code follows style guidelines
-   - [ ] Self-review completed
-   - [ ] Documentation updated
-   - [ ] Tests pass
-   - [ ] No new warnings
-   
-   ## Screenshots (if applicable)
-   
-   ## Related Issues
-   Closes #123
-   ```
+## Checklist
+- [ ] Code follows style guidelines
+- [ ] Self-review completed
+- [ ] Documentation updated
+- [ ] Tests added/updated
+- [ ] All checks passing
+```
 
 ### Review Process
 
-1. **Automated Checks**
-   - Tests must pass
-   - Lint must pass
-   - No security vulnerabilities
+1. **Automated Checks** - Linting, build, tests must pass
+2. **Code Review** - At least one maintainer approval required
+3. **Testing** - Reviewer tests changes manually if needed
+4. **Feedback** - Address review comments and update PR
+5. **Approval** - Once approved, maintainer will merge
 
-2. **Code Review**
-   - At least one approval required
-   - Address all review comments
-   - Be open to feedback
+### After Your PR is Merged
 
-3. **Merge**
-   - Squash and merge (default)
-   - Delete branch after merge
+1. **Delete your branch**
+   ```bash
+   git branch -d feature/your-feature-name
+   git push origin --delete feature/your-feature-name
+   ```
+
+2. **Update your fork**
+   ```bash
+   git checkout main
+   git pull upstream main
+   git push origin main
+   ```
+
+3. **Celebrate!** 🎉 Your contribution is now part of Archon!
 
 ---
 
-## Reporting Bugs
+## Testing Guidelines
 
-### Before Reporting
+### Writing Tests
 
-1. **Search existing issues**
-   - Check if already reported
-   - Add to existing issue if found
+Currently, the project is setting up testing infrastructure. When tests are established:
 
-2. **Verify it's a bug**
-   - Try to reproduce
-   - Check documentation
-   - Test on latest version
+```javascript
+// Example test structure (Jest + React Testing Library)
+import { render, screen, fireEvent } from '@testing-library/react';
+import { AgentCard } from './AgentCard';
 
-### Bug Report Template
-
-```markdown
-**Describe the bug**
-A clear and concise description
-
-**To Reproduce**
-Steps to reproduce:
-1. Go to '...'
-2. Click on '...'
-3. See error
-
-**Expected behavior**
-What you expected to happen
-
-**Screenshots**
-If applicable
-
-**Environment:**
-- OS: [e.g., macOS 13.0]
-- Browser: [e.g., Chrome 120]
-- Version: [e.g., 0.9.0]
-
-**Additional context**
-Any other relevant information
+describe('AgentCard', () => {
+  const mockAgent = {
+    id: '123',
+    name: 'Test Agent',
+    description: 'A test agent'
+  };
+  
+  it('renders agent information', () => {
+    render(<AgentCard agent={mockAgent} onExecute={jest.fn()} />);
+    
+    expect(screen.getByText('Test Agent')).toBeInTheDocument();
+    expect(screen.getByText('A test agent')).toBeInTheDocument();
+  });
+  
+  it('calls onExecute when button clicked', () => {
+    const mockExecute = jest.fn();
+    render(<AgentCard agent={mockAgent} onExecute={mockExecute} />);
+    
+    fireEvent.click(screen.getByText('Execute'));
+    
+    expect(mockExecute).toHaveBeenCalledWith('123');
+  });
+});
 ```
 
+### Testing Priorities
+
+1. **Critical paths** - Agent creation, workflow execution
+2. **User interactions** - Form submissions, button clicks
+3. **Error handling** - Network errors, validation errors
+4. **Edge cases** - Empty states, loading states
+5. **Accessibility** - Keyboard navigation, screen readers
+
 ---
 
-## Feature Requests
+## Documentation
 
-### Feature Request Template
+### Documentation Standards
 
-```markdown
-**Is your feature request related to a problem?**
-Describe the problem
+1. **Code Comments** - Explain complex logic
+2. **JSDoc** - Document functions with parameters and return values
+3. **README files** - Add README to complex feature directories
+4. **API docs** - Document all backend functions
+5. **User guides** - Update user-facing documentation
 
-**Describe the solution you'd like**
-Clear description of desired functionality
+### Example Documentation
 
-**Describe alternatives you've considered**
-Other approaches considered
-
-**Additional context**
-Screenshots, mockups, examples
-
-**Would you like to implement this feature?**
-Yes/No
+```javascript
+/**
+ * Executes an AI agent with the given prompt
+ * 
+ * @param {string} agentId - The unique identifier of the agent
+ * @param {string} prompt - The prompt to send to the agent
+ * @param {Object} options - Additional execution options
+ * @param {number} options.timeout - Execution timeout in milliseconds
+ * @param {Object} options.context - Additional context for the agent
+ * @returns {Promise<Object>} The agent's response
+ * @throws {Error} If agent not found or execution fails
+ * 
+ * @example
+ * const result = await executeAgent('agent-123', 'Analyze this data', {
+ *   timeout: 30000,
+ *   context: { dataset: 'sales-2024' }
+ * });
+ */
+async function executeAgent(agentId, prompt, options = {}) {
+  // Implementation...
+}
 ```
 
 ---
 
 ## Community
 
-### Communication Channels
-
-- **GitHub Discussions**: General discussion, Q&A
-- **GitHub Issues**: Bug reports, feature requests
-- **Slack**: [Join our Slack](https://archon-orchestrator.slack.com) (coming soon)
-- **Discord**: [Join our Discord](https://discord.gg/archon) (coming soon)
-
 ### Getting Help
 
-- **Documentation**: Check [docs](./README.md)
-- **Discussions**: Ask in GitHub Discussions
-- **Support**: support@archon.io
+- **GitHub Discussions** - Ask questions, share ideas
+- **GitHub Issues** - Report bugs, request features
+- **Documentation** - Check docs first
+- **Code Examples** - Look at existing code
 
----
+### Communication Channels
 
-## Recognition
+- **GitHub** - Primary communication platform
+- **Issues** - Bug reports and feature requests
+- **Discussions** - Questions and community chat
+- **Pull Requests** - Code review and feedback
 
-Contributors will be recognized in:
-- CHANGELOG.md
-- Contributors page
-- Release notes
-- Project website
+### Recognition
 
----
-
-## License
-
-By contributing, you agree that your contributions will be licensed under the same license as the project (see LICENSE file).
+Contributors will be:
+- Listed in the [Contributors](https://github.com/Krosebrook/archon-orchestrator/graphs/contributors) page
+- Mentioned in release notes for significant contributions
+- Given credit in documentation for major features
 
 ---
 
 ## Questions?
 
-If you have questions about contributing, feel free to:
-- Open a GitHub Discussion
-- Email: opensource@archon.io
+If you have questions about contributing:
+
+1. Check this guide and other documentation
+2. Search existing issues and discussions
+3. Ask in GitHub Discussions
+4. Create an issue with the `question` label
 
 ---
 
-**Thank you for contributing to Archon Orchestrator!**
+## Thank You!
 
-Together, we're building the future of AI agent orchestration.
+Your contributions make Archon Orchestrator better for everyone. We appreciate your time and effort! 🙏
 
 ---
 
-**Last Updated:** December 30, 2025
+**Happy Contributing!** 🚀

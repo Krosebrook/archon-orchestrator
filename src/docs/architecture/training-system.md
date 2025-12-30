@@ -1,524 +1,453 @@
 # Training System Architecture
 
-**Version:** 1.0  
-**Last Updated:** December 30, 2025  
-**Status:** Production
+**Architecture for AI Agent Training & Optimization**
 
 ---
 
 ## Overview
 
-The Training System in Archon Orchestrator provides comprehensive capabilities for training, fine-tuning, and continuously improving AI agents. It supports multiple training methodologies including supervised learning, reinforcement learning, transfer learning, and synthetic data generation.
+The Training System provides a comprehensive framework for training, fine-tuning, and optimizing AI agents in Archon Orchestrator. It supports multiple training paradigms including supervised learning, reinforcement learning, and adaptive behavior modification.
 
 ---
 
-## Architecture Diagram
+## System Architecture
+
+### High-Level Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                      Training Orchestration Layer                │
-│  ┌──────────────────┐  ┌────────────────┐  ┌────────────────┐  │
-│  │  Training        │  │   Curriculum   │  │   Evaluation   │  │
-│  │  Coordinator     │  │   Manager      │  │   Engine       │  │
-│  └──────────────────┘  └────────────────┘  └────────────────┘  │
-└────────────────────────┬────────────────────────────────────────┘
-                         │
-┌────────────────────────┴────────────────────────────────────────┐
-│                      Training Pipeline                           │
-│  ┌───────────────┐  ┌─────────────────┐  ┌─────────────────┐  │
-│  │ Data          │  │  Model          │  │  Performance    │  │
-│  │ Preparation   │  │  Training       │  │  Tracking       │  │
-│  └───────────────┘  └─────────────────┘  └─────────────────┘  │
-└────────────────────────┬────────────────────────────────────────┘
-                         │
-┌────────────────────────┴────────────────────────────────────────┐
-│                      Backend Functions                           │
-│  ┌────────────────┐  ┌───────────────────────┐  ┌────────────┐ │
-│  │  trainAgent    │  │ generateSynthetic     │  │ adaptAgent │ │
-│  │     .ts        │  │   TrainingData.ts     │  │ Behavior.ts│ │
-│  └────────────────┘  └───────────────────────┘  └────────────┘ │
-│  ┌────────────────┐  ┌───────────────────────┐  ┌────────────┐ │
-│  │ analyzeAgent   │  │  benchmarkAgent.ts    │  │ validatets │ │
-│  │   Logs.ts      │  │                       │  │ Model.ts   │ │
-│  └────────────────┘  └───────────────────────┘  └────────────┘ │
-└────────────────────────┬────────────────────────────────────────┘
-                         │
-┌────────────────────────┴────────────────────────────────────────┐
-│                      Storage & Models                            │
-│  ┌────────────────┐  ┌─────────────────┐  ┌─────────────────┐  │
-│  │ Training Data  │  │  Model Registry │  │  Metrics Store  │  │
-│  │   Storage      │  │  (Versions)     │  │  (Time-series)  │  │
-│  └────────────────┘  └─────────────────┘  └─────────────────┘  │
-└─────────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────┐
+│                  Training Orchestrator                      │
+├────────────────────────────────────────────────────────────┤
+│                                                             │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────────┐ │
+│  │   Data Prep  │  │   Training   │  │   Evaluation     │ │
+│  │   Pipeline   │──│   Engine     │──│   & Validation   │ │
+│  └──────────────┘  └──────────────┘  └──────────────────┘ │
+│         │                 │                    │            │
+│         │                 │                    │            │
+│  ┌──────▼─────────────────▼────────────────────▼─────────┐ │
+│  │           Agent Memory & Knowledge Base                │ │
+│  └────────────────────────────────────────────────────────┘ │
+└────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
 ## Core Components
 
-### 1. Training Coordinator
+### 1. Training Data Manager
 
-**Responsibility:** Orchestrates the entire training lifecycle
+Manages training datasets and examples:
 
-**Key Features:**
-- Training job scheduling
-- Resource allocation
-- Multi-agent training coordination
-- Failure recovery
-- Progress monitoring
-
-**Training Lifecycle:**
 ```
-1. Initialization
-   ├─> Load training configuration
-   ├─> Allocate resources
-   └─> Setup training environment
-
-2. Data Preparation
-   ├─> Load training datasets
-   ├─> Apply data augmentation
-   ├─> Create train/val/test splits
-   └─> Prepare batches
-
-3. Training Loop
-   ├─> Forward pass
-   ├─> Loss calculation
-   ├─> Backpropagation
-   ├─> Optimization step
-   └─> Metrics logging
-
-4. Evaluation
-   ├─> Run validation
-   ├─> Calculate metrics
-   ├─> Compare to baseline
-   └─> Save checkpoints
-
-5. Completion
-   ├─> Save final model
-   ├─> Generate report
-   └─> Update agent configuration
+Training Data
+├── Source Data
+│   ├── User interactions
+│   ├── Expert demonstrations
+│   ├── Synthetic examples
+│   └── External datasets
+│
+├── Preprocessing
+│   ├── Cleaning
+│   ├── Normalization
+│   ├── Augmentation
+│   └── Validation
+│
+└── Storage
+    ├── Raw data
+    ├── Processed data
+    └── Embeddings
 ```
 
----
+**Features:**
+- Multi-source data ingestion
+- Automatic data validation
+- Version control for datasets
+- Quality scoring
 
-### 2. Curriculum Manager
+### 2. Training Engine
 
-**Responsibility:** Manages progressive training difficulty
+Executes training operations:
 
-**Key Features:**
-- Difficulty progression
-- Task scheduling
-- Success rate monitoring
-- Adaptive curriculum
-- Multi-stage training
-
-**Curriculum Structure:**
+```typescript
+// Training execution flow
+async function trainAgent(agentId, trainingData, config) {
+  // 1. Validate training data
+  const validated = await validateTrainingData(trainingData);
+  
+  // 2. Prepare agent for training
+  const agent = await prepareAgent(agentId, config);
+  
+  // 3. Execute training loop
+  for (const epoch of range(config.epochs)) {
+    for (const batch of batchify(validated, config.batch_size)) {
+      // Forward pass
+      const predictions = await agent.predict(batch.inputs);
+      
+      // Compute loss
+      const loss = computeLoss(predictions, batch.targets);
+      
+      // Update agent
+      await updateAgent(agent, loss);
+      
+      // Log metrics
+      await logMetrics({ epoch, batch, loss });
+    }
+    
+    // Evaluate after each epoch
+    const metrics = await evaluate(agent, validationData);
+    console.log('Epoch', epoch, 'metrics:', metrics);
+  }
+  
+  // 4. Save trained agent
+  await saveAgent(agent);
+  
+  return { success: true, metrics };
+}
 ```
-Level 1: Basic Tasks
-├─> Simple tool usage
-├─> Basic reasoning
-└─> Single-step problems
-
-Level 2: Intermediate Tasks
-├─> Multi-step workflows
-├─> Context management
-└─> Error handling
-
-Level 3: Advanced Tasks
-├─> Complex reasoning
-├─> Multi-agent collaboration
-└─> Edge case handling
-
-Level 4: Expert Tasks
-├─> Novel scenarios
-├─> Creative problem-solving
-└─> Autonomous decision-making
-```
-
----
 
 ### 3. Synthetic Data Generator
 
-**Responsibility:** Generate realistic training data
+Generates training examples:
 
-**Key Features:**
-- Scenario-based generation
-- Edge case creation
-- Privacy-preserving synthesis
-- Quality validation
-- Diversity enforcement
-
-**Implementation:**
-```typescript
-// functions/generateSyntheticTrainingData.ts
-interface SyntheticDataConfig {
-  scenarioType: string;
-  count: number;
-  difficulty: 'easy' | 'medium' | 'hard';
-  edgeCases: boolean;
-  diversity: number;
-}
+```
+Generation Pipeline
+├── Scenario Definition
+│   └── User specifies data requirements
+│
+├── Template Selection
+│   └── Choose appropriate templates
+│
+├── LLM-Based Generation
+│   └── Generate synthetic examples
+│
+├── Quality Validation
+│   └── Score and filter examples
+│
+└── Output
+    └── High-quality training data
 ```
 
-**Generation Methods:**
-- Template-based synthesis
-- AI-generated scenarios
-- Mutation of real data
-- Adversarial examples
-- Domain-specific generators
+**Generation Strategies:**
+- Template-based generation
+- LLM-powered generation
+- Rule-based generation
+- Adversarial generation
+
+### 4. Adaptive Learning System
+
+Continuously improves agent behavior:
+
+```
+Real-time Learning Loop
+      │
+      ▼
+  Execution → Feedback → Analysis → Update → Agent
+      │                                         │
+      └─────────────────────────────────────────┘
+```
+
+**Adaptation Methods:**
+- Online learning from feedback
+- Behavior reinforcement
+- Performance-based tuning
+- Context-aware optimization
 
 ---
 
-### 4. Evaluation Engine
-
-**Responsibility:** Assess agent performance objectively
-
-**Key Metrics:**
-- **Accuracy**: Task completion rate
-- **Efficiency**: Time per task
-- **Resource Usage**: Tokens, API calls, memory
-- **Robustness**: Performance on edge cases
-- **Safety**: Adherence to guardrails
-- **User Satisfaction**: Feedback scores
-
-**Evaluation Types:**
-```
-1. Online Evaluation
-   └─> Real-time performance during training
-
-2. Offline Evaluation
-   └─> Held-out test set evaluation
-
-3. A/B Testing
-   └─> Compare against baseline
-
-4. Human Evaluation
-   └─> Expert review of outputs
-
-5. Automated Testing
-   └─> Unit and integration tests
-```
-
----
-
-### 5. Model Registry
-
-**Responsibility:** Version control for trained models
-
-**Key Features:**
-- Model versioning
-- Metadata tracking
-- Performance comparison
-- Rollback capabilities
-- Deployment automation
-
-**Model Metadata:**
-```typescript
-interface ModelVersion {
-  id: string;
-  agentId: string;
-  version: string;
-  trainedAt: Date;
-  metrics: PerformanceMetrics;
-  config: TrainingConfig;
-  checkpointPath: string;
-  status: 'training' | 'ready' | 'deployed' | 'archived';
-}
-```
-
----
-
-## Training Methodologies
+## Training Paradigms
 
 ### 1. Supervised Learning
 
-**Use Case:** Learn from labeled examples
+Train agents with labeled examples:
 
-**Process:**
+```typescript
+await base44.functions.trainAgent({
+  agent_id: 'agent_abc123',
+  training_data: [
+    {
+      input: 'What is your return policy?',
+      expected_output: 'Our return policy allows...',
+      feedback: 'correct'
+    },
+    {
+      input: 'How do I upgrade my plan?',
+      expected_output: 'To upgrade your plan...',
+      feedback: 'correct'
+    }
+  ],
+  training_type: 'supervised',
+  config: {
+    epochs: 10,
+    learning_rate: 0.001,
+    validation_split: 0.2
+  }
+});
 ```
-1. Prepare Dataset
-   └─> Input-output pairs
-
-2. Define Loss Function
-   └─> Measure prediction accuracy
-
-3. Train Model
-   └─> Minimize loss on training data
-
-4. Validate
-   └─> Test on held-out data
-```
-
-**Example:**
-- Task classification
-- Response generation
-- Tool selection
-
----
 
 ### 2. Reinforcement Learning
 
-**Use Case:** Learn from environment feedback
-
-**Process:**
-```
-1. Define Reward Function
-   └─> Measure success criteria
-
-2. Agent Exploration
-   └─> Try different actions
-
-3. Reward Assignment
-   └─> Positive for success, negative for failure
-
-4. Policy Optimization
-   └─> Learn better action selection
-```
-
-**Example:**
-- Workflow optimization
-- Multi-step reasoning
-- Adaptive behavior
-
----
-
-### 3. Transfer Learning
-
-**Use Case:** Leverage pre-trained models
-
-**Process:**
-```
-1. Load Pre-trained Model
-   └─> Foundation model (e.g., GPT, Claude)
-
-2. Fine-tune
-   └─> Adapt to specific domain
-
-3. Validate
-   └─> Ensure performance improvement
-```
-
-**Example:**
-- Domain-specific agents
-- Specialized tasks
-- Quick adaptation
-
----
-
-### 4. Continual Learning
-
-**Use Case:** Learn from ongoing interactions
-
-**Process:**
-```
-1. Deploy Agent
-   └─> Production environment
-
-2. Collect Feedback
-   └─> User corrections, ratings
-
-3. Incremental Training
-   └─> Update model periodically
-
-4. Validate & Deploy
-   └─> A/B test new version
-```
-
-**Example:**
-- Improving over time
-- Adapting to new patterns
-- User preference learning
-
----
-
-## Data Pipeline
-
-### Data Sources
-
-1. **Historical Data**
-   - Past agent executions
-   - Successful workflows
-   - User interactions
-
-2. **Synthetic Data**
-   - AI-generated scenarios
-   - Edge case simulations
-   - Adversarial examples
-
-3. **Human Annotations**
-   - Expert demonstrations
-   - Quality ratings
-   - Corrections
-
-4. **External Data**
-   - Public datasets
-   - Domain knowledge
-   - Best practices
-
----
-
-### Data Processing
-
-```
-1. Collection
-   ├─> Gather raw data from sources
-   └─> Initial validation
-
-2. Cleaning
-   ├─> Remove duplicates
-   ├─> Fix inconsistencies
-   └─> Handle missing values
-
-3. Augmentation
-   ├─> Paraphrase inputs
-   ├─> Add noise for robustness
-   └─> Generate variations
-
-4. Labeling
-   ├─> Ground truth assignment
-   ├─> Quality control
-   └─> Inter-annotator agreement
-
-5. Splitting
-   ├─> Training set (70%)
-   ├─> Validation set (15%)
-   └─> Test set (15%)
-
-6. Batching
-   └─> Create mini-batches for training
-```
-
----
-
-## Performance Tracking
-
-### Training Metrics
-
-```
-Loss Metrics:
-├─> Training loss
-├─> Validation loss
-└─> Test loss
-
-Performance Metrics:
-├─> Accuracy
-├─> Precision / Recall / F1
-├─> Task success rate
-└─> Response quality
-
-Efficiency Metrics:
-├─> Training time
-├─> Inference latency
-├─> Token usage
-└─> API costs
-
-Robustness Metrics:
-├─> Edge case performance
-├─> Adversarial robustness
-└─> Out-of-distribution handling
-```
-
----
-
-### Visualization
-
-- **Learning Curves**: Loss over time
-- **Performance Trends**: Metric improvements
-- **Confusion Matrices**: Error analysis
-- **Attention Maps**: Model interpretability
-- **Resource Usage**: Cost tracking
-
----
-
-## Integration with Agent Lifecycle
-
-```
-┌─────────────┐
-│   Create    │
-│   Agent     │
-└──────┬──────┘
-       │
-       ▼
-┌─────────────┐
-│  Initial    │
-│  Training   │ ◄─── Curriculum, Synthetic Data
-└──────┬──────┘
-       │
-       ▼
-┌─────────────┐
-│  Deployment │
-└──────┬──────┘
-       │
-       ▼
-┌─────────────┐
-│  Production │
-│  Usage      │
-└──────┬──────┘
-       │
-       ▼
-┌─────────────┐
-│  Feedback   │
-│  Collection │
-└──────┬──────┘
-       │
-       ▼
-┌─────────────┐
-│  Continual  │
-│  Learning   │ ◄─── adaptAgentBehavior.ts
-└──────┬──────┘
-       │
-       └──────► (Repeat)
-```
-
----
-
-## API Usage Examples
-
-### Start Training
+Learn from rewards and outcomes:
 
 ```typescript
-const trainingJob = await sdk.functions.invoke('trainAgent', {
-  agentId: 'agent-123',
+await base44.functions.adaptAgentBehavior({
+  agent_id: 'agent_abc123',
+  performance_metrics: {
+    success_rate: 0.85,
+    user_satisfaction: 0.90,
+    response_time: 1.2
+  },
+  adaptation_strategy: 'reinforcement',
+  reward_function: 'maximize_satisfaction'
+});
+```
+
+### 3. Few-Shot Learning
+
+Learn from minimal examples:
+
+```typescript
+await base44.functions.trainAgent({
+  agent_id: 'agent_abc123',
+  training_data: [
+    // Only 3-5 examples
+    { input: '...', expected_output: '...' },
+    { input: '...', expected_output: '...' },
+    { input: '...', expected_output: '...' }
+  ],
+  training_type: 'few_shot',
   config: {
-    method: 'supervised',
-    dataset: 'training-data-v1',
-    epochs: 10,
-    batchSize: 32,
-    learningRate: 0.001,
-    validation: {
-      split: 0.15,
-      frequency: 'epoch'
-    }
+    use_prompt_engineering: true,
+    leverage_base_model: true
+  }
+});
+```
+
+### 4. Transfer Learning
+
+Leverage pre-trained knowledge:
+
+```typescript
+await base44.functions.trainAgent({
+  agent_id: 'agent_abc123',
+  training_data: domainSpecificData,
+  training_type: 'transfer',
+  config: {
+    base_agent_id: 'pretrained_agent_xyz',
+    freeze_layers: ['embedding', 'early_layers'],
+    fine_tune_layers: ['late_layers', 'output']
   }
 });
 ```
 
 ---
 
-### Generate Synthetic Data
+## Training Workflow
+
+### End-to-End Training Flow
+
+```
+1. Define Training Objective
+      ↓
+2. Collect/Generate Training Data
+      ↓
+3. Validate Data Quality
+      ↓
+4. Configure Training Parameters
+      ↓
+5. Execute Training
+      ↓
+6. Monitor Progress
+      ↓
+7. Evaluate Performance
+      ↓
+8. Deploy Updated Agent
+      ↓
+9. Monitor Production Performance
+      ↓
+10. Collect Feedback for Next Iteration
+```
+
+---
+
+## Performance Optimization
+
+### Automated Optimization
 
 ```typescript
-const syntheticData = await sdk.functions.invoke('generateSyntheticTrainingData', {
-  scenarioType: 'customer-support',
-  count: 1000,
-  difficulty: 'medium',
-  edgeCases: true,
-  diversity: 0.8
+await base44.functions.analyzeAndOptimize({
+  agent_id: 'agent_abc123',
+  optimization_goals: [
+    'minimize_latency',
+    'maximize_accuracy',
+    'optimize_cost'
+  ]
+});
+```
+
+**Optimization Techniques:**
+- Hyperparameter tuning
+- Model compression
+- Prompt optimization
+- Context pruning
+- Caching strategies
+
+### Performance Monitoring
+
+```
+Metrics Tracked:
+├── Accuracy (correctness)
+├── Latency (response time)
+├── Cost (token usage)
+├── User satisfaction
+├── Error rate
+└── Resource utilization
+```
+
+---
+
+## Quality Assurance
+
+### Validation Process
+
+```
+Training Data → Validation → Quality Score
+      │                          │
+      │                          ▼
+      │                    Accept/Reject
+      │                          │
+      └──────────────────────────┘
+```
+
+**Quality Checks:**
+- Format validation
+- Content appropriateness
+- Diversity assessment
+- Bias detection
+- Consistency verification
+
+### Testing Framework
+
+```typescript
+// Automated testing of trained agents
+const testResults = await testAgent({
+  agent_id: 'agent_abc123',
+  test_suite: [
+    { input: '...', expected: '...' },
+    { input: '...', expected: '...' }
+  ],
+  evaluation_criteria: [
+    'accuracy',
+    'relevance',
+    'safety'
+  ]
 });
 ```
 
 ---
 
-### Adapt Agent Behavior
+## Memory & Knowledge Management
+
+### Agent Memory Types
+
+```
+Agent Memory
+├── Semantic Memory (facts, knowledge)
+├── Episodic Memory (experiences)
+├── Procedural Memory (skills, patterns)
+└── Working Memory (current context)
+```
+
+### Knowledge Base Integration
 
 ```typescript
-const adaptation = await sdk.functions.invoke('adaptAgentBehavior', {
-  agentId: 'agent-123',
-  feedback: [
-    { input: '...', expected: '...', actual: '...', rating: 3 },
-    // more feedback items
-  ],
-  method: 'reinforcement'
+// Update agent knowledge
+await base44.asServiceRole.entities.AgentMemory.create({
+  agent_id: agentId,
+  memory_type: 'semantic',
+  content: {
+    type: 'learned_pattern',
+    pattern: 'When user asks about pricing, emphasize value',
+    confidence: 0.95,
+    learned_from: 'training_session_xyz'
+  },
+  importance: 80,
+  tags: ['pricing', 'communication', 'learned']
+});
+```
+
+---
+
+## Scalability Considerations
+
+### Distributed Training
+
+```
+Training Coordinator
+      │
+      ├──→ Worker 1 (batch 1-1000)
+      ├──→ Worker 2 (batch 1001-2000)
+      ├──→ Worker 3 (batch 2001-3000)
+      └──→ Worker N (batch N...)
+      │
+      ▼
+  Aggregator → Updated Agent
+```
+
+### Incremental Learning
+
+- Online updates without full retraining
+- Continuous learning from production data
+- Rolling updates to minimize downtime
+- A/B testing for validation
+
+---
+
+## Security & Privacy
+
+### Training Data Security
+
+- Encrypted data storage
+- Access control for training data
+- PII detection and removal
+- Audit logging of data access
+
+### Model Security
+
+- Secure model storage
+- Version control with rollback
+- Access control for model updates
+- Adversarial training for robustness
+
+---
+
+## Integration Points
+
+### With Agent Execution
+
+```typescript
+// Agents use trained knowledge during execution
+const agent = await loadAgent(agentId);
+const memories = await loadAgentMemories(agentId);
+
+const response = await agent.execute(prompt, {
+  context: buildContext(memories),
+  use_learned_patterns: true
+});
+```
+
+### With Monitoring System
+
+```typescript
+// Training metrics integrated with monitoring
+await recordMetric({
+  type: 'training',
+  agent_id: agentId,
+  metrics: {
+    training_loss: 0.05,
+    validation_accuracy: 0.95,
+    training_duration_ms: 120000
+  }
 });
 ```
 
@@ -528,82 +457,77 @@ const adaptation = await sdk.functions.invoke('adaptAgentBehavior', {
 
 ### 1. Data Quality
 
-- **Diverse**: Cover all expected scenarios
-- **Balanced**: Equal representation of classes
-- **Clean**: Free of errors and biases
-- **Representative**: Matches production distribution
-- **Updated**: Refresh with new patterns
-
----
+- Validate all training data
+- Use diverse examples
+- Balance positive/negative examples
+- Regular data audits
 
 ### 2. Training Configuration
 
-- **Start Simple**: Baseline model first
-- **Incremental Complexity**: Gradually increase difficulty
-- **Early Stopping**: Prevent overfitting
-- **Regularization**: L2, dropout, etc.
-- **Hyperparameter Tuning**: Systematic search
-
----
+- Start with small learning rates
+- Use validation sets
+- Monitor for overfitting
+- Save checkpoints frequently
 
 ### 3. Evaluation
 
-- **Multiple Metrics**: Don't rely on single metric
-- **Test Coverage**: Include edge cases
-- **Human Evaluation**: Sample quality checks
-- **A/B Testing**: Compare to baseline
-- **Continuous Monitoring**: Track in production
+- Use holdout test sets
+- Test on edge cases
+- Measure multiple metrics
+- Compare against baselines
 
----
+### 4. Deployment
 
-### 4. Model Management
-
-- **Version Control**: Track all model versions
-- **Documentation**: Record training details
-- **Reproducibility**: Save configs and seeds
-- **Rollback Plan**: Keep previous versions
-- **Automated Testing**: CI/CD for models
+- Gradual rollout of updates
+- A/B test new versions
+- Monitor production metrics
+- Have rollback plan ready
 
 ---
 
 ## Troubleshooting
 
-See [Training Failures Runbook](../runbooks/training-failures.md) for detailed troubleshooting steps.
+### Common Issues
+
+**Issue: Poor training performance**
+- Check data quality
+- Adjust learning rate
+- Increase training data
+- Try different architectures
+
+**Issue: Overfitting**
+- Reduce model complexity
+- Add regularization
+- Use more training data
+- Implement early stopping
+
+**Issue: Slow convergence**
+- Increase learning rate
+- Use better optimizer
+- Improve data preprocessing
+- Add more training examples
 
 ---
 
-## Future Enhancements (Phase 2 - Q2 2025)
+## Future Enhancements
 
-1. **Multi-Modal Training**
-   - Image understanding
-   - Video processing
-   - Audio integration
+### Planned Features
 
-2. **Federated Learning**
-   - Decentralized training
-   - Privacy-preserving
-   - Multi-tenant scenarios
-
-3. **Neural Architecture Search**
-   - Automated model design
-   - Hyperparameter optimization
-   - Efficient model selection
-
-4. **Meta-Learning**
-   - Few-shot learning
-   - Quick adaptation
-   - Transfer across tasks
+1. **Federated Learning** - Train across distributed data
+2. **Active Learning** - Intelligently select examples to label
+3. **Meta-Learning** - Learn how to learn better
+4. **Neural Architecture Search** - Automatically find optimal architectures
+5. **Continual Learning** - Learn without forgetting previous knowledge
 
 ---
 
 ## Related Documentation
 
-- [Training API Reference](../api/training-api.md)
-- [AI Debugging Architecture](../architecture-ai-debugging.md)
-- [Training Failures Runbook](../runbooks/training-failures.md)
+- [Training API](../api/training-api.md)
+- [Runbook - Training Failures](../runbooks/training-failures.md)
+- [AGENTS.md](../../../AGENTS.md)
 
 ---
 
-**Document Maintainer:** Development Team  
-**Last Review:** December 30, 2025  
-**Next Review:** Q1 2025
+**Last Updated:** December 30, 2025  
+**Maintained By:** Archon Development Team

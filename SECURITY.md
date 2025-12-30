@@ -1,413 +1,433 @@
 # Security Policy
 
-## Overview
+**Archon Orchestrator Security Guidelines & Reporting**
 
-Security is a top priority for Archon Orchestrator. This document outlines our security policies, how to report vulnerabilities, and our response process.
+Version: 1.0  
+Last Updated: December 30, 2025
 
 ---
 
-## Supported Versions
+## Table of Contents
 
-We provide security updates for the following versions:
+1. [Overview](#overview)
+2. [Reporting a Vulnerability](#reporting-a-vulnerability)
+3. [Security Measures](#security-measures)
+4. [Data Protection](#data-protection)
+5. [Compliance](#compliance)
+6. [Security Best Practices](#security-best-practices)
+7. [Responsible Disclosure](#responsible-disclosure)
 
-| Version | Supported          | End of Support |
-| ------- | ------------------ | -------------- |
-| 0.9.x   | :white_check_mark: | TBD            |
-| 0.8.x   | :white_check_mark: | 2025-06-30     |
-| 0.7.x   | :x:                | 2025-03-31     |
-| < 0.7   | :x:                | Ended          |
+---
+
+## Overview
+
+Security is a top priority for Archon Orchestrator. This document outlines our security practices, how to report vulnerabilities, and guidelines for secure usage.
 
 ---
 
 ## Reporting a Vulnerability
 
-### Where to Report
+### 🚨 DO NOT Create Public Issues
 
-**DO NOT** report security vulnerabilities through public GitHub issues.
+**NEVER** create public GitHub issues for security vulnerabilities. This protects all users while the issue is being addressed.
 
-Instead, please report them via:
+### How to Report
 
-**Email:** security@archon.io  
-**PGP Key:** [Available upon request]
+**Email:** security@archon-orchestrator.com (or organization security contact)
 
-### What to Include
+**Include in Your Report:**
+- Description of the vulnerability
+- Steps to reproduce
+- Potential impact
+- Suggested fix (if you have one)
+- Your contact information
 
-Your report should include:
+### What to Expect
 
-1. **Description** of the vulnerability
-2. **Steps to reproduce** the issue
-3. **Potential impact** and severity assessment
-4. **Suggested fix** (if you have one)
-5. **Your contact information** for follow-up
-
-### Example Report
-
-```
-Subject: Security Vulnerability - [Brief Description]
-
-Description:
-[Detailed description of the vulnerability]
-
-Steps to Reproduce:
-1. [Step 1]
-2. [Step 2]
-3. [Step 3]
-
-Impact:
-[What an attacker could do with this vulnerability]
-
-Affected Versions:
-[e.g., 0.8.0 through 0.9.0]
-
-Suggested Fix:
-[If you have a recommendation]
-
-Contact:
-[Your email for follow-up questions]
-```
-
----
-
-## Response Process
-
-### Acknowledgment
-
-We will acknowledge your report within **48 hours** and provide:
-- Confirmation that we received your report
-- Initial assessment of severity
-- Expected timeline for investigation
-
-### Investigation
-
-Our security team will:
-1. Verify the vulnerability
-2. Assess the impact and affected versions
-3. Develop a fix
-4. Test the fix thoroughly
-
-**Timeline:** Typically 7-14 days depending on severity
-
-### Disclosure
-
-After a fix is available:
-1. We will notify you of the resolution
-2. Release a security patch
-3. Publish a security advisory (if applicable)
-4. Credit you in the advisory (if desired)
+1. **Acknowledgment** - Within 48 hours of report
+2. **Initial Assessment** - Within 5 business days
+3. **Status Updates** - Every 7 days until resolved
+4. **Resolution** - Typically within 30-90 days depending on severity
+5. **Credit** - Security researchers will be credited (if desired)
 
 ### Severity Levels
 
-| Level | Response Time | Disclosure |
-|-------|--------------|-----------|
-| **Critical** | 24-48 hours | 7 days |
-| **High** | 2-5 days | 30 days |
-| **Medium** | 7-14 days | 60 days |
-| **Low** | 14-30 days | 90 days |
+| Level | Description | Response Time |
+|-------|-------------|---------------|
+| **Critical** | Direct exploitation, data breach, authentication bypass | 24 hours |
+| **High** | Privilege escalation, significant data leak | 72 hours |
+| **Medium** | Limited impact, requires special conditions | 7 days |
+| **Low** | Minor issues, theoretical attacks | 30 days |
+
+---
+
+## Security Measures
+
+### Authentication & Authorization
+
+#### 1. Authentication System
+
+- **Provider:** Base44 Authentication
+- **Method:** Token-based authentication
+- **Session Management:** Secure, httpOnly cookies
+- **Password Requirements:** Enforced by Base44
+- **Multi-Factor Authentication:** Planned (Phase 3)
+
+#### 2. Role-Based Access Control (RBAC)
+
+```
+Roles Hierarchy:
+- Super Admin
+- Organization Admin
+- Team Lead
+- Developer
+- Viewer
+- Compliance Officer
+- System Auditor
+```
+
+**Permission Matrix:**
+See [ARCHITECTURE.md](./ARCHITECTURE.md#security-architecture) for details.
+
+#### 3. API Security
+
+- **Authentication:** Required on all endpoints
+- **Rate Limiting:** Backend enforced (planned: frontend)
+- **Input Validation:** Zod schemas throughout
+- **Output Sanitization:** PII redaction where applicable
+
+---
+
+### Data Protection
+
+#### 1. Data Encryption
+
+**At Rest:**
+- Database: Encrypted by Base44 platform
+- File Storage: Encrypted at rest
+- Backups: Encrypted
+
+**In Transit:**
+- TLS 1.2+ enforced
+- HTTPS everywhere
+- Secure WebSocket connections
+
+#### 2. Sensitive Data Handling
+
+**PII Protection:**
+- Automatic redaction in logs
+- Masked display in UI
+- Separate storage for sensitive data
+- Audit trail for all access
+
+**Secrets Management:**
+- Environment-based configuration
+- No secrets in code
+- Secure secret rotation (planned)
+- Encrypted secret storage
+
+#### 3. Data Retention
+
+- Audit logs: 7 years (configurable)
+- User data: Per agreement
+- Temporary data: 30 days
+- Deleted data: Unrecoverable deletion
+
+---
+
+### Infrastructure Security
+
+#### 1. Deployment Security
+
+- **Edge Functions:** Isolated execution
+- **Network:** Private by default
+- **Access:** Principle of least privilege
+- **Monitoring:** 24/7 security monitoring
+
+#### 2. Dependency Management
+
+- Regular dependency updates
+- Automated vulnerability scanning
+- npm audit / Deno security checks
+- Dependabot alerts
+
+#### 3. Code Security
+
+- ESLint security rules
+- CodeQL scanning (planned)
+- Regular security audits
+- Penetration testing (planned)
+
+---
+
+## Compliance
+
+### Current Compliance Status
+
+| Standard | Status | Notes |
+|----------|--------|-------|
+| **GDPR** | 🟡 Partial | Data protection features in place |
+| **SOC 2** | 📋 Planned | Phase 3 (Q3 2025) |
+| **HIPAA** | 📋 Planned | Phase 3 (Q3 2025) |
+| **ISO 27001** | 📋 Future | Phase 4+ |
+
+### GDPR Compliance
+
+**Right to Access:**
+- Users can export their data via API
+- Data export in JSON format
+- Complete data portability
+
+**Right to Erasure:**
+- Account deletion available
+- Data retention policies
+- Secure data deletion
+
+**Data Processing:**
+- Transparent data usage
+- Consent management
+- Data processing agreements
+
+### Audit Logging
+
+**All Actions Logged:**
+- User authentication
+- Resource creation/modification/deletion
+- Permission changes
+- Data access
+- Configuration changes
+
+**Audit Log Fields:**
+- Timestamp
+- Actor (user)
+- Action
+- Resource
+- Outcome
+- Metadata
+
+**Audit Log Retention:** 7 years (default)
 
 ---
 
 ## Security Best Practices
 
-### For Users
-
-1. **Keep Updated**
-   - Always use the latest version
-   - Subscribe to security advisories
-   - Monitor the [CHANGELOG](./CHANGELOG.md)
-
-2. **Credentials Management**
-   - Use strong, unique passwords
-   - Enable MFA when available
-   - Rotate API keys regularly
-   - Never commit credentials to repositories
-
-3. **Access Control**
-   - Follow principle of least privilege
-   - Regular review user permissions
-   - Remove inactive users promptly
-   - Use RBAC effectively
-
-4. **Network Security**
-   - Use HTTPS for all connections
-   - Implement IP whitelisting
-   - Use VPN for admin access
-   - Configure firewall rules
-
-5. **Monitoring**
-   - Enable audit logging
-   - Monitor for suspicious activity
-   - Set up security alerts
-   - Regular security reviews
-
 ### For Developers
 
-1. **Code Security**
-   - Never hardcode secrets
-   - Validate all inputs
-   - Sanitize all outputs
-   - Use parameterized queries
-   - Implement proper error handling
+#### 1. Code Security
 
-2. **Dependencies**
-   - Keep dependencies updated
-   - Run security audits regularly
-   - Use automated scanning tools
-   - Monitor vulnerability databases
+```typescript
+// ✅ DO: Validate all inputs
+const schema = z.object({
+  email: z.string().email(),
+  name: z.string().min(1).max(100)
+});
+const validated = schema.parse(userInput);
 
-3. **Authentication**
-   - Use secure authentication methods
-   - Implement session management
-   - Add rate limiting
-   - Log authentication attempts
+// ❌ DON'T: Trust user input
+const user = await db.query(`SELECT * FROM users WHERE email = '${email}'`);
+```
 
-4. **Data Protection**
-   - Encrypt sensitive data at rest
-   - Use TLS for data in transit
-   - Implement data redaction
-   - Follow data retention policies
+#### 2. Authentication
 
-5. **Testing**
-   - Security testing in CI/CD
-   - Penetration testing regularly
-   - Code reviews for security
-   - Static analysis tools
+```typescript
+// ✅ DO: Always check authentication
+const user = await base44.auth.me();
+if (!user) {
+  return Response.json({ error: 'Unauthorized' }, { status: 401 });
+}
 
----
+// ❌ DON'T: Skip authentication checks
+const data = await processUserData(request.body);
+```
 
-## Known Security Features
+#### 3. Secrets Management
 
-### Current Security Measures
+```bash
+# ✅ DO: Use environment variables
+VITE_BASE44_PROJECT_ID=abc123
 
-1. **Authentication & Authorization**
-   - JWT-based authentication
-   - Role-Based Access Control (RBAC)
-   - API key management
-   - Session management
+# ❌ DON'T: Hardcode secrets
+const API_KEY = "sk-1234567890abcdef";
+```
 
-2. **Data Protection**
-   - Encryption at rest
-   - TLS 1.3 for data in transit
-   - PII redaction capabilities
-   - Secure credential storage
+#### 4. Error Handling
 
-3. **Audit & Compliance**
-   - Comprehensive audit logging
-   - Compliance reporting
-   - Security testing framework
-   - Policy management
+```typescript
+// ✅ DO: Generic error messages
+catch (error) {
+  console.error('Internal error:', error); // Log details
+  return { error: 'An error occurred' }; // Generic to user
+}
 
-4. **Infrastructure Security**
-   - Regular security updates
-   - Intrusion detection
-   - DDoS protection
-   - Backup and recovery
+// ❌ DON'T: Expose internal details
+catch (error) {
+  return { error: error.message, stack: error.stack };
+}
+```
 
 ---
 
-## Vulnerability Disclosure Policy
+### For Users
 
-### Coordinated Disclosure
+#### 1. Account Security
 
-We follow a coordinated disclosure policy:
+- **Use Strong Passwords** - 12+ characters, mixed case, numbers, symbols
+- **Enable MFA** - When available (Phase 3)
+- **Regular Reviews** - Review access logs regularly
+- **Secure Devices** - Keep devices up to date and secured
 
-1. **Private Disclosure**
-   - Vulnerability is reported privately
-   - We investigate and develop a fix
-   - Fix is tested and prepared for release
+#### 2. API Key Management
 
-2. **Advance Notice**
-   - Major users/partners notified 7 days before public release
-   - Allows time to prepare for updates
+- **Rotate Regularly** - Change keys every 90 days
+- **Least Privilege** - Only grant needed permissions
+- **Monitor Usage** - Watch for unusual activity
+- **Secure Storage** - Never commit keys to git
 
-3. **Public Disclosure**
-   - Security advisory published
-   - Fix released to all users
-   - CVE assigned (if applicable)
+#### 3. Data Management
 
-### Hall of Fame
-
-We maintain a security researchers Hall of Fame to recognize contributors:
-- [Coming Soon]
+- **Regular Exports** - Backup important data
+- **Review Permissions** - Check who has access
+- **Clean Up** - Delete unused resources
+- **Monitor Costs** - Unusual usage may indicate compromise
 
 ---
 
-## Security Advisories
+## Responsible Disclosure
 
-### Subscribe to Advisories
+### Guidelines
 
-Stay informed about security updates:
+We follow responsible disclosure practices:
 
-- **GitHub:** Watch repository for security advisories
-- **Email:** security-advisories@archon.io
-- **RSS:** [Coming Soon]
-- **Twitter:** @ArchonSecurity (coming soon)
+1. **Private Reporting** - Report vulnerabilities privately
+2. **Reasonable Time** - Give us time to fix (typically 90 days)
+3. **No Exploitation** - Don't exploit vulnerabilities
+4. **No Data Access** - Don't access user data
+5. **Good Faith** - Act in good faith
 
-### Past Advisories
+### Safe Harbor
 
-No security advisories published yet for public versions.
+We will not pursue legal action against security researchers who:
 
-For enterprise customers, please check your private security portal.
+- Make good faith effort to avoid privacy violations
+- Don't exploit vulnerabilities beyond proof-of-concept
+- Report vulnerabilities promptly
+- Give reasonable time to fix before disclosure
+- Don't access or modify user data
 
----
+### Recognition
 
-## Bug Bounty Program
+We maintain a security hall of fame for researchers who help improve our security:
 
-### Status
-
-We are planning to launch a bug bounty program in Q2 2025.
-
-### Scope (Planned)
-
-**In Scope:**
-- Web application vulnerabilities
-- API security issues
-- Authentication/authorization bypasses
-- Data exposure vulnerabilities
-- Infrastructure vulnerabilities
-
-**Out of Scope:**
-- Social engineering
-- Physical security
-- Third-party services
-- Denial of service
-- Spam/phishing
-
-### Rewards (Planned)
-
-| Severity | Reward Range |
-|----------|--------------|
-| Critical | $1,000 - $5,000 |
-| High | $500 - $1,000 |
-| Medium | $250 - $500 |
-| Low | $50 - $250 |
+**Hall of Fame:** [Link to be added]
 
 ---
 
-## Compliance & Certifications
+## Security Checklist
 
-### Current Status
+### For Deployments
 
-- **SOC 2 Type II:** In progress (Q2 2025)
-- **GDPR:** Compliant
-- **CCPA:** Compliant
-- **ISO 27001:** Planned (2026)
+- [ ] All environment variables set
+- [ ] HTTPS enforced
+- [ ] Authentication configured
+- [ ] RBAC policies applied
+- [ ] Audit logging enabled
+- [ ] Monitoring configured
+- [ ] Backup strategy in place
+- [ ] Incident response plan ready
 
-### Data Privacy
+### For Development
 
-We are committed to data privacy:
-- Privacy by design
-- Data minimization
-- User consent management
-- Right to deletion
-- Data portability
-
----
-
-## Security Contacts
-
-### Primary Contact
-
-**Email:** security@archon.io  
-**Response Time:** 24-48 hours
-
-### Emergency Contact
-
-**24/7 Hotline:** [Available to enterprise customers]
-
-### Security Team
-
-For non-urgent security questions:
-- **General:** security@archon.io
-- **Compliance:** compliance@archon.io
-- **Privacy:** privacy@archon.io
+- [ ] Dependencies updated
+- [ ] Security linters passing
+- [ ] No hardcoded secrets
+- [ ] Input validation implemented
+- [ ] Error handling robust
+- [ ] Tests passing
+- [ ] Code reviewed
+- [ ] Security scan completed
 
 ---
 
 ## Incident Response
 
-### If You Detect a Breach
+### In Case of Security Incident
 
-1. **Immediately notify** security@archon.io
-2. **Do not delete** any logs or evidence
-3. **Preserve** system state if possible
-4. **Document** what you observed
-5. **Follow** our incident response runbook
+1. **Contain** - Isolate affected systems
+2. **Assess** - Determine scope and impact
+3. **Notify** - Inform affected parties
+4. **Remediate** - Fix the vulnerability
+5. **Recover** - Restore normal operations
+6. **Review** - Post-incident analysis
 
-### Our Response
+### Contact
 
-We will:
-1. Acknowledge within 1 hour
-2. Investigate immediately
-3. Contain the incident
-4. Remediate vulnerabilities
-5. Conduct post-incident review
-6. Notify affected parties
-
-See [Security Incident Response Runbook](./src/docs/runbooks/security-incident-response.md)
+**Security Team:** security@archon-orchestrator.com  
+**Emergency:** [Add 24/7 contact]
 
 ---
 
 ## Security Updates
 
-### Update Notifications
+We communicate security updates through:
 
-Security updates are announced via:
-- GitHub Security Advisories
-- Email notifications (opt-in)
-- Release notes
-- CHANGELOG.md
-
-### Applying Updates
-
-```bash
-# Check current version
-archon --version
-
-# Update to latest
-npm update
-
-# Verify security patches
-npm audit
-```
+- **GitHub Security Advisories**
+- **Email notifications** (for serious issues)
+- **Changelog** (CHANGELOG.md)
+- **Status page** (for incidents)
 
 ---
 
-## Third-Party Security
+## Security Roadmap
 
-### Dependencies
+### Planned Enhancements
 
-We regularly audit and update dependencies:
+**Phase 2 (Q2 2025):**
 - Automated dependency scanning
-- Weekly security reviews
-- Rapid patching of critical vulnerabilities
+- Enhanced audit logging
+- API rate limiting
+- Security headers audit
 
-### Partners
+**Phase 3 (Q3 2025):**
+- Multi-factor authentication
+- SSO/SAML integration
+- SOC 2 compliance
+- Advanced RBAC
 
-Our infrastructure partners:
-- Base44 Platform
-- Cloud providers (AWS, GCP)
-- CDN providers
-- Monitoring services
+**Phase 4 (Q4 2025):**
+- Penetration testing
+- Security bug bounty
+- Advanced threat detection
+- Zero-trust architecture
+
+---
+
+## Resources
+
+### Internal Documentation
+
+- [ARCHITECTURE.md](./ARCHITECTURE.md#security-architecture)
+- [CONTRIBUTING.md](./CONTRIBUTING.md#security)
+- [API.md](./API.md#authentication)
+
+### External Resources
+
+- [OWASP Top 10](https://owasp.org/www-project-top-ten/)
+- [CWE Top 25](https://cwe.mitre.org/top25/)
+- [NIST Cybersecurity Framework](https://www.nist.gov/cyberframework)
 
 ---
 
 ## Questions?
 
-For security-related questions:
-- **Email:** security@archon.io
-- **Documentation:** [Security Guide](./docs/security/)
-- **Support:** support@archon.io
+For security questions or concerns:
+
+- **General:** security@archon-orchestrator.com
+- **Urgent:** [Add emergency contact]
+- **Non-security:** Use GitHub Discussions
 
 ---
 
-## Updates to This Policy
-
-This security policy is reviewed and updated quarterly.
-
+**Version:** 1.0  
 **Last Updated:** December 30, 2025  
-**Next Review:** Q1 2025  
-**Version:** 1.0
-
----
-
-**Thank you for helping keep Archon Orchestrator and our users safe!**
+**Next Review:** March 30, 2026  
+**Maintained By:** Security Team
