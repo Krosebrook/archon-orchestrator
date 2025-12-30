@@ -6,10 +6,35 @@ Archon Orchestrator is a comprehensive platform for managing, training, monitori
 
 ## 📚 Documentation
 
+### Core Documentation
 - **[Product Requirements Document (PRD.md)](./PRD.md)** - Comprehensive product overview, technical architecture, and feature specifications
 - **[Feature Roadmap (ROADMAP.md)](./ROADMAP.md)** - 6-phase development roadmap with timeline and priorities
 - **[Codebase Audit (AUDIT.md)](./AUDIT.md)** - Technical assessment, recommendations, and analysis
-- **[Recommendations (RECOMMENDATIONS.md)](./RECOMMENDATIONS.md)** - Best practices, reference repositories, and context-engineered prompts for GitHub Agents and Copilot
+- **[Recommendations (RECOMMENDATIONS.md)](./RECOMMENDATIONS.md)** - Best practices, reference repositories, and context-engineered prompts
+- **[Changelog (CHANGELOG.md)](./CHANGELOG.md)** - Version history and release notes
+
+### Agent Documentation
+- **[Agents Overview (agents.md)](./agents.md)** - Complete guide to agent types, capabilities, and best practices
+- **[Claude Integration (claude.md)](./claude.md)** - Claude AI integration guide with examples
+- **[Gemini Integration (gemini.md)](./gemini.md)** - Google Gemini AI integration documentation
+
+### Technical Documentation
+- **[AI Debugging Architecture](./src/docs/architecture-ai-debugging.md)** - Debug system architecture and components
+- **[Training System Architecture](./src/docs/architecture/training-system.md)** - Training pipeline and methodologies
+- **[AI Debugging Assistant Guide](./src/docs/ai-debugging-assistant.md)** - User guide for debugging features
+- **[Training API Reference](./src/docs/api/training-api.md)** - Complete API documentation
+
+### Operational Runbooks
+- **[Training Failures](./src/docs/runbooks/training-failures.md)** - Troubleshooting training issues
+- **[AI Debugger Failures](./src/docs/runbooks/ai-debugger-failure.md)** - Debug UI troubleshooting
+- **[Performance Degradation](./src/docs/runbooks/performance-degradation.md)** - Performance issue resolution
+- **[Security Incident Response](./src/docs/runbooks/security-incident-response.md)** - Security procedures
+- **[Disaster Recovery](./src/docs/runbooks/disaster-recovery.md)** - DR procedures and backup strategy
+
+### Community
+- **[Contributing Guide (CONTRIBUTING.md)](./CONTRIBUTING.md)** - How to contribute to the project
+- **[Code of Conduct (CODE_OF_CONDUCT.md)](./CODE_OF_CONDUCT.md)** - Community guidelines
+- **[Security Policy (SECURITY.md)](./SECURITY.md)** - Security policies and vulnerability reporting
 
 ## 🚀 Quick Start
 
