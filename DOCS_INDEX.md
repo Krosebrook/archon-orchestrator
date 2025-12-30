@@ -60,6 +60,13 @@ This index provides quick access to all documentation resources for the Archon O
 
 ### Code Quality & Standards
 
+- **[.github/copilot-instructions.md](./.github/copilot-instructions.md)** - GitHub Copilot Agent Template
+  - Feature-to-PR workflow template
+  - Context-first execution guide
+  - Scope-adaptive requirements
+  - Repository-specific patterns
+  - Best practices for AI agents
+
 - **[REFACTORING.md](./REFACTORING.md)** - Refactoring Recommendations
   - Priority improvements
   - Type safety migration
@@ -185,8 +192,9 @@ This index provides quick access to all documentation resources for the Archon O
 1. [README.md](./README.md) - Quick start
 2. [ARCHITECTURE.md](./ARCHITECTURE.md) - System design
 3. [CONTRIBUTING.md](./CONTRIBUTING.md) - Contribution guidelines
-4. [TESTING.md](./TESTING.md) - Testing guide
-5. [API.md](./API.md) - API reference
+4. [.github/copilot-instructions.md](./.github/copilot-instructions.md) - GitHub Copilot agent workflow
+5. [TESTING.md](./TESTING.md) - Testing guide
+6. [API.md](./API.md) - API reference
 
 **Advanced Topics:**
 - [REFACTORING.md](./REFACTORING.md)
