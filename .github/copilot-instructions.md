@@ -413,7 +413,7 @@ npm run dev
 
 **Patterns to Follow:**
 ```typescript
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.3';
 
 Deno.serve(async (req) => {
   const trace_id = crypto.randomUUID();
