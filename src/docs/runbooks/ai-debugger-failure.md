@@ -273,8 +273,8 @@ This runbook provides troubleshooting procedures for AI Debugging Assistant and 
 
 3. **Check Trace Completion**
    ```typescript
-   const incompleteTr aces = traces.filter(t => !t.endTime);
-   console.log('Incomplete traces:', incompleteTra ces.length);
+   const incompleteTraces = traces.filter(t => !t.endTime);
+   console.log('Incomplete traces:', incompleteTraces.length);
    ```
 
 **Resolution:**
