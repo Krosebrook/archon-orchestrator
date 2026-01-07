@@ -6,10 +6,11 @@
 import { render } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { vi } from 'vitest';
 
 /**
  * Custom render function that includes common providers
- * @param {React.ReactElement} ui - Component to render
+ * @param {import('react').ReactElement} ui - Component to render
  * @param {Object} options - Render options
  * @returns {Object} Render result with utilities
  */
