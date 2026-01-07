@@ -171,6 +171,27 @@ npm run lint:fix
 npm run typecheck
 ```
 
+### Testing
+
+```bash
+# Run all tests
+npm test
+
+# Run tests in watch mode
+npm run test:watch
+
+# Run tests with UI
+npm run test:ui
+
+# Generate coverage report
+npm run test:coverage
+
+# Run specific test file
+npm test button.test.jsx
+```
+
+Coverage reports are generated in the `coverage/` directory and can be viewed by opening `coverage/index.html` in a browser.
+
 ---
 
 ## 🏗️ Technology Stack

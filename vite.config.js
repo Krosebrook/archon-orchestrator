@@ -11,5 +11,29 @@ export default defineConfig({
       legacySDKImports: process.env.BASE44_LEGACY_SDK_IMPORTS === 'true'
     }),
     react(),
-  ]
+  ],
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: ['./src/test/setup.js'],
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json', 'html', 'lcov'],
+      exclude: [
+        'node_modules/',
+        'src/test/',
+        '**/*.test.{js,jsx}',
+        '**/*.config.{js,ts}',
+        'dist/',
+        'coverage/',
+        'functions/',
+      ],
+      thresholds: {
+        lines: 10,
+        functions: 10,
+        branches: 10,
+        statements: 10,
+      },
+    },
+  },
 });
