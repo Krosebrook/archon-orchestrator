@@ -60,7 +60,7 @@ export function createMockWorkflow(overrides = {}) {
   return {
     ...mockWorkflow,
     ...overrides,
-    id: overrides.id || `workflow_${Math.random().toString(36).substr(2, 9)}`,
+    id: overrides.id || `workflow_${Math.random().toString(36).slice(2, 11)}`,
   };
 }
 
@@ -71,6 +71,6 @@ export function createMockWorkflowExecution(overrides = {}) {
   return {
     ...mockWorkflowExecution,
     ...overrides,
-    id: overrides.id || `wf_exec_${Math.random().toString(36).substr(2, 9)}`,
+    id: overrides.id || `wf_exec_${Math.random().toString(36).slice(2, 11)}`,
   };
 }

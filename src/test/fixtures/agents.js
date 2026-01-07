@@ -60,7 +60,7 @@ export function createMockAgent(overrides = {}) {
   return {
     ...mockAgent,
     ...overrides,
-    id: overrides.id || `agent_${Math.random().toString(36).substr(2, 9)}`,
+    id: overrides.id || `agent_${Math.random().toString(36).slice(2, 11)}`,
   };
 }
 
@@ -71,6 +71,6 @@ export function createMockExecution(overrides = {}) {
   return {
     ...mockAgentExecution,
     ...overrides,
-    id: overrides.id || `exec_${Math.random().toString(36).substr(2, 9)}`,
+    id: overrides.id || `exec_${Math.random().toString(36).slice(2, 11)}`,
   };
 }
