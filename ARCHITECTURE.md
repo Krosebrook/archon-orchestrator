@@ -2,8 +2,8 @@
 
 **Archon Orchestrator - Technical Architecture**
 
-Version: 1.0  
-Last Updated: December 30, 2025  
+Version: 1.1  
+Last Updated: January 8, 2026  
 Status: Active Development
 
 ---
@@ -43,8 +43,8 @@ Archon Orchestrator follows a modern, serverless, cloud-native architecture buil
 |--------|-----------|-----------|
 | **Frontend Framework** | React 18.2 | Industry standard, large ecosystem, excellent performance |
 | **Build Tool** | Vite 6.1 | Fast HMR, excellent DX, modern ESM support |
-| **Backend Runtime** | Deno | TypeScript-native, secure by default, modern APIs |
-| **Platform** | Base44 | Serverless, integrated auth/data, rapid development |
+| **Backend Runtime** | Deno 1.40+ | TypeScript-native, secure by default, modern APIs |
+| **Platform** | Base44 SDK 0.8.3-0.8.6 | Serverless, integrated auth/data, rapid development |
 | **Styling** | Tailwind CSS | Utility-first, consistent design, excellent DX |
 | **State Management** | TanStack Query | Server state sync, caching, optimistic updates |
 | **UI Components** | Radix UI | Accessible, unstyled primitives, WCAG compliant |
@@ -62,7 +62,7 @@ Archon Orchestrator follows a modern, serverless, cloud-native architecture buil
 │  │                  React Application (SPA)                      │ │
 │  │  ┌────────┐  ┌──────────┐  ┌──────────┐  ┌──────────────┐  │ │
 │  │  │ Pages  │  │Components│  │  Hooks   │  │  State Mgmt  │  │ │
-│  │  │ (46)   │  │  (334)   │  │          │  │ (TanStack Q) │  │ │
+│  │  │  (46)  │  │  (337)   │  │          │  │ (TanStack Q) │  │ │
 │  │  └────────┘  └──────────┘  └──────────┘  └──────────────┘  │ │
 │  └──────────────────────────────────────────────────────────────┘ │
 └────────────────────────────────────────────────────────────────────┘
@@ -160,7 +160,7 @@ App.jsx (Root)
 │   ├── Compliance
 │   └── ...
 │
-└── Components (334 total)
+├── Components (337 total)
     ├── ui/ (Radix-based primitives)
     │   ├── Button
     │   ├── Dialog
@@ -343,6 +343,8 @@ Deno.serve(async (req) => {
 | **Refactoring** | 5 | analyzeCodebase, generateRefactoringSuggestions, applyRefactor, rollbackRefactor, aiCodeReview |
 | **Debug** | 2 | startDebugSession, explainDecision |
 | **Data** | 3 | exportData, compareVersions, getSecretHealth |
+
+**Total:** 54 serverless functions
 
 ### API Design Patterns
 
@@ -771,5 +773,5 @@ Region 1 (Primary)     Region 2 (Backup)     Region 3 (Backup)
 
 ---
 
-**Last Updated:** December 30, 2025  
+**Last Updated:** January 8, 2026  
 **Maintained By:** Archon Development Team

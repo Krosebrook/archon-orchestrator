@@ -156,8 +156,9 @@ npm run build
 3. **Test your changes**
    ```bash
    npm run lint
+   npm run typecheck
+   npm test
    npm run build
-   # Run any tests
    ```
 
 4. **Commit your changes**

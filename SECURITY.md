@@ -2,8 +2,8 @@
 
 **Archon Orchestrator Security Guidelines & Reporting**
 
-Version: 1.0  
-Last Updated: December 30, 2025
+Version: 1.1  
+Last Updated: January 8, 2026
 
 ---
 
