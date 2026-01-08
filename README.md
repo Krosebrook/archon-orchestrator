@@ -171,6 +171,29 @@ npm run lint:fix
 npm run typecheck
 ```
 
+### Testing
+
+```bash
+# Run all tests once
+npm test
+
+# Run tests in watch mode (for development)
+npm run test:watch
+
+# Run tests with UI
+npm run test:ui
+
+# Generate coverage report
+npm run test:coverage
+```
+
+**Test Statistics:**
+- ✅ 47 tests passing
+- 📊 Test infrastructure: Vitest + Testing Library
+- 🎯 Coverage target: 50% (Phase 1)
+
+See [TESTING_IMPLEMENTATION.md](./TESTING_IMPLEMENTATION.md) for detailed testing guide.
+
 ---
 
 ## 🏗️ Technology Stack
@@ -324,21 +347,33 @@ archon-orchestrator/
    - Use TypeScript for backend functions
    - Follow React best practices for frontend
 
-3. **Test your changes**
+3. **Write tests**
+   ```bash
+   # Run tests in watch mode while developing
+   npm run test:watch
+   
+   # Run all tests
+   npm test
+   
+   # Check coverage
+   npm run test:coverage
+   ```
+
+4. **Test your changes**
    ```bash
    npm run lint
    npm run typecheck
    npm run build
    ```
 
-4. **Commit and push**
+5. **Commit and push**
    ```bash
    git add .
    git commit -m "feat: your feature description"
    git push origin feature/your-feature-name
    ```
 
-5. **Create a Pull Request**
+6. **Create a Pull Request**
    - Provide clear description
    - Reference any related issues
    - Wait for review
