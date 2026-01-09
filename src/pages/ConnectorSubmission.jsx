@@ -12,6 +12,8 @@ import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Plus, Trash2, Upload, Code, Shield } from 'lucide-react';
 import { toast } from 'sonner';
 import { createPageUrl } from '@/utils';
+import AIConnectorAssistant from '../components/connectors/AIConnectorAssistant';
+import OperationValidator from '../components/connectors/OperationValidator';
 
 export default function ConnectorSubmission() {
   const navigate = useNavigate();
@@ -53,6 +55,29 @@ export default function ConnectorSubmission() {
       toast.error('Failed to submit connector: ' + error.message);
     },
   });
+
+  const handleApplyAISuggestions = (suggestions) => {
+    setFormData({
+      ...formData,
+      name: suggestions.name || formData.name,
+      provider: suggestions.provider || formData.provider,
+      description: suggestions.description || formData.description,
+      category: suggestions.category || formData.category,
+      auth_type: suggestions.auth_type || formData.auth_type,
+      auth_config: suggestions.auth_config_suggestions || formData.auth_config,
+      operations: suggestions.operations || formData.operations,
+    });
+    toast.success('AI suggestions applied successfully!');
+  };
+
+  const handleApplySchemaFix = (improvedSchemas) => {
+    setCurrentOperation({
+      ...currentOperation,
+      input_schema: JSON.stringify(improvedSchemas.input_schema, null, 2),
+      output_schema: JSON.stringify(improvedSchemas.output_schema, null, 2),
+    });
+    toast.success('AI improvements applied to schemas');
+  };
 
   const addOperation = () => {
     if (!currentOperation.id || !currentOperation.name) {
@@ -138,6 +163,9 @@ export default function ConnectorSubmission() {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
+        {/* AI Assistant */}
+        <AIConnectorAssistant onApplySuggestions={handleApplyAISuggestions} />
+
         {/* Basic Information */}
         <Card>
           <CardHeader>
@@ -395,6 +423,21 @@ export default function ConnectorSubmission() {
               <Plus className="w-4 h-4 mr-2" />
               Add Operation
             </Button>
+
+            {currentOperation.id && currentOperation.name && (
+              <OperationValidator 
+                operation={{
+                  ...currentOperation,
+                  input_schema: (() => {
+                    try { return JSON.parse(currentOperation.input_schema); } catch { return {}; }
+                  })(),
+                  output_schema: (() => {
+                    try { return JSON.parse(currentOperation.output_schema); } catch { return {}; }
+                  })(),
+                }}
+                onApplyFix={handleApplySchemaFix}
+              />
+            )}
 
             {formData.operations.length > 0 && (
               <div className="space-y-2 mt-4">
