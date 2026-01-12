@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Agent, AgentMetric, SkillInstallation, SkillReview, Run } from '@/entities/all';
 import { base44 } from '@/api/base44Client';
-import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { BarChart3, DollarSign, MessageSquare, TrendingUp } from 'lucide-react';

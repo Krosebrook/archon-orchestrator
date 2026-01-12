@@ -4,7 +4,6 @@
  * @version 1.0.0
  */
 
-import React from 'react';
 import { ArrowRight, MessageSquare, Database, Vote, Share2 } from 'lucide-react';
 
 export default function CollaborationEdge({ 

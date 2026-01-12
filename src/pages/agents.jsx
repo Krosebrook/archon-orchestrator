@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Agent } from '@/entities/Agent';
 import { Button } from '@/components/ui/button';
 import { PlusCircle, Bot, Search } from 'lucide-react';

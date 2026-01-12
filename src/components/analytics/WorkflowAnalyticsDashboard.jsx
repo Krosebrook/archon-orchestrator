@@ -4,12 +4,12 @@
  * @version 1.0.0
  */
 
-import React, { useState, useEffect, useMemo } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useState, useEffect, useMemo } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { DatePickerWithRange } from '@/components/ui/date-picker';
-import { TrendingUp, TrendingDown, Clock, DollarSign, CheckCircle2, XCircle, Activity } from 'lucide-react';
+import { TrendingUp, TrendingDown, Clock, DollarSign, CheckCircle2, Activity } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 import ExecutionTimeChart from './charts/ExecutionTimeChart';

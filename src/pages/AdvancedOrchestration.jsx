@@ -4,7 +4,7 @@
  * @version 1.0.0
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Clock, GitBranch, Network, Activity } from 'lucide-react';
 import { base44 } from '@/api/base44Client';

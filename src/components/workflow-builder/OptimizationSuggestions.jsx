@@ -7,14 +7,14 @@
  * @version 1.0.0
  */
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useState, useEffect } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { 
   TrendingUp, Loader2, Zap, DollarSign, Clock, 
-  CheckCircle, AlertTriangle, Lightbulb, ArrowRight 
+  CheckCircle, Lightbulb 
 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';

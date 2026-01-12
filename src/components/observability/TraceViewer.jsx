@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Search, Clock, AlertCircle, RefreshCw } from 'lucide-react';
+import { Search, Clock, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { traceService } from '@/components/services/TraceService';
 import { useAsync } from '@/components/hooks/useAsync';

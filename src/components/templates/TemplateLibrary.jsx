@@ -1,4 +1,3 @@
-import React from 'react';
 import TemplateCard from './TemplateCard';
 
 export default function TemplateLibrary({ templates, onRefresh, getTemplateRating }) {

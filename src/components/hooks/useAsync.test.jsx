@@ -4,7 +4,7 @@
  * Tests for the async state management hook
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { useAsync } from './useAsync';
 

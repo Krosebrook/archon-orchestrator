@@ -1,12 +1,11 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle2, XCircle, Clock, RefreshCw } from 'lucide-react';
+import { CheckCircle2, XCircle, Clock } from 'lucide-react';
 import { format } from 'date-fns';
 import { useApprovals } from '@/components/hooks/useApprovals';
-import { approvalService } from '@/components/services/ApprovalService';
 
 export default function ApprovalCenter() {
   const [selectedRequest, setSelectedRequest] = useState(null);

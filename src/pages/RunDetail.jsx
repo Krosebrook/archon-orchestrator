@@ -1,7 +1,7 @@
 
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Run, Workflow, Agent, Event } from '@/entities/all';
-import { useParams, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import RunHeader from '../components/runs/RunHeader';
 import RunMetrics from '../components/runs/RunMetrics';
 import RunTimeline from '../components/runs/RunTimeline';
@@ -9,7 +9,6 @@ import LiveLogStream from '../components/runs/LiveLogStream';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertTriangle, ArrowLeft, Code } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';

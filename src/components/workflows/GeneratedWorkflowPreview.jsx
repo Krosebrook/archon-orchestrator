@@ -4,7 +4,6 @@
  * @version 1.0.0
  */
 
-import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Bot, Settings, GitBranch, Database, Mail, Webhook, Clock, DollarSign, Tag } from 'lucide-react';

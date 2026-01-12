@@ -9,7 +9,6 @@
 
 import { base44 } from '@/api/base44Client';
 import { APIError, ErrorCodes, ErrorSeverity } from '../shared/constants';
-import { auditCritical } from '../utils/audit-logger';
 
 /**
  * Validates user has access to specified organization.
