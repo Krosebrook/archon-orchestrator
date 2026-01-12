@@ -1,0 +1,405 @@
+{
+  "metadata": {
+    "name": "FlashFusion Component Color Mapping",
+    "version": "1.0.0",
+    "description": "Production-ready color specifications for all UI components with state variations"
+  },
+  "buttons": {
+    "primary": {
+      "default": {
+        "background": "#a855f7",
+        "foreground": "#ffffff",
+        "border": "transparent",
+        "shadow": "0 0 20px rgba(168, 85, 247, 0.4)"
+      },
+      "hover": {
+        "background": "#9333ea",
+        "foreground": "#ffffff",
+        "border": "transparent",
+        "shadow": "0 0 30px rgba(168, 85, 247, 0.6)"
+      },
+      "active": {
+        "background": "#7e22ce",
+        "foreground": "#ffffff",
+        "border": "transparent",
+        "shadow": "0 0 15px rgba(168, 85, 247, 0.5)"
+      },
+      "disabled": {
+        "background": "#6b21a8",
+        "foreground": "#c084fc",
+        "border": "transparent",
+        "shadow": "none",
+        "opacity": 0.5
+      }
+    },
+    "secondary": {
+      "default": {
+        "background": "#f472b6",
+        "foreground": "#ffffff",
+        "border": "transparent",
+        "shadow": "0 0 20px rgba(244, 114, 182, 0.4)"
+      },
+      "hover": {
+        "background": "#ec4899",
+        "foreground": "#ffffff",
+        "border": "transparent",
+        "shadow": "0 0 30px rgba(244, 114, 182, 0.6)"
+      },
+      "active": {
+        "background": "#db2777",
+        "foreground": "#ffffff",
+        "border": "transparent",
+        "shadow": "0 0 15px rgba(244, 114, 182, 0.5)"
+      },
+      "disabled": {
+        "background": "#be185d",
+        "foreground": "#fda4af",
+        "border": "transparent",
+        "shadow": "none",
+        "opacity": 0.5
+      }
+    },
+    "outline": {
+      "default": {
+        "background": "transparent",
+        "foreground": "#a855f7",
+        "border": "#a855f7",
+        "shadow": "none"
+      },
+      "hover": {
+        "background": "rgba(168, 85, 247, 0.1)",
+        "foreground": "#9333ea",
+        "border": "#9333ea",
+        "shadow": "0 0 15px rgba(168, 85, 247, 0.3)"
+      },
+      "active": {
+        "background": "rgba(168, 85, 247, 0.2)",
+        "foreground": "#7e22ce",
+        "border": "#7e22ce",
+        "shadow": "none"
+      },
+      "disabled": {
+        "background": "transparent",
+        "foreground": "#6b21a8",
+        "border": "#6b21a8",
+        "shadow": "none",
+        "opacity": 0.5
+      }
+    },
+    "ghost": {
+      "default": {
+        "background": "transparent",
+        "foreground": "#f3e8ff",
+        "border": "transparent",
+        "shadow": "none"
+      },
+      "hover": {
+        "background": "rgba(168, 85, 247, 0.1)",
+        "foreground": "#e9d5ff",
+        "border": "transparent",
+        "shadow": "none"
+      },
+      "active": {
+        "background": "rgba(168, 85, 247, 0.15)",
+        "foreground": "#d8b4fe",
+        "border": "transparent",
+        "shadow": "none"
+      },
+      "disabled": {
+        "background": "transparent",
+        "foreground": "#c084fc",
+        "border": "transparent",
+        "shadow": "none",
+        "opacity": 0.4
+      }
+    }
+  },
+  "forms": {
+    "input": {
+      "default": {
+        "background": "rgba(255, 255, 255, 0.05)",
+        "foreground": "#f3e8ff",
+        "border": "#3d2563",
+        "placeholder": "#c084fc"
+      },
+      "focus": {
+        "background": "rgba(255, 255, 255, 0.08)",
+        "foreground": "#f3e8ff",
+        "border": "#a855f7",
+        "ring": "rgba(168, 85, 247, 0.3)",
+        "shadow": "0 0 0 3px rgba(168, 85, 247, 0.3)"
+      },
+      "error": {
+        "background": "rgba(239, 68, 68, 0.05)",
+        "foreground": "#f3e8ff",
+        "border": "#ef4444",
+        "ring": "rgba(239, 68, 68, 0.3)"
+      },
+      "disabled": {
+        "background": "rgba(255, 255, 255, 0.03)",
+        "foreground": "#c084fc",
+        "border": "#2d1b4e",
+        "opacity": 0.5
+      }
+    },
+    "select": {
+      "default": {
+        "background": "rgba(255, 255, 255, 0.05)",
+        "foreground": "#f3e8ff",
+        "border": "#3d2563"
+      },
+      "hover": {
+        "background": "rgba(255, 255, 255, 0.08)",
+        "foreground": "#f3e8ff",
+        "border": "#4d2f7a"
+      },
+      "focus": {
+        "background": "rgba(255, 255, 255, 0.08)",
+        "foreground": "#f3e8ff",
+        "border": "#a855f7",
+        "ring": "rgba(168, 85, 247, 0.3)"
+      },
+      "disabled": {
+        "background": "rgba(255, 255, 255, 0.03)",
+        "foreground": "#c084fc",
+        "border": "#2d1b4e",
+        "opacity": 0.5
+      }
+    },
+    "checkbox": {
+      "unchecked": {
+        "background": "transparent",
+        "border": "#3d2563",
+        "foreground": "transparent"
+      },
+      "checked": {
+        "background": "#a855f7",
+        "border": "#a855f7",
+        "foreground": "#ffffff",
+        "shadow": "0 0 10px rgba(168, 85, 247, 0.3)"
+      },
+      "disabled": {
+        "background": "#2d1b4e",
+        "border": "#2d1b4e",
+        "foreground": "#6b21a8",
+        "opacity": 0.5
+      }
+    },
+    "radio": {
+      "unchecked": {
+        "background": "transparent",
+        "border": "#3d2563",
+        "dot": "transparent"
+      },
+      "checked": {
+        "background": "transparent",
+        "border": "#a855f7",
+        "dot": "#a855f7",
+        "shadow": "0 0 10px rgba(168, 85, 247, 0.3)"
+      },
+      "disabled": {
+        "background": "transparent",
+        "border": "#2d1b4e",
+        "dot": "#6b21a8",
+        "opacity": 0.5
+      }
+    }
+  },
+  "alerts": {
+    "info": {
+      "background": "rgba(59, 130, 246, 0.1)",
+      "foreground": "#dbeafe",
+      "border": "#3b82f6",
+      "icon": "#60a5fa"
+    },
+    "success": {
+      "background": "rgba(34, 197, 94, 0.1)",
+      "foreground": "#dcfce7",
+      "border": "#22c55e",
+      "icon": "#4ade80"
+    },
+    "warning": {
+      "background": "rgba(245, 158, 11, 0.1)",
+      "foreground": "#fef3c7",
+      "border": "#f59e0b",
+      "icon": "#fbbf24"
+    },
+    "error": {
+      "background": "rgba(239, 68, 68, 0.1)",
+      "foreground": "#fee2e2",
+      "border": "#ef4444",
+      "icon": "#f87171"
+    }
+  },
+  "cards": {
+    "default": {
+      "background": "#18082d",
+      "foreground": "#f3e8ff",
+      "border": "#2d1b4e",
+      "shadow": "0 4px 6px rgba(0, 0, 0, 0.1)"
+    },
+    "elevated": {
+      "background": "#1f0d3a",
+      "foreground": "#f3e8ff",
+      "border": "#3d2563",
+      "shadow": "0 10px 15px rgba(0, 0, 0, 0.2)"
+    },
+    "glass": {
+      "background": "rgba(255, 255, 255, 0.05)",
+      "foreground": "#f3e8ff",
+      "border": "rgba(255, 255, 255, 0.1)",
+      "backdrop": "blur(12px)",
+      "shadow": "0 8px 32px rgba(0, 0, 0, 0.2)"
+    },
+    "interactive": {
+      "default": {
+        "background": "#18082d",
+        "foreground": "#f3e8ff",
+        "border": "#2d1b4e"
+      },
+      "hover": {
+        "background": "#1f0d3a",
+        "foreground": "#f3e8ff",
+        "border": "#4d2f7a",
+        "shadow": "0 0 20px rgba(168, 85, 247, 0.2)"
+      },
+      "active": {
+        "background": "#231347",
+        "foreground": "#f3e8ff",
+        "border": "#a855f7"
+      }
+    }
+  },
+  "navigation": {
+    "navbar": {
+      "background": "rgba(15, 6, 24, 0.8)",
+      "foreground": "#f3e8ff",
+      "border": "#2d1b4e",
+      "backdrop": "blur(12px)"
+    },
+    "navItem": {
+      "default": {
+        "background": "transparent",
+        "foreground": "#e9d5ff"
+      },
+      "hover": {
+        "background": "rgba(168, 85, 247, 0.1)",
+        "foreground": "#f3e8ff"
+      },
+      "active": {
+        "background": "rgba(168, 85, 247, 0.2)",
+        "foreground": "#ffffff",
+        "border": "#a855f7"
+      }
+    },
+    "sidebar": {
+      "background": "#0f0618",
+      "foreground": "#f3e8ff",
+      "border": "#2d1b4e"
+    },
+    "sidebarItem": {
+      "default": {
+        "background": "transparent",
+        "foreground": "#e9d5ff"
+      },
+      "hover": {
+        "background": "rgba(168, 85, 247, 0.1)",
+        "foreground": "#f3e8ff"
+      },
+      "active": {
+        "background": "#a855f7",
+        "foreground": "#ffffff",
+        "shadow": "0 0 15px rgba(168, 85, 247, 0.4)"
+      }
+    }
+  },
+  "badges": {
+    "primary": {
+      "background": "#a855f7",
+      "foreground": "#ffffff",
+      "border": "transparent"
+    },
+    "secondary": {
+      "background": "#f472b6",
+      "foreground": "#ffffff",
+      "border": "transparent"
+    },
+    "success": {
+      "background": "#22c55e",
+      "foreground": "#ffffff",
+      "border": "transparent"
+    },
+    "warning": {
+      "background": "#f59e0b",
+      "foreground": "#ffffff",
+      "border": "transparent"
+    },
+    "error": {
+      "background": "#ef4444",
+      "foreground": "#ffffff",
+      "border": "transparent"
+    },
+    "info": {
+      "background": "#3b82f6",
+      "foreground": "#ffffff",
+      "border": "transparent"
+    },
+    "outline": {
+      "background": "transparent",
+      "foreground": "#a855f7",
+      "border": "#a855f7"
+    },
+    "ghost": {
+      "background": "rgba(168, 85, 247, 0.1)",
+      "foreground": "#a855f7",
+      "border": "transparent"
+    }
+  },
+  "modals": {
+    "overlay": {
+      "background": "rgba(15, 6, 24, 0.8)",
+      "backdrop": "blur(8px)"
+    },
+    "dialog": {
+      "background": "#18082d",
+      "foreground": "#f3e8ff",
+      "border": "#3d2563",
+      "shadow": "0 20px 25px rgba(0, 0, 0, 0.3)"
+    },
+    "dialogHeader": {
+      "background": "rgba(168, 85, 247, 0.1)",
+      "foreground": "#f3e8ff",
+      "border": "#3d2563"
+    }
+  },
+  "tooltips": {
+    "default": {
+      "background": "#1f0d3a",
+      "foreground": "#f3e8ff",
+      "border": "#3d2563",
+      "shadow": "0 4px 6px rgba(0, 0, 0, 0.2)"
+    }
+  },
+  "tables": {
+    "header": {
+      "background": "rgba(168, 85, 247, 0.1)",
+      "foreground": "#f3e8ff",
+      "border": "#3d2563"
+    },
+    "row": {
+      "background": "transparent",
+      "foreground": "#f3e8ff",
+      "border": "#2d1b4e"
+    },
+    "rowHover": {
+      "background": "rgba(168, 85, 247, 0.05)",
+      "foreground": "#f3e8ff",
+      "border": "#2d1b4e"
+    },
+    "rowSelected": {
+      "background": "rgba(168, 85, 247, 0.15)",
+      "foreground": "#ffffff",
+      "border": "#a855f7"
+    }
+  }
+}
