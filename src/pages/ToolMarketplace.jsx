@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { ToolIntegration } from '@/entities/all';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';

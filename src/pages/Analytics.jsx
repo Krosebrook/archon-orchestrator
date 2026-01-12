@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Run, Agent, AgentMetric, Workflow, Event } from '@/entities/all';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useState, useEffect } from 'react';
+import { Run, Agent, AgentMetric, Workflow } from '@/entities/all';
+import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { BarChart3, TrendingUp, AlertTriangle, Zap, DollarSign, Clock } from 'lucide-react';
+import { BarChart3, AlertTriangle, Zap, DollarSign, Clock } from 'lucide-react';
 import RunHistoryTable from '../components/analytics/RunHistoryTable';
 import PerformanceCharts from '../components/analytics/PerformanceCharts';
 import CostBreakdown from '../components/analytics/CostBreakdown';

@@ -1,11 +1,6 @@
-import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Users, Play, Pause, CheckCircle, AlertCircle } from 'lucide-react';
-import { format } from 'date-fns';
-import { base44 } from '@/api/base44Client';
-import { toast } from 'sonner';
 
 export default function CollaborationHub({ collaborations, teams, agents, workflows, onRefresh }) {
   const statusConfig = {

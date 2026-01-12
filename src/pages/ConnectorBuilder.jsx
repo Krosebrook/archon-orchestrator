@@ -1,4 +1,3 @@
-import React from 'react';
 import ConnectorBuilder from '../components/connectors/ConnectorBuilder';
 
 export default function ConnectorBuilderPage() {

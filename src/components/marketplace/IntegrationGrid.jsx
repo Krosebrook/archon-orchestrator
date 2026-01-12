@@ -1,4 +1,3 @@
-import React from 'react';
 import IntegrationCard from './IntegrationCard';
 
 export default function IntegrationGrid({ integrations, onRefresh }) {

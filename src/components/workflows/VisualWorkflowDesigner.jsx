@@ -1,9 +1,8 @@
-import React, { useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { 
-  Plus, 
   Play, 
   Save,
   Bot,
@@ -13,11 +12,9 @@ import {
   Mail,
   Webhook,
   Trash2,
-  X,
   Users,
   Brain
 } from 'lucide-react';
-import CollaborationEdge from './CollaborationEdge';
 import { toast } from 'sonner';
 import WorkflowNodePanel from './WorkflowNodePanel';
 import AgentCollaborationNode from './AgentCollaborationNode';

@@ -1,6 +1,4 @@
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Brain, Zap, Database, GitBranch, MessageSquare, Play, RotateCw } from 'lucide-react';
+import { Brain, Zap, Database, GitBranch, MessageSquare, RotateCw } from 'lucide-react';
 
 const NODE_TYPES = [
   { type: 'agent_action', label: 'Agent Action', icon: Brain, color: 'bg-blue-500', description: 'Execute an AI agent task' },

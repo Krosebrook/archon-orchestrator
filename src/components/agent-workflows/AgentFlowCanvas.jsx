@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import FlowNode from './FlowNode';
 import NodeConfigPanel from './NodeConfigPanel';
 import ConnectionLine from './ConnectionLine';

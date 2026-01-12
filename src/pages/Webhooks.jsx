@@ -1,4 +1,3 @@
-import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Plug, Zap, Activity } from 'lucide-react';
 import WebhookManager from '../components/webhooks/WebhookManager';

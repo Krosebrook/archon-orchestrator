@@ -4,11 +4,10 @@
  * @version 1.0.0
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
 import { Sparkles, Wand2, Loader2, Save, Play } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';

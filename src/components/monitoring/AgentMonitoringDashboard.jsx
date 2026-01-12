@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { AgentMetric, Agent } from '@/entities/all';
-import { Activity, Cpu, HardDrive, Zap, TrendingUp, AlertTriangle } from 'lucide-react';
+import { Activity, Cpu, HardDrive, Zap, TrendingUp } from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { format, subMinutes } from 'date-fns';
 

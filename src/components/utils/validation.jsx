@@ -19,7 +19,6 @@
  * const result = validate(Schema.string({ email: true }), email);
  */
 
-import { ValidationPatterns, RateLimitConfig } from '../shared/constants';
 
 // =============================================================================
 // BASIC VALIDATORS

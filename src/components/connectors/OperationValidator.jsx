@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { CheckCircle2, AlertCircle, Info, Loader2, Sparkles } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
-import { toast } from 'sonner';
 
 export default function OperationValidator({ operation, onApplyFix }) {
   const [validation, setValidation] = useState(null);

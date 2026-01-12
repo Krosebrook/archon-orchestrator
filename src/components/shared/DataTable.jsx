@@ -3,12 +3,12 @@
  * @module shared/DataTable
  */
 
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Search, ChevronLeft, ChevronRight, ArrowUpDown, Filter } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight, ArrowUpDown } from 'lucide-react';
 import { EmptyState } from './EmptyState';
 import { Skeleton } from '@/components/ui/skeleton';
 

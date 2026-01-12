@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -8,13 +8,11 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   Play,
   Pause,
-  Square,
   RefreshCw,
   CheckCircle2,
   AlertCircle,
   Clock,
   Loader2,
-  ChevronRight,
   Terminal,
   DollarSign,
   Zap

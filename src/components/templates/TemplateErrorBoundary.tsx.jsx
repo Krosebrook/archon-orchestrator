@@ -4,7 +4,7 @@
  * @version 1.0.0
  */
 
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AlertCircle, RefreshCw } from 'lucide-react';

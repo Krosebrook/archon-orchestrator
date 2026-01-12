@@ -1,26 +1,19 @@
-import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import ReactMarkdown from 'react-markdown';
 import { 
-  BookOpen, 
   Code, 
   Shield, 
   Zap, 
   Database,
-  GitBranch,
   AlertCircle,
   CheckCircle2
 } from 'lucide-react';
 import { 
   ARCHITECTURE_DOC, 
-  README_DOC, 
   SECURITY_DOC, 
-  API_REFERENCE_DOC,
-  DEPLOYMENT_DOC,
-  CONTRIBUTING_DOC 
+  API_REFERENCE_DOC 
 } from '../components/shared/docs';
 
 const QuickRefCard = ({ title, icon: Icon, items, color = 'blue' }) => (

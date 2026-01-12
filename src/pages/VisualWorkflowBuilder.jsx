@@ -1,8 +1,6 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
-import { createPageUrl } from '@/utils';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -23,15 +21,9 @@ import {
   Redo,
   ZoomIn,
   ZoomOut,
-  Maximize2,
   GitBranch,
   History,
-  Settings,
-  Trash2,
-  Copy,
-  Download,
   Upload,
-  Eye,
   Activity,
   Sparkles,
   TrendingUp,
@@ -42,7 +34,6 @@ import WorkflowCanvas from '../components/workflow-builder/WorkflowCanvas';
 import NodeLibrary from '../components/workflow-builder/NodeLibrary';
 import WorkflowProperties from '../components/workflow-builder/WorkflowProperties';
 import ExecutionMonitor from '../components/workflow-builder/ExecutionMonitor';
-import VersionHistory from '../components/workflow-builder/VersionHistory';
 import AIWorkflowAssistant from '../components/workflow-builder/AIWorkflowAssistant';
 import OptimizationSuggestions from '../components/workflow-builder/OptimizationSuggestions';
 import ABTestManager from '../components/workflow-builder/ABTestManager';

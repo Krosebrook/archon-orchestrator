@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Shield, PlayCircle, CheckCircle2, XCircle, Clock } from 'lucide-react';
+import { Shield, PlayCircle, CheckCircle2, XCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { runRLSTests } from '../components/security/RLSTestSuite';
 

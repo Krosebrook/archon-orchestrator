@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Play, CheckCircle2, XCircle, Clock, GitBranch, TestTube, Rocket, AlertTriangle, Eye } from 'lucide-react';
+import { Play, Clock, GitBranch, TestTube, Rocket, AlertTriangle, Eye } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 import { format } from 'date-fns';

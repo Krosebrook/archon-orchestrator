@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { AlertTriangle, TrendingUp, TrendingDown, Zap } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 export default function PredictiveAnomalyDetector({ metrics, agents }) {
   const [anomalies, setAnomalies] = useState([]);

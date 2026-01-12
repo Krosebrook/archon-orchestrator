@@ -1,5 +1,4 @@
-import React, { useRef, useState, useCallback, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
+import { useRef, useState, useCallback, useEffect } from 'react';
 import { 
   Bot, 
   Zap, 
@@ -9,8 +8,6 @@ import {
   RotateCw,
   Play,
   Pause,
-  Trash2,
-  GripHorizontal,
   Circle,
   CheckCircle2,
   AlertCircle,

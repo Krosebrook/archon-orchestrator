@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
@@ -10,7 +10,6 @@ import {
   MessageSquare, 
   RotateCw,
   Play,
-  Pause,
   Search,
   ChevronDown,
   ChevronRight,
