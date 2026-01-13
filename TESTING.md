@@ -538,19 +538,25 @@ deno test functions/createAgent.test.ts
 
 ## E2E Testing
 
-### Setup
+### Setup ✅ COMPLETE
+
+E2E testing infrastructure is now operational with Playwright:
 
 ```bash
 # Install Playwright
 npm install --save-dev @playwright/test
-npx playwright install
+
+# Install browsers (first time only)
+npx playwright install --with-deps
 ```
 
-### Configuration
+### Configuration ✅ COMPLETE
 
-```typescript
-// playwright.config.ts
-import { defineConfig } from '@playwright/test';
+Playwright is configured in `playwright.config.js`:
+
+```javascript
+// playwright.config.js
+import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
   testDir: './e2e',
@@ -558,66 +564,150 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
-  reporter: 'html',
+  reporter: process.env.CI ? 'github' : 'html',
   use: {
-    baseURL: 'http://localhost:5173',
+    baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:5173',
     trace: 'on-first-retry',
+    screenshot: 'only-on-failure',
+    video: 'retain-on-failure',
   },
   projects: [
-    { name: 'chromium', use: { browserName: 'chromium' } },
-    { name: 'firefox', use: { browserName: 'firefox' } },
-    { name: 'webkit', use: { browserName: 'webkit' } },
+    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+    { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
+    { name: 'webkit', use: { ...devices['Desktop Safari'] } },
+    { name: 'Mobile Chrome', use: { ...devices['Pixel 5'] } },
+    { name: 'Mobile Safari', use: { ...devices['iPhone 12'] } },
   ],
   webServer: {
     command: 'npm run dev',
-    port: 5173,
+    url: 'http://localhost:5173',
     reuseExistingServer: !process.env.CI,
+    timeout: 120000,
   },
 });
 ```
 
+### Running Tests ✅ OPERATIONAL
+
+```bash
+# Run all E2E tests
+npm run test:e2e
+
+# Run E2E tests with UI
+npm run test:e2e:ui
+
+# Run E2E tests in headed mode (see browser)
+npm run test:e2e:headed
+
+# Debug E2E tests step-by-step
+npm run test:e2e:debug
+
+# View test report
+npm run test:e2e:report
+
+# Run specific test file
+npx playwright test e2e/navigation.spec.js
+
+# Run tests in specific browser
+npx playwright test --project=chromium
+```
+
+### Existing E2E Tests ✅ COMPLETE
+
+**Test Files:**
+1. **e2e/navigation.spec.js** - Navigation and basic UI tests
+   - Page loading and routing
+   - Lazy loading behavior
+   - Error boundary functionality
+   - Basic performance checks
+   
+2. **e2e/agents.spec.js** - Agent management workflows
+   - Agent list display
+   - Agent creation UI
+   - Agent search and filtering
+   - Agent detail views
+   - 404 handling
+   
+3. **e2e/workflows.spec.js** - Workflow management
+   - Workflow list display
+   - Workflow creation UI
+   - Workflow execution and runs
+   - Visual workflow builder loading
+   - Agent collaboration features
+
+### CI/CD Integration ✅ COMPLETE
+
+E2E tests are integrated into GitHub Actions workflow (`.github/workflows/test.yml`):
+- Separate `e2e` job runs after unit tests pass
+- Installs Playwright browsers in CI environment
+- Runs tests against local dev server
+- Uploads test reports and videos on failure
+- Retries failed tests 2 times in CI
+
 ### Example E2E Test
 
-```typescript
-// e2e/agent-creation.spec.ts
+```javascript
+// e2e/navigation.spec.js
 import { test, expect } from '@playwright/test';
 
-test.describe('Agent Creation Flow', () => {
-  test('user can create a new agent', async ({ page }) => {
-    // Navigate to agents page
-    await page.goto('/agents');
+test.describe('Navigation', () => {
+  test('should load dashboard page', async ({ page }) => {
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
     
-    // Click create button
-    await page.click('button:has-text("Create Agent")');
-    
-    // Fill form
-    await page.fill('input[name="name"]', 'E2E Test Agent');
-    await page.fill('textarea[name="description"]', 'Created by E2E test');
-    await page.selectOption('select[name="provider"]', 'openai');
-    await page.selectOption('select[name="model"]', 'gpt-4o');
-    
-    // Submit
-    await page.click('button:has-text("Create")');
-    
-    // Wait for success message
-    await expect(page.locator('.toast-success')).toBeVisible();
-    await expect(page.locator('.toast-success')).toContainText('Agent created');
-    
-    // Verify agent appears in list
-    await expect(page.locator(`text=E2E Test Agent`)).toBeVisible();
+    const url = page.url();
+    expect(url).toMatch(/(dashboard|login)/i);
   });
-  
-  test('validates required fields', async ({ page }) => {
-    await page.goto('/agents/new');
+
+  test('should lazy load pages without errors', async ({ page }) => {
+    const errors = [];
+    page.on('console', msg => {
+      if (msg.type() === 'error') errors.push(msg.text());
+    });
     
-    // Try to submit without filling required fields
-    await page.click('button:has-text("Create")');
+    await page.goto('/workflows');
+    await page.waitForLoadState('networkidle');
     
-    // Check for validation errors
-    await expect(page.locator('text=Name is required')).toBeVisible();
+    const criticalErrors = errors.filter(
+      err => !err.includes('auth') && !err.includes('401')
+    );
+    expect(criticalErrors).toHaveLength(0);
   });
 });
 ```
+
+### Test Strategy
+
+**Coverage Areas:**
+- ✅ Navigation and routing
+- ✅ Lazy loading behavior
+- ✅ Error boundaries
+- ✅ Agent management
+- ✅ Workflow management
+- ✅ Performance basics
+- 📋 Authentication flows (planned)
+- 📋 Form validation (planned)
+- 📋 Real-time updates (planned)
+
+### Best Practices
+
+1. **Authentication Handling**
+   - Tests skip gracefully when auth is required
+   - Use test accounts or mock authentication in CI
+   
+2. **Data Management**
+   - Tests handle both empty and populated states
+   - No dependency on specific test data existing
+   
+3. **Flakiness Prevention**
+   - Use `waitForLoadState('networkidle')`
+   - Proper timeout handling
+   - Retry logic in CI
+   
+4. **Performance Testing**
+   - Basic load time checks
+   - Code splitting verification
+   - Bundle size monitoring
 
 ---
 
