@@ -199,7 +199,7 @@ const Sidebar = ({ isCollapsed, isMobileOpen, setIsMobileOpen }) => {
 };
 
 const Header = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen, restartTour }) => {
-  const { user, organization, role } = useAuth();
+  const { user, role } = useAuth();  // Removed 'organization' as it's not used in this component
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark');
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
 
