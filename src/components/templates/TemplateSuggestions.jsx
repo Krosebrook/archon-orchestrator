@@ -34,7 +34,9 @@ export default function TemplateSuggestions() {
     }
   };
 
-  const useTemplate = async (template) => {
+  // Renamed from useTemplate to avoid React Hook naming conflict
+  // This is not a hook, just a regular async function
+  const handleUseTemplate = async (template) => {
     try {
       const user = await base44.auth.me();
       const workflow = await base44.entities.Workflow.create({
@@ -140,7 +142,7 @@ export default function TemplateSuggestions() {
 
                     <Button
                       size="sm"
-                      onClick={() => useTemplate(rec.template)}
+                      onClick={() => handleUseTemplate(rec.template)}
                       className="w-full bg-green-600 hover:bg-green-700"
                     >
                       <Plus className="w-3 h-3 mr-2" />

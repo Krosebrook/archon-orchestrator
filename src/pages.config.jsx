@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react';
 import AdvancedOrchestration from './pages/AdvancedOrchestration';
 import AgentAnalytics from './pages/AgentAnalytics';
 import AgentCollaboration from './pages/AgentCollaboration';
@@ -24,28 +25,50 @@ import KnowledgeBase from './pages/KnowledgeBase';
 import Monitoring from './pages/Monitoring';
 import Observability from './pages/Observability';
 import OrchestrationHub from './pages/OrchestrationHub';
-import RAGManagement from './pages/RAGManagement';
+// Lazy-loaded large pages for better performance (code splitting)
+// Note: These are wrapped with Suspense in withSuspense(), which handles loading states
+// The ErrorBoundary in App.jsx will catch any import failures from network issues
+const RAGManagement = lazy(() => import('./pages/RAGManagement'));
+const VisualWorkflowBuilder = lazy(() => import('./pages/VisualWorkflowBuilder'));
+const ConnectorSubmission = lazy(() => import('./pages/ConnectorSubmission'));
+const SkillDetail = lazy(() => import('./pages/SkillDetail'));
 import RefactorPolicies from './pages/RefactorPolicies';
 import Refactoring from './pages/Refactoring';
 import RunDetail from './pages/RunDetail';
 import Runs from './pages/Runs';
 import SecurityTests from './pages/SecurityTests';
 import Settings from './pages/Settings';
-import SkillDetail from './pages/SkillDetail';
 import SkillManagement from './pages/SkillManagement';
 import SkillMarketplace from './pages/SkillMarketplace';
 import TemplateCustomizer from './pages/TemplateCustomizer';
 import Templates from './pages/Templates';
 import ToolMarketplace from './pages/ToolMarketplace';
 import UserProfile from './pages/UserProfile';
-import VisualWorkflowBuilder from './pages/VisualWorkflowBuilder';
 import Webhooks from './pages/Webhooks';
 import WorkflowDetail from './pages/WorkflowDetail';
 import WorkflowStudio from './pages/WorkflowStudio';
 import Workflows from './pages/Workflows';
 import agents from './pages/agents';
-import ConnectorSubmission from './pages/ConnectorSubmission';
 import __Layout from './Layout.jsx';
+
+// Loading fallback component for lazy-loaded pages
+const PageLoader = () => (
+  <div className="fixed inset-0 flex items-center justify-center bg-slate-950">
+    <div className="text-center">
+      <div className="w-12 h-12 border-4 border-slate-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
+      <p className="text-slate-400 text-sm">Loading page...</p>
+    </div>
+  </div>
+);
+
+// Wrapper for lazy-loaded pages with Suspense boundary
+const withSuspense = (Component) => {
+  return (props) => (
+    <Suspense fallback={<PageLoader />}>
+      <Component {...props} />
+    </Suspense>
+  );
+};
 
 
 export const PAGES = {
@@ -75,27 +98,28 @@ export const PAGES = {
     "Monitoring": Monitoring,
     "Observability": Observability,
     "OrchestrationHub": OrchestrationHub,
-    "RAGManagement": RAGManagement,
+    // Lazy-loaded pages wrapped with Suspense for code splitting
+    "RAGManagement": withSuspense(RAGManagement),
     "RefactorPolicies": RefactorPolicies,
     "Refactoring": Refactoring,
     "RunDetail": RunDetail,
     "Runs": Runs,
     "SecurityTests": SecurityTests,
     "Settings": Settings,
-    "SkillDetail": SkillDetail,
+    "SkillDetail": withSuspense(SkillDetail),
     "SkillManagement": SkillManagement,
     "SkillMarketplace": SkillMarketplace,
     "TemplateCustomizer": TemplateCustomizer,
     "Templates": Templates,
     "ToolMarketplace": ToolMarketplace,
     "UserProfile": UserProfile,
-    "VisualWorkflowBuilder": VisualWorkflowBuilder,
+    "VisualWorkflowBuilder": withSuspense(VisualWorkflowBuilder),
     "Webhooks": Webhooks,
     "WorkflowDetail": WorkflowDetail,
     "WorkflowStudio": WorkflowStudio,
     "Workflows": Workflows,
     "agents": agents,
-    "ConnectorSubmission": ConnectorSubmission,
+    "ConnectorSubmission": withSuspense(ConnectorSubmission),
 }
 
 export const pagesConfig = {
