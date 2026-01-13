@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import * as Sentry from "@sentry/react"
+import { initWebVitals } from '@/utils/web-vitals'
 import App from '@/App.jsx'
 import '@/index.css'
 
@@ -44,6 +45,10 @@ if (import.meta.env.VITE_SENTRY_DSN) {
     },
   });
 }
+
+// Initialize Web Vitals performance monitoring
+// Tracks CLS, FID, FCP, LCP, TTFB, and INP metrics
+initWebVitals();
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   // <React.StrictMode>
