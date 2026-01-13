@@ -32,7 +32,7 @@ test.describe('Navigation', () => {
   });
 
   test('should lazy load pages without errors', async ({ page }) => {
-    const errors: string[] = [];
+    const errors = [];
     
     // Listen for console errors
     page.on('console', msg => {
@@ -87,7 +87,7 @@ test.describe('Error Handling', () => {
   });
   
   test('should log errors to Sentry when configured', async ({ page }) => {
-    const sentryRequests: string[] = [];
+    const sentryRequests = [];
     
     // Intercept Sentry requests
     page.on('request', request => {

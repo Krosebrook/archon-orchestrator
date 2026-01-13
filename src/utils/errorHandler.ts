@@ -99,7 +99,7 @@ export class AppError extends Error {
  * Generate a unique trace ID for error tracking
  */
 function generateTraceId(): string {
-  return `trace_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  return `trace_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
 }
 
 /**
