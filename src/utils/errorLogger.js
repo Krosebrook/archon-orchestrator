@@ -21,6 +21,7 @@ export const LogLevel = {
  */
 class ErrorLogger {
   constructor() {
+    // import.meta.env.PROD is set by Vite build tool (true in production builds)
     this.isProduction = import.meta.env.PROD;
     this.appVersion = import.meta.env.VITE_APP_VERSION || '0.0.0';
   }

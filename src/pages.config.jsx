@@ -26,6 +26,8 @@ import Monitoring from './pages/Monitoring';
 import Observability from './pages/Observability';
 import OrchestrationHub from './pages/OrchestrationHub';
 // Lazy-loaded large pages for better performance (code splitting)
+// Note: These are wrapped with Suspense in withSuspense(), which handles loading states
+// The ErrorBoundary in App.jsx will catch any import failures from network issues
 const RAGManagement = lazy(() => import('./pages/RAGManagement'));
 const VisualWorkflowBuilder = lazy(() => import('./pages/VisualWorkflowBuilder'));
 const ConnectorSubmission = lazy(() => import('./pages/ConnectorSubmission'));
