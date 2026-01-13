@@ -6,6 +6,7 @@
  */
 
 import { toast } from 'sonner';
+import type { AppError as AppErrorType } from '@/types/common';
 
 /**
  * Error severity levels
@@ -15,7 +16,9 @@ export const ErrorSeverity = {
   MEDIUM: 'medium',
   HIGH: 'high',
   CRITICAL: 'critical'
-};
+} as const;
+
+export type ErrorSeverityLevel = typeof ErrorSeverity[keyof typeof ErrorSeverity];
 
 /**
  * Error categories for tracking and analysis
@@ -31,13 +34,34 @@ export const ErrorCategory = {
   AGENT_ERROR: 'agent_error',
   WORKFLOW_ERROR: 'workflow_error',
   UNKNOWN: 'unknown'
-};
+} as const;
+
+export type ErrorCategoryType = typeof ErrorCategory[keyof typeof ErrorCategory];
+
+interface AppErrorOptions {
+  code?: string;
+  category?: ErrorCategoryType;
+  severity?: ErrorSeverityLevel;
+  statusCode?: number;
+  details?: Record<string, any>;
+  traceId?: string;
+  isOperational?: boolean;
+}
 
 /**
  * Custom application error class with enhanced metadata
  */
 export class AppError extends Error {
-  constructor(message, options = {}) {
+  public readonly code: string;
+  public readonly category: ErrorCategoryType;
+  public readonly severity: ErrorSeverityLevel;
+  public readonly statusCode: number;
+  public readonly details: Record<string, any>;
+  public readonly timestamp: string;
+  public readonly traceId: string;
+  public readonly isOperational: boolean;
+
+  constructor(message: string, options: AppErrorOptions = {}) {
     super(message);
     this.name = 'AppError';
     this.code = options.code || 'UNKNOWN_ERROR';
@@ -74,24 +98,24 @@ export class AppError extends Error {
 /**
  * Generate a unique trace ID for error tracking
  */
-function generateTraceId() {
-  return `trace_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+function generateTraceId(): string {
+  return `trace_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
 }
 
 /**
  * Parse API error responses into standardized AppError format
- * @param {Error|Response|Object} error - The error to parse
- * @returns {AppError} Standardized error object
+ * @param error - The error to parse
+ * @returns Standardized error object
  */
-export async function parseApiError(error) {
+export async function parseApiError(error: unknown): Promise<AppError> {
   // If already an AppError, return as-is
   if (error instanceof AppError) {
     return error;
   }
 
-  // Handle Response objects from fetch (or objects that look like Response)
-  if (error instanceof Response || (error && typeof error.status === 'number' && typeof error.json === 'function')) {
-    let errorData;
+  // Handle Response objects from fetch
+  if (error instanceof Response) {
+    let errorData: any;
     try {
       errorData = await error.json();
     } catch {
@@ -135,19 +159,19 @@ export async function parseApiError(error) {
   }
 
   // Handle plain objects or strings
-  const message = typeof error === 'string' ? error : error?.message || 'An unknown error occurred';
+  const message = typeof error === 'string' ? error : (error as any)?.message || 'An unknown error occurred';
   return new AppError(message, {
-    code: error?.code || 'UNKNOWN_ERROR',
+    code: (error as any)?.code || 'UNKNOWN_ERROR',
     category: ErrorCategory.UNKNOWN,
     severity: ErrorSeverity.MEDIUM,
-    details: typeof error === 'object' ? error : {}
+    details: typeof error === 'object' ? (error as any) : {}
   });
 }
 
 /**
  * Categorize error by HTTP status code
  */
-function categorizeByStatusCode(status) {
+function categorizeByStatusCode(status: number): ErrorCategoryType {
   if (status === 401) return ErrorCategory.AUTHENTICATION;
   if (status === 403) return ErrorCategory.AUTHORIZATION;
   if (status === 404) return ErrorCategory.NOT_FOUND;
@@ -160,7 +184,7 @@ function categorizeByStatusCode(status) {
 /**
  * Determine severity by HTTP status code
  */
-function getSeverityByStatusCode(status) {
+function getSeverityByStatusCode(status: number): ErrorSeverityLevel {
   if (status >= 500) return ErrorSeverity.HIGH;
   if (status === 401 || status === 403) return ErrorSeverity.MEDIUM;
   if (status === 404) return ErrorSeverity.LOW;
@@ -168,16 +192,22 @@ function getSeverityByStatusCode(status) {
   return ErrorSeverity.LOW;
 }
 
+interface ToastOptions {
+  duration?: number;
+  description?: string;
+  [key: string]: any;
+}
+
 /**
  * Display user-friendly error notification
- * @param {AppError|Error|string} error - Error to display
- * @param {Object} options - Toast options
+ * @param error - Error to display
+ * @param options - Toast options
  */
-export function showErrorToast(error, options = {}) {
+export function showErrorToast(error: AppError | Error | string, options: ToastOptions = {}): void {
   const appError = error instanceof AppError ? error : null;
-  const message = appError?.message || error?.message || error || 'An error occurred';
+  const message = appError?.message || (error as Error)?.message || (error as string) || 'An error occurred';
   
-  const toastOptions = {
+  const toastOptions: ToastOptions = {
     duration: options.duration || 5000,
     ...options
   };
@@ -190,13 +220,21 @@ export function showErrorToast(error, options = {}) {
   toast.error(message, toastOptions);
 }
 
+interface HandleErrorOptions {
+  showToast?: boolean;
+  logToConsole?: boolean;
+  logToServer?: boolean;
+  context?: Record<string, any>;
+  toastOptions?: ToastOptions;
+}
+
 /**
  * Handle errors with automatic logging and user notification
- * @param {Error} error - The error to handle
- * @param {Object} options - Handling options
- * @returns {AppError} Processed error
+ * @param error - The error to handle
+ * @param options - Handling options
+ * @returns Processed error
  */
-export async function handleError(error, options = {}) {
+export async function handleError(error: unknown, options: HandleErrorOptions = {}): Promise<AppError> {
   const {
     showToast = true,
     logToConsole = true,
@@ -238,10 +276,10 @@ export async function handleError(error, options = {}) {
 
 /**
  * Log error to server for centralized tracking
- * @param {AppError} error - The error to log
- * @param {Object} context - Additional context
+ * @param error - The error to log
+ * @param context - Additional context
  */
-async function logErrorToServer(error, context) {
+async function logErrorToServer(error: AppError, context: Record<string, any>): Promise<void> {
   try {
     // Only log operational errors (not programming errors)
     if (!error.isOperational) {
@@ -268,13 +306,24 @@ async function logErrorToServer(error, context) {
   }
 }
 
+interface RetryOptions {
+  maxAttempts?: number;
+  initialDelay?: number;
+  maxDelay?: number;
+  factor?: number;
+  onRetry?: (attempt: number, delay: number, error: AppError) => void;
+}
+
 /**
  * Retry a failed operation with exponential backoff
- * @param {Function} fn - Async function to retry
- * @param {Object} options - Retry options
- * @returns {Promise} Result of successful operation
+ * @param fn - Async function to retry
+ * @param options - Retry options
+ * @returns Result of successful operation
  */
-export async function retryWithBackoff(fn, options = {}) {
+export async function retryWithBackoff<T>(
+  fn: () => Promise<T>,
+  options: RetryOptions = {}
+): Promise<T> {
   const {
     maxAttempts = 3,
     initialDelay = 1000,
@@ -310,16 +359,14 @@ export async function retryWithBackoff(fn, options = {}) {
       attempt++;
     }
   }
+  
+  throw new Error('Retry loop completed without success');
 }
 
 /**
  * Determine if an error is retryable
  */
-function isRetryableError(error) {
-  if (!(error instanceof AppError)) {
-    return false;
-  }
-
+function isRetryableError(error: AppError): boolean {
   // Retry network errors and 5xx server errors
   if (error.category === ErrorCategory.NETWORK) {
     return true;
@@ -336,17 +383,21 @@ function isRetryableError(error) {
 /**
  * Sleep utility for retry backoff
  */
-function sleep(ms) {
+function sleep(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+interface ReactErrorInfo {
+  componentStack?: string;
 }
 
 /**
  * Error boundary helper - extract useful info from React error
- * @param {Error} error - React error
- * @param {Object} errorInfo - React error info with componentStack
- * @returns {Object} Formatted error details
+ * @param error - React error
+ * @param errorInfo - React error info with componentStack
+ * @returns Formatted error details
  */
-export function formatReactError(error, errorInfo) {
+export function formatReactError(error: Error, errorInfo: ReactErrorInfo) {
   return {
     message: error.message,
     stack: error.stack,
@@ -356,12 +407,19 @@ export function formatReactError(error, errorInfo) {
   };
 }
 
+interface SafeHandlerOptions extends HandleErrorOptions {
+  fallback?: (...args: any[]) => any;
+}
+
 /**
  * Create a safe error handler wrapper for async functions
  * Useful for event handlers that shouldn't crash the app
  */
-export function createSafeHandler(handler, options = {}) {
-  return async (...args) => {
+export function createSafeHandler<T extends (...args: any[]) => Promise<any>>(
+  handler: T,
+  options: SafeHandlerOptions = {}
+): (...args: Parameters<T>) => Promise<ReturnType<T> | void> {
+  return async (...args: Parameters<T>) => {
     try {
       return await handler(...args);
     } catch (error) {
@@ -380,7 +438,7 @@ export function createSafeHandler(handler, options = {}) {
 /**
  * Validation error helper
  */
-export function createValidationError(field, message, details = {}) {
+export function createValidationError(field: string, message: string, details: Record<string, any> = {}): AppError {
   return new AppError(message, {
     code: 'VALIDATION_ERROR',
     category: ErrorCategory.VALIDATION,
@@ -393,7 +451,7 @@ export function createValidationError(field, message, details = {}) {
 /**
  * Not found error helper
  */
-export function createNotFoundError(resource, id) {
+export function createNotFoundError(resource: string, id?: string): AppError {
   return new AppError(`${resource} not found${id ? ` with ID: ${id}` : ''}`, {
     code: 'NOT_FOUND',
     category: ErrorCategory.NOT_FOUND,
@@ -406,7 +464,7 @@ export function createNotFoundError(resource, id) {
 /**
  * Authorization error helper
  */
-export function createAuthorizationError(action, resource) {
+export function createAuthorizationError(action: string, resource: string): AppError {
   return new AppError(`You don't have permission to ${action} ${resource}`, {
     code: 'FORBIDDEN',
     category: ErrorCategory.AUTHORIZATION,
@@ -415,18 +473,3 @@ export function createAuthorizationError(action, resource) {
     details: { action, resource }
   });
 }
-
-export default {
-  AppError,
-  ErrorSeverity,
-  ErrorCategory,
-  handleError,
-  parseApiError,
-  showErrorToast,
-  retryWithBackoff,
-  formatReactError,
-  createSafeHandler,
-  createValidationError,
-  createNotFoundError,
-  createAuthorizationError
-};

@@ -1,55 +1,77 @@
 import { lazy, Suspense } from 'react';
-import AdvancedOrchestration from './pages/AdvancedOrchestration';
-import AgentAnalytics from './pages/AgentAnalytics';
-import AgentCollaboration from './pages/AgentCollaboration';
-import AgentDebugger from './pages/AgentDebugger';
-import AgentDetail from './pages/AgentDetail';
-import AgentTraining from './pages/AgentTraining';
-import AgentWorkflowDesigner from './pages/AgentWorkflowDesigner';
-import Agents from './pages/Agents';
-import Analytics from './pages/Analytics';
-import Approvals from './pages/Approvals';
-import AuditExport from './pages/AuditExport';
-import CICD from './pages/CICD';
-import ComplianceDashboard from './pages/ComplianceDashboard';
-import ConnectorBuilder from './pages/ConnectorBuilder';
-import ConnectorMarketplace from './pages/ConnectorMarketplace';
-import CostManagement from './pages/CostManagement';
+// Keep frequently accessed pages as eager imports for better initial UX
 import Dashboard from './pages/Dashboard';
-import Documentation from './pages/Documentation';
-import Governance from './pages/Governance';
 import Home from './pages/Home';
-import IntegrationManagement from './pages/IntegrationManagement';
-import Integrations from './pages/Integrations';
-import KnowledgeBase from './pages/KnowledgeBase';
-import Monitoring from './pages/Monitoring';
-import Observability from './pages/Observability';
-import OrchestrationHub from './pages/OrchestrationHub';
-// Lazy-loaded large pages for better performance (code splitting)
+import Agents from './pages/Agents';
+import __Layout from './Layout.jsx';
+
+// Lazy-loaded pages for better performance (code splitting)
 // Note: These are wrapped with Suspense in withSuspense(), which handles loading states
 // The ErrorBoundary in App.jsx will catch any import failures from network issues
-const RAGManagement = lazy(() => import('./pages/RAGManagement'));
+
+// Analytics & Reporting (heavy data visualization)
+const Analytics = lazy(() => import('./pages/Analytics'));
+const AgentAnalytics = lazy(() => import('./pages/AgentAnalytics'));
+const Monitoring = lazy(() => import('./pages/Monitoring'));
+const Observability = lazy(() => import('./pages/Observability'));
+const CostManagement = lazy(() => import('./pages/CostManagement'));
+
+// Workflow & Orchestration (complex builders/editors)
 const VisualWorkflowBuilder = lazy(() => import('./pages/VisualWorkflowBuilder'));
+const WorkflowStudio = lazy(() => import('./pages/WorkflowStudio'));
+const Workflows = lazy(() => import('./pages/Workflows'));
+const WorkflowDetail = lazy(() => import('./pages/WorkflowDetail'));
+const AgentWorkflowDesigner = lazy(() => import('./pages/AgentWorkflowDesigner'));
+const AdvancedOrchestration = lazy(() => import('./pages/AdvancedOrchestration'));
+const OrchestrationHub = lazy(() => import('./pages/OrchestrationHub'));
+
+// Agent Management (detail pages)
+const AgentDetail = lazy(() => import('./pages/AgentDetail'));
+const AgentTraining = lazy(() => import('./pages/AgentTraining'));
+const AgentCollaboration = lazy(() => import('./pages/AgentCollaboration'));
+const AgentDebugger = lazy(() => import('./pages/AgentDebugger'));
+const agents = lazy(() => import('./pages/agents'));
+
+// Connectors & Integrations
+const ConnectorBuilder = lazy(() => import('./pages/ConnectorBuilder'));
+const ConnectorMarketplace = lazy(() => import('./pages/ConnectorMarketplace'));
 const ConnectorSubmission = lazy(() => import('./pages/ConnectorSubmission'));
+const Integrations = lazy(() => import('./pages/Integrations'));
+const IntegrationManagement = lazy(() => import('./pages/IntegrationManagement'));
+
+// Skills & Templates
 const SkillDetail = lazy(() => import('./pages/SkillDetail'));
-import RefactorPolicies from './pages/RefactorPolicies';
-import Refactoring from './pages/Refactoring';
-import RunDetail from './pages/RunDetail';
-import Runs from './pages/Runs';
-import SecurityTests from './pages/SecurityTests';
-import Settings from './pages/Settings';
-import SkillManagement from './pages/SkillManagement';
-import SkillMarketplace from './pages/SkillMarketplace';
-import TemplateCustomizer from './pages/TemplateCustomizer';
-import Templates from './pages/Templates';
-import ToolMarketplace from './pages/ToolMarketplace';
-import UserProfile from './pages/UserProfile';
-import Webhooks from './pages/Webhooks';
-import WorkflowDetail from './pages/WorkflowDetail';
-import WorkflowStudio from './pages/WorkflowStudio';
-import Workflows from './pages/Workflows';
-import agents from './pages/agents';
-import __Layout from './Layout.jsx';
+const SkillManagement = lazy(() => import('./pages/SkillManagement'));
+const SkillMarketplace = lazy(() => import('./pages/SkillMarketplace'));
+const Templates = lazy(() => import('./pages/Templates'));
+const TemplateCustomizer = lazy(() => import('./pages/TemplateCustomizer'));
+const ToolMarketplace = lazy(() => import('./pages/ToolMarketplace'));
+
+// Administration & Governance
+const Governance = lazy(() => import('./pages/Governance'));
+const ComplianceDashboard = lazy(() => import('./pages/ComplianceDashboard'));
+const SecurityTests = lazy(() => import('./pages/SecurityTests'));
+const AuditExport = lazy(() => import('./pages/AuditExport'));
+const Approvals = lazy(() => import('./pages/Approvals'));
+
+// Development & DevOps
+const CICD = lazy(() => import('./pages/CICD'));
+const Refactoring = lazy(() => import('./pages/Refactoring'));
+const RefactorPolicies = lazy(() => import('./pages/RefactorPolicies'));
+
+// Knowledge & Documentation
+const KnowledgeBase = lazy(() => import('./pages/KnowledgeBase'));
+const RAGManagement = lazy(() => import('./pages/RAGManagement'));
+const Documentation = lazy(() => import('./pages/Documentation'));
+
+// Workflow Execution
+const Runs = lazy(() => import('./pages/Runs'));
+const RunDetail = lazy(() => import('./pages/RunDetail'));
+
+// User & Settings
+const Settings = lazy(() => import('./pages/Settings'));
+const UserProfile = lazy(() => import('./pages/UserProfile'));
+const Webhooks = lazy(() => import('./pages/Webhooks'));
 
 // Loading fallback component for lazy-loaded pages
 const PageLoader = () => (
@@ -72,54 +94,75 @@ const withSuspense = (Component) => {
 
 
 export const PAGES = {
-    "AdvancedOrchestration": AdvancedOrchestration,
-    "AgentAnalytics": AgentAnalytics,
-    "AgentCollaboration": AgentCollaboration,
-    "AgentDebugger": AgentDebugger,
-    "AgentDetail": AgentDetail,
-    "AgentTraining": AgentTraining,
-    "AgentWorkflowDesigner": AgentWorkflowDesigner,
-    "Agents": Agents,
-    "Analytics": Analytics,
-    "Approvals": Approvals,
-    "AuditExport": AuditExport,
-    "CICD": CICD,
-    "ComplianceDashboard": ComplianceDashboard,
-    "ConnectorBuilder": ConnectorBuilder,
-    "ConnectorMarketplace": ConnectorMarketplace,
-    "CostManagement": CostManagement,
+    // Eager-loaded pages (frequently accessed, needed for initial UX)
     "Dashboard": Dashboard,
-    "Documentation": Documentation,
-    "Governance": Governance,
     "Home": Home,
-    "IntegrationManagement": IntegrationManagement,
-    "Integrations": Integrations,
-    "KnowledgeBase": KnowledgeBase,
-    "Monitoring": Monitoring,
-    "Observability": Observability,
-    "OrchestrationHub": OrchestrationHub,
-    // Lazy-loaded pages wrapped with Suspense for code splitting
-    "RAGManagement": withSuspense(RAGManagement),
-    "RefactorPolicies": RefactorPolicies,
-    "Refactoring": Refactoring,
-    "RunDetail": RunDetail,
-    "Runs": Runs,
-    "SecurityTests": SecurityTests,
-    "Settings": Settings,
-    "SkillDetail": withSuspense(SkillDetail),
-    "SkillManagement": SkillManagement,
-    "SkillMarketplace": SkillMarketplace,
-    "TemplateCustomizer": TemplateCustomizer,
-    "Templates": Templates,
-    "ToolMarketplace": ToolMarketplace,
-    "UserProfile": UserProfile,
+    "Agents": Agents,
+    
+    // Lazy-loaded pages wrapped with Suspense for code splitting and better performance
+    // Analytics & Reporting
+    "Analytics": withSuspense(Analytics),
+    "AgentAnalytics": withSuspense(AgentAnalytics),
+    "Monitoring": withSuspense(Monitoring),
+    "Observability": withSuspense(Observability),
+    "CostManagement": withSuspense(CostManagement),
+    
+    // Workflow & Orchestration
     "VisualWorkflowBuilder": withSuspense(VisualWorkflowBuilder),
-    "Webhooks": Webhooks,
-    "WorkflowDetail": WorkflowDetail,
-    "WorkflowStudio": WorkflowStudio,
-    "Workflows": Workflows,
-    "agents": agents,
+    "WorkflowStudio": withSuspense(WorkflowStudio),
+    "Workflows": withSuspense(Workflows),
+    "WorkflowDetail": withSuspense(WorkflowDetail),
+    "AgentWorkflowDesigner": withSuspense(AgentWorkflowDesigner),
+    "AdvancedOrchestration": withSuspense(AdvancedOrchestration),
+    "OrchestrationHub": withSuspense(OrchestrationHub),
+    
+    // Agent Management
+    "AgentDetail": withSuspense(AgentDetail),
+    "AgentTraining": withSuspense(AgentTraining),
+    "AgentCollaboration": withSuspense(AgentCollaboration),
+    "AgentDebugger": withSuspense(AgentDebugger),
+    "agents": withSuspense(agents),
+    
+    // Connectors & Integrations
+    "ConnectorBuilder": withSuspense(ConnectorBuilder),
+    "ConnectorMarketplace": withSuspense(ConnectorMarketplace),
     "ConnectorSubmission": withSuspense(ConnectorSubmission),
+    "Integrations": withSuspense(Integrations),
+    "IntegrationManagement": withSuspense(IntegrationManagement),
+    
+    // Skills & Templates
+    "SkillDetail": withSuspense(SkillDetail),
+    "SkillManagement": withSuspense(SkillManagement),
+    "SkillMarketplace": withSuspense(SkillMarketplace),
+    "Templates": withSuspense(Templates),
+    "TemplateCustomizer": withSuspense(TemplateCustomizer),
+    "ToolMarketplace": withSuspense(ToolMarketplace),
+    
+    // Administration & Governance
+    "Governance": withSuspense(Governance),
+    "ComplianceDashboard": withSuspense(ComplianceDashboard),
+    "SecurityTests": withSuspense(SecurityTests),
+    "AuditExport": withSuspense(AuditExport),
+    "Approvals": withSuspense(Approvals),
+    
+    // Development & DevOps
+    "CICD": withSuspense(CICD),
+    "Refactoring": withSuspense(Refactoring),
+    "RefactorPolicies": withSuspense(RefactorPolicies),
+    
+    // Knowledge & Documentation
+    "KnowledgeBase": withSuspense(KnowledgeBase),
+    "RAGManagement": withSuspense(RAGManagement),
+    "Documentation": withSuspense(Documentation),
+    
+    // Workflow Execution
+    "Runs": withSuspense(Runs),
+    "RunDetail": withSuspense(RunDetail),
+    
+    // User & Settings
+    "Settings": withSuspense(Settings),
+    "UserProfile": withSuspense(UserProfile),
+    "Webhooks": withSuspense(Webhooks),
 }
 
 export const pagesConfig = {
