@@ -22,7 +22,7 @@ export default function PerformanceMonitor({ agentId, onAlertCreated }) {
     error_rate: 10,
     cost_per_hour: 5.0,
   });
-  const [isLoading, setIsLoading] = useState(true);
+  const [_isLoading, _setIsLoading] = useState(true);
 
   useEffect(() => {
     loadMetrics();

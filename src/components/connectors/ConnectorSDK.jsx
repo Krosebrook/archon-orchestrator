@@ -593,7 +593,7 @@ export class WebSocketConnection {
       try {
         const data = JSON.parse(event.data);
         this._emit('message', data);
-      } catch (error) {
+      } catch (_error) {
         this._emit('message', event.data);
       }
     };

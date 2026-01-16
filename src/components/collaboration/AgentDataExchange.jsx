@@ -17,7 +17,7 @@ import { toast } from 'sonner';
 export default function AgentDataExchange({ sourceAgent, targetAgent, onExchangeComplete }) {
   const [dataType, setDataType] = useState('json');
   const [data, setData] = useState('');
-  const [metadata, setMetadata] = useState({});
+  const [_metadata, _setMetadata] = useState({});
   const [isValidating, setIsValidating] = useState(false);
   const [isValid, setIsValid] = useState(null);
 

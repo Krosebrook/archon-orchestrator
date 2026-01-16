@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp, AlertTriangle } from 'lucide-react';
 
-export default function PerformanceInsights({ runs, metrics }) {
+export default function PerformanceInsights({ _runs, _metrics }) {
   const insights = [
     {
       type: 'success',

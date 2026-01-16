@@ -24,7 +24,7 @@ export default function WorkflowDetailView() {
   const [workflow, setWorkflow] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [showShareDialog, setShowShareDialog] = useState(false);
+  const [_showShareDialog, _setShowShareDialog] = useState(false);
 
   useEffect(() => {
     loadWorkflow();
@@ -34,8 +34,8 @@ export default function WorkflowDetailView() {
     try {
       const [result] = await base44.entities.Workflow.filter({ id });
       setWorkflow(result);
-    } catch (error) {
-      console.error('Failed to load workflow:', error);
+    } catch (_error) {
+      console.error('Failed to load workflow:', _error);
       toast.error('Failed to load workflow');
     } finally {
       setLoading(false);
@@ -47,7 +47,7 @@ export default function WorkflowDetailView() {
       await base44.entities.Workflow.delete(id);
       toast.success('Workflow deleted');
       navigate(createPageUrl('Workflows'));
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to delete workflow');
     }
   };
@@ -63,7 +63,7 @@ export default function WorkflowDetailView() {
       });
       toast.success('Workflow duplicated');
       navigate(createPageUrl('WorkflowDetail', { id: duplicate.id }));
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to duplicate workflow');
     }
   };
@@ -75,7 +75,7 @@ export default function WorkflowDetailView() {
       });
       toast.success('Workflow started');
       navigate(createPageUrl('RunDetail', { id: run.id }));
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to start workflow');
     }
   };

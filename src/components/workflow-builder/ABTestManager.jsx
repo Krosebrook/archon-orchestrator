@@ -56,7 +56,7 @@ export default function ABTestManager({ workflow, onCreateVariant, onSelectWinne
 
     setIsCreating(true);
     try {
-      const user = await base44.auth.me();
+      const _user = await base44.auth.me();
 
       // Create variant workflow
       const variantWorkflow = await base44.entities.Workflow.create({
@@ -125,7 +125,7 @@ export default function ABTestManager({ workflow, onCreateVariant, onSelectWinne
 
   const declareWinner = async (test, winnerId) => {
     try {
-      const user = await base44.auth.me();
+      const _user = await base44.auth.me();
 
       await base44.entities.ABTest.update(test.id, {
         status: 'completed',
@@ -150,7 +150,7 @@ export default function ABTestManager({ workflow, onCreateVariant, onSelectWinne
     }
   };
 
-  const calculateStats = (test) => {
+  const calculateStats = (_test) => {
     // Mock calculation - in production, fetch from metrics
     const variantARuns = Math.floor(Math.random() * 100) + 50;
     const variantBRuns = Math.floor(Math.random() * 100) + 50;

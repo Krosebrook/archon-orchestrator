@@ -28,7 +28,7 @@ export async function listSecretReferences() {
   try {
     const { data } = await base44.functions.invoke('listSecrets');
     return data.map(s => new SecretReference(s.name, s.arn, s.metadata));
-  } catch (error) {
+  } catch (_error) {
     throw new APIError(
       ErrorCodes.SERVER_ERROR,
       'Failed to list secrets',
@@ -104,7 +104,7 @@ export async function getSecretHealth(name) {
       lastAccessed: data.last_accessed_date,
       needsRotation: data.needs_rotation
     };
-  } catch (error) {
+  } catch (_error) {
     throw new APIError(
       ErrorCodes.SERVER_ERROR,
       'Failed to fetch secret health',

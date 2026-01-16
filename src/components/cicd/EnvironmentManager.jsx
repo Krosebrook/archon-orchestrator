@@ -21,7 +21,7 @@ export default function EnvironmentManager({ environments, agents, onRefresh }) 
       });
       toast.success(`Deployed to ${env.name}`);
       onRefresh();
-    } catch (error) {
+    } catch (_error) {
       toast.error('Deployment failed');
     } finally {
       setDeploying(null);

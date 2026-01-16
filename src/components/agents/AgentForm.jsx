@@ -72,7 +72,7 @@ export default function AgentForm({ open, onOpenChange, agent, onSave }) {
     setIsSaving(true);
     try {
       let result;
-      const user = await base44.auth.me();
+      const _user = await base44.auth.me();
       
       if (formData.id) {
         // Update existing agent

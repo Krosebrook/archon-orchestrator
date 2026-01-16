@@ -20,7 +20,7 @@ const statusColors = {
   deprecated: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
 };
 
-const providerColors = {
+const _providerColors = {
   openai: 'bg-sky-500/20 text-sky-400 border-sky-500/30',
   anthropic: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
 }

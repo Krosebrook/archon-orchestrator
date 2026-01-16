@@ -6,7 +6,7 @@ import { Loader2, Sparkles, AlertTriangle } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 
-export default function BottleneckDetection({ runs, workflows, agents }) {
+export default function BottleneckDetection({ runs, workflows, _agents }) {
   const [bottlenecks, setBottlenecks] = useState(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 

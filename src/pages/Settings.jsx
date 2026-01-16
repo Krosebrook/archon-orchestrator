@@ -28,7 +28,7 @@ export default function Settings() {
       // In production, this would update the organization
       await new Promise(resolve => setTimeout(resolve, 500));
       toast.success('Organization settings saved');
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to save settings');
     } finally {
       setSaving(false);

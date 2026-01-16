@@ -41,7 +41,7 @@ export default function AgentPerformanceAnalytics() {
   const [metrics, setMetrics] = useState([]);
   const [selectedAgent, setSelectedAgent] = useState('all');
   const [timeRange, setTimeRange] = useState('7d');
-  const [isLoading, setIsLoading] = useState(true);
+  const [_isLoading, _setIsLoading] = useState(true);
 
   useEffect(() => {
     loadData();

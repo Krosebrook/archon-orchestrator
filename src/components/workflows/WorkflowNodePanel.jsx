@@ -119,7 +119,7 @@ export default function WorkflowNodePanel({ selectedNode, agents, tools, onUpdat
               try {
                 const parsed = JSON.parse(e.target.value);
                 setNodeData({ ...nodeData, config: parsed });
-              } catch (err) {
+              } catch (_err) {
                 // Invalid JSON, ignore for now
               }
             }}

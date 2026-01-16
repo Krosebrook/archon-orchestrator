@@ -95,7 +95,7 @@ Focus on practical, high-impact skills that fill capability gaps.`,
       });
 
       toast.success(`${skillName} installed`);
-    } catch (error) {
+    } catch (_error) {
       toast.error('Installation failed');
     } finally {
       setInstalling(null);

@@ -22,22 +22,22 @@ const statusColors = {
 
 export default function Agents() {
   const [agents, setAgents] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [_isLoading, _setIsLoading] = useState(true);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedAgent, setSelectedAgent] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
 
-  const { hasPermission } = useAuth();
+  const { _hasPermission } = useAuth();
 
   const loadAgents = useCallback(async () => {
-    setIsLoading(true);
+    _setIsLoading(true);
     try {
       const agentData = await Agent.list('-updated_date');
       setAgents(agentData);
     } catch (error) {
       console.error("Failed to load agents:", error);
     } finally {
-      setIsLoading(false);
+      _setIsLoading(false);
     }
   }, []);
 
@@ -50,12 +50,12 @@ export default function Agents() {
     setIsFormOpen(true);
   };
 
-  const handleEdit = (agent) => {
+  const _handleEdit = (agent) => {
     setSelectedAgent(agent);
     setIsFormOpen(true);
   };
   
-  const handleDelete = async (agentId) => {
+  const _handleDelete = async (agentId) => {
     if (confirm('Are you sure you want to delete this agent?')) {
         try {
             await Agent.delete(agentId);

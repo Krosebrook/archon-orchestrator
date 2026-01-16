@@ -91,7 +91,7 @@ export default function OptimizationSuggestions({ workflow, nodes, edges, onAppl
 
     setIsAnalyzing(true);
     try {
-      const user = await base44.auth.me();
+      const _user = await base44.auth.me();
 
       const workflowContext = {
         name: workflow.name,

@@ -40,7 +40,7 @@ export default function PublishSkillDialog({ open, onOpenChange, onPublish }) {
       let parameters = {};
       try {
         parameters = JSON.parse(formData.parameters);
-      } catch (e) {
+      } catch (_e) {
         toast.error('Invalid JSON for parameters');
         setIsPublishing(false);
         return;

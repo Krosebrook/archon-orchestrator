@@ -13,7 +13,7 @@ export default function Governance() {
     const [policies, setPolicies] = useState([]);
     const [audits, setAudits] = useState([]);
     const [alerts, setAlerts] = useState([]); // New state for alerts
-    const [isLoading, setIsLoading] = useState(true);
+    const [_isLoading, _setIsLoading] = useState(true);
     const [isPolicyFormOpen, setIsPolicyFormOpen] = useState(false);
     const [selectedPolicy, setSelectedPolicy] = useState(null);
 

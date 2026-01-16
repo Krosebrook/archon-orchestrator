@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Shield, Edit, AlertTriangle } from 'lucide-react';
 
-export default function PolicyList({ policies, onEdit, onRefresh }) {
+export default function PolicyList({ policies, onEdit, _onRefresh }) {
   return (
     <Card className="bg-slate-900 border-slate-800">
       <CardHeader>

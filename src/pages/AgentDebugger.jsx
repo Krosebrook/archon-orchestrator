@@ -15,7 +15,7 @@ export default function AgentDebugger() {
   const [agents, setAgents] = useState([]);
   const [runs, setRuns] = useState([]);
   const [metrics, setMetrics] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [_isLoading, _setIsLoading] = useState(true);
   const [inspectingRun, setInspectingRun] = useState(null);
 
   useEffect(() => {

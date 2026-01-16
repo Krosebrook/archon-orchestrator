@@ -83,7 +83,7 @@ export default function WorkflowGenerator() {
     }
   };
 
-  const previewWorkflow = () => {
+  const _previewWorkflow = () => {
     navigate(createPageUrl('Workflows'));
   };
 

@@ -109,7 +109,7 @@ Then act as an ARBITER:
 // =============================================================================
 
 export function compressPrompt(prompt, options = {}) {
-  const { maxLength = 4000, preserveKeywords = [] } = options;
+  const { maxLength = 4000, _preserveKeywords = [] } = options;
   
   if (prompt.length <= maxLength) {
     return { compressed: prompt, ratio: 1 };

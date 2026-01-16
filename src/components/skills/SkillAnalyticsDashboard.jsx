@@ -68,7 +68,7 @@ Provide:
     executions: u.execution_count
   }));
 
-  const COLORS = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981'];
+  const _COLORS = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981'];
 
   if (isLoading) {
     return <div className="text-slate-400 text-center py-12">Loading analytics...</div>;

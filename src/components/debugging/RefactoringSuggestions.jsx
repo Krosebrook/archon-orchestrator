@@ -8,7 +8,7 @@ import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 import { handleError } from '../utils/api-client';
 
-export default function RefactoringSuggestions({ agents, onRefresh }) {
+export default function RefactoringSuggestions({ agents, _onRefresh }) {
   const [selectedAgent, setSelectedAgent] = useState('');
   const [suggestions, setSuggestions] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);

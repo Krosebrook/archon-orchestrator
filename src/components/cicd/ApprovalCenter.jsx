@@ -15,10 +15,10 @@ export default function ApprovalCenter() {
     requests, 
     loading, 
     processing, 
-    canApprove, 
+    _canApprove, 
     approve, 
     reject, 
-    refresh 
+    _refresh 
   } = useApprovals({ 
     status: 'pending',
     autoRefresh: true 

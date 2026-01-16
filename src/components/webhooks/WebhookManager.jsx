@@ -49,7 +49,7 @@ export default function WebhookManager() {
       });
       toast.success(`Webhook ${!webhook.enabled ? 'enabled' : 'disabled'}`);
       loadData();
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to update webhook');
     }
   };
@@ -61,7 +61,7 @@ export default function WebhookManager() {
       await base44.entities.WebhookEndpoint.delete(webhook.id);
       toast.success('Webhook deleted');
       loadData();
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to delete webhook');
     }
   };

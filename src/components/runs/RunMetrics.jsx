@@ -11,7 +11,7 @@ const statusStyles = {
     cancelled: "bg-slate-500/20 text-slate-400 border-slate-500/30"
 };
 
-export default function RunMetrics({ run, workflow, agent }) {
+export default function RunMetrics({ run, _workflow, _agent }) {
   const duration = run.finished_at 
     ? formatDistance(new Date(run.finished_at), new Date(run.started_at))
     : formatDistanceToNow(new Date(run.started_at), { addSuffix: true });

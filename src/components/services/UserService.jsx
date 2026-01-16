@@ -17,7 +17,7 @@ export class UserService {
     try {
       const [profile] = await base44.entities.UserProfile.filter({ user_email: userEmail });
       return { ok: true, value: profile || null };
-    } catch (error) {
+    } catch (_error) {
       return { 
         ok: false, 
         error: new APIError(ErrorCodes.SERVER_ERROR, 'Failed to get profile')
@@ -43,7 +43,7 @@ export class UserService {
         });
         return { ok: true, value: created };
       }
-    } catch (error) {
+    } catch (_error) {
       return { 
         ok: false, 
         error: new APIError(ErrorCodes.SERVER_ERROR, 'Failed to update profile')
@@ -58,7 +58,7 @@ export class UserService {
     try {
       const [prefs] = await base44.entities.UserPreferences.filter({ user_email: userEmail });
       return { ok: true, value: prefs || this.getDefaultPreferences() };
-    } catch (error) {
+    } catch (_error) {
       return { 
         ok: false, 
         error: new APIError(ErrorCodes.SERVER_ERROR, 'Failed to get preferences')
@@ -84,7 +84,7 @@ export class UserService {
         });
         return { ok: true, value: created };
       }
-    } catch (error) {
+    } catch (_error) {
       return { 
         ok: false, 
         error: new APIError(ErrorCodes.SERVER_ERROR, 'Failed to update preferences')
@@ -100,7 +100,7 @@ export class UserService {
       const key = `archon_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
       const result = await this.updateProfile(userEmail, orgId, { api_key: key });
       return result;
-    } catch (error) {
+    } catch (_error) {
       return { 
         ok: false, 
         error: new APIError(ErrorCodes.SERVER_ERROR, 'Failed to generate API key')

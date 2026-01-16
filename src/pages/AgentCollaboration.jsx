@@ -14,7 +14,7 @@ export default function AgentCollaboration() {
   const [teams, setTeams] = useState([]);
   const [agents, setAgents] = useState([]);
   const [workflows, setWorkflows] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [_isLoading, _setIsLoading] = useState(true);
 
   useEffect(() => {
     loadData();

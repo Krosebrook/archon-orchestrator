@@ -39,7 +39,7 @@ export default function ConnectorBuilder() {
     description: '',
   });
 
-  const [testResult, setTestResult] = useState(null);
+  const [_testResult, _setTestResult] = useState(null);
   const [generatedCode, setGeneratedCode] = useState('');
 
   const addOperation = () => {
@@ -139,12 +139,12 @@ async function ${op.id}(client, params = {}) {
     toast.success('Code generated');
   };
 
-  const testConnector = async () => {
-    setTestResult({ status: 'testing' });
+  const _testConnector = async () => {
+    _setTestResult({ status: 'testing' });
     
     // Simulate test
     setTimeout(() => {
-      setTestResult({
+      _setTestResult({
         status: 'success',
         tests: [
           { name: 'Connection Test', passed: true, duration: 123 },

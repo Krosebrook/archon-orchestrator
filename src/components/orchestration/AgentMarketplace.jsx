@@ -26,15 +26,15 @@ export default function AgentMarketplace({ onAgentSelect }) {
 
   const categories = ['all', 'general', 'code', 'data', 'creative', 'analysis'];
 
-  const filteredAgents = agents.filter(agent => {
-    const matchesSearch = agent.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         agent.config?.capabilities?.some(c => c.toLowerCase().includes(searchQuery.toLowerCase()));
+  const filteredAgents = agents.filter(_agent => {
+    const matchesSearch = _agent.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         _agent.config?.capabilities?.some(c => c.toLowerCase().includes(searchQuery.toLowerCase()));
     const matchesCategory = selectedCategory === 'all' || 
-                           agent.config?.capabilities?.includes(selectedCategory);
+                           _agent.config?.capabilities?.includes(selectedCategory);
     return matchesSearch && matchesCategory;
   });
 
-  const getAgentRating = (agent) => {
+  const _getAgentRating = (_agent) => {
     // Mock rating calculation - in production, calculate from metrics
     return 4.5;
   };

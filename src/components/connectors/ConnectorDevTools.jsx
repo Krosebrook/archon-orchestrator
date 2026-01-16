@@ -22,7 +22,7 @@ import { toast } from 'sonner';
  * Connector Development Tools
  * Local testing and debugging interface
  */
-export default function ConnectorDevTools({ connector }) {
+export default function ConnectorDevTools({ _connector }) {
   const [testRequest, setTestRequest] = useState({
     operation: '',
     params: '{}',
@@ -38,8 +38,8 @@ export default function ConnectorDevTools({ connector }) {
     setTestResult(null);
     
     try {
-      const params = JSON.parse(testRequest.params);
-      const credentials = JSON.parse(testRequest.credentials);
+      const _params = JSON.parse(testRequest.params);
+      const _credentials = JSON.parse(testRequest.credentials);
 
       const startTime = performance.now();
       

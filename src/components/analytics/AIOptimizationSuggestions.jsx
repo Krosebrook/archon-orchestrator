@@ -6,7 +6,7 @@ import { Lightbulb, TrendingUp, DollarSign, Zap, CheckCircle, Loader2 } from 'lu
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 
-export default function AIOptimizationSuggestions({ metrics, agents, runs, skills }) {
+export default function AIOptimizationSuggestions({ metrics, agents, runs, _skills }) {
   const [suggestions, setSuggestions] = useState([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [appliedSuggestions, setAppliedSuggestions] = useState(new Set());

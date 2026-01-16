@@ -25,7 +25,7 @@ export default function OrchestrationHub() {
   const [collaborations, setCollaborations] = useState([]);
   const [selectedCollaboration, setSelectedCollaboration] = useState(null);
   const [selectedWorkflow, setSelectedWorkflow] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [_isLoading, _setIsLoading] = useState(true);
 
   useEffect(() => {
     loadData();

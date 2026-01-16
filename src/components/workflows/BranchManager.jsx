@@ -50,16 +50,16 @@ export default function BranchManager({ workflowId, currentBranchId, onBranchCha
 
     try {
       // Get current branch to use as base
-      const currentBranch = branches.find(b => b.id === currentBranchId);
+      const _branch = branches.find(b => b.id === currentBranchId);
       
-      const branch = await base44.entities.WorkflowBranch.create({
+      const _branchResult = await base44.entities.WorkflowBranch.create({
         workflow_id: workflowId,
         name: formData.name,
         description: formData.description,
         is_protected: formData.is_protected,
         is_default: false,
-        base_version_id: currentBranch?.head_version_id,
-        head_version_id: currentBranch?.head_version_id,
+        base_version_id: _branch?.head_version_id,
+        head_version_id: _branch?.head_version_id,
         status: 'active',
         created_by: user.email,
         org_id: organization.id
@@ -115,7 +115,7 @@ export default function BranchManager({ workflowId, currentBranchId, onBranchCha
       });
       toast.success('Branch archived');
       loadBranches();
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to archive branch');
     }
   };

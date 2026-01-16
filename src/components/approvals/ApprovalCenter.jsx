@@ -9,7 +9,7 @@ import { formatDistanceToNow } from 'date-fns';
 
 export default function ApprovalCenter() {
   const [requests, setRequests] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [_isLoading, _setIsLoading] = useState(true);
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [decisionReason, setDecisionReason] = useState('');
 

@@ -20,7 +20,7 @@ const mockNewLogs = [
 
 export default function LiveLogStream({ runId, runStatus }) {
   const [events, setEvents] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [_isLoading, _setIsLoading] = useState(true);
   const scrollRef = useRef(null);
 
   useEffect(() => {

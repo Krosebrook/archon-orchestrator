@@ -100,7 +100,7 @@ export default function TaskDelegationPanel({ collaboration, agents, onUpdate })
     }
   };
 
-  const getAgentName = (agentId) => {
+  const _getAgentName = (agentId) => {
     const agent = agents.find(a => a.id === agentId);
     return agent?.name || agentId;
   };

@@ -18,7 +18,7 @@ import { toast } from 'sonner';
  * @param {number} [options.refreshInterval] - Refresh interval in ms
  */
 export function useApprovals(options = {}) {
-  const { user, hasPermission } = useAuth();
+  const { _user, hasPermission } = useAuth();
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);

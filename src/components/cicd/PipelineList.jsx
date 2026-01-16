@@ -27,7 +27,7 @@ export default function PipelineList({ pipelines, agents, isLoading, onEdit, onR
       
       toast.success('Pipeline completed successfully');
       onRefresh();
-    } catch (error) {
+    } catch (_error) {
       toast.error('Pipeline failed');
     } finally {
       setRunningPipeline(null);
@@ -40,7 +40,7 @@ export default function PipelineList({ pipelines, agents, isLoading, onEdit, onR
       await base44.entities.CIPipeline.delete(id);
       toast.success('Pipeline deleted');
       onRefresh();
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to delete pipeline');
     }
   };
