@@ -55,6 +55,7 @@ import { KeyboardShortcuts } from './components/shared/KeyboardShortcuts';
 import { OnboardingTour } from './components/onboarding/OnboardingTour';
 import { useOnboarding } from './components/hooks/useOnboarding';
 import { HelpCircle } from 'lucide-react';
+import { observeWebVitals } from './components/utils/performance';
 
 const navItems = [
   { name: 'Dashboard', icon: LayoutDashboard, path: 'Dashboard', permission: null, dataTour: 'dashboard-link' },
@@ -313,6 +314,13 @@ function AppLayout({ children, currentPageName }) {
       navigator.serviceWorker.register('/service-worker.js')
         .catch((error) => console.log('SW registration failed:', error));
     }
+
+    // Monitor web vitals for performance tracking
+    const cleanup = observeWebVitals((metric) => {
+      console.log(`[Web Vitals] ${metric.name}:`, metric.value, `(${metric.rating})`);
+    });
+
+    return cleanup;
   }, []);
 
   return (
