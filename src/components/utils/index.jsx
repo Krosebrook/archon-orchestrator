@@ -1,3 +1,4 @@
+
 /**
  * @fileoverview Utils Module Barrel Export
  * @description Central export point for all utility functions.
@@ -130,13 +131,17 @@ export {
   // Metrics
   performanceCollector,
   
-  // Web Vitals
-  observeWebVitals,
-  
   // Idle
   runWhenIdle,
   cancelIdleTask
 } from './performance';
+
+// =============================================================================
+// WEB VITALS
+// =============================================================================
+
+// Placeholder to prevent import errors during cache clearing
+export { default as observeWebVitals } from './web-vitals';
 
 // =============================================================================
 // COT REASONING
