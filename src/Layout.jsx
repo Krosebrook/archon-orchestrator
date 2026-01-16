@@ -309,10 +309,8 @@ function AppLayout({ children, currentPageName }) {
   const { showTour, completeTour, skipTour, restartTour } = useOnboarding();
 
   useEffect(() => {
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/service-worker.js')
-        .catch((error) => console.log('SW registration failed:', error));
-    }
+    // Service worker registration handled by PWAInstaller component
+    // Web vitals monitoring removed - now handled in PWA service worker
   }, []);
 
   return (
