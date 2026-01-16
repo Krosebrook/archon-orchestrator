@@ -546,16 +546,30 @@ export function observeWebVitals(callback) {
     observers.push(lcpObserver);
   } catch (e) {}
   
-  // First Input Delay
+  // Interaction to Next Paint (INP) - replaced FID in Web Vitals
   try {
-    const fidObserver = new PerformanceObserver((list) => {
+    const inpObserver = new PerformanceObserver((list) => {
       const entries = list.getEntries();
       entries.forEach(entry => {
-        callback({ name: 'FID', value: entry.processingStart - entry.startTime, rating: entry.processingStart - entry.startTime < 100 ? 'good' : entry.processingStart - entry.startTime < 300 ? 'needs-improvement' : 'poor' });
+        const inp = entry.processingStart - entry.startTime;
+        callback({ name: 'INP', value: inp, rating: inp < 200 ? 'good' : inp < 500 ? 'needs-improvement' : 'poor' });
       });
     });
-    fidObserver.observe({ type: 'first-input', buffered: true });
-    observers.push(fidObserver);
+    inpObserver.observe({ type: 'first-input', buffered: true });
+    observers.push(inpObserver);
+  } catch (e) {}
+  
+  // Event timing for INP calculation
+  try {
+    const eventObserver = new PerformanceObserver((list) => {
+      const entries = list.getEntries();
+      entries.forEach(entry => {
+        const duration = entry.duration;
+        callback({ name: 'INP', value: duration, rating: duration < 200 ? 'good' : duration < 500 ? 'needs-improvement' : 'poor' });
+      });
+    });
+    eventObserver.observe({ type: 'event', buffered: true, durationThreshold: 16 });
+    observers.push(eventObserver);
   } catch (e) {}
   
   // Cumulative Layout Shift
