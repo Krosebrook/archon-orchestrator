@@ -2,7 +2,7 @@ import { lazy, Suspense } from 'react';
 // Keep frequently accessed pages as eager imports for better initial UX
 import Dashboard from './pages/Dashboard';
 import Home from './pages/Home';
-import Agents from './pages/Agents';
+import Agents from './pages/agents';
 import __Layout from './Layout.jsx';
 
 // Lazy-loaded pages for better performance (code splitting)
@@ -30,7 +30,6 @@ const AgentDetail = lazy(() => import('./pages/AgentDetail'));
 const AgentTraining = lazy(() => import('./pages/AgentTraining'));
 const AgentCollaboration = lazy(() => import('./pages/AgentCollaboration'));
 const AgentDebugger = lazy(() => import('./pages/AgentDebugger'));
-const agents = lazy(() => import('./pages/agents'));
 
 // Connectors & Integrations
 const ConnectorBuilder = lazy(() => import('./pages/ConnectorBuilder'));
@@ -121,7 +120,6 @@ export const PAGES = {
     "AgentTraining": withSuspense(AgentTraining),
     "AgentCollaboration": withSuspense(AgentCollaboration),
     "AgentDebugger": withSuspense(AgentDebugger),
-    "agents": withSuspense(agents),
     
     // Connectors & Integrations
     "ConnectorBuilder": withSuspense(ConnectorBuilder),

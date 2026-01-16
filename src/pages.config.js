@@ -5,7 +5,7 @@ import AgentDebugger from './pages/AgentDebugger';
 import AgentDetail from './pages/AgentDetail';
 import AgentTraining from './pages/AgentTraining';
 import AgentWorkflowDesigner from './pages/AgentWorkflowDesigner';
-import Agents from './pages/Agents';
+import Agents from './pages/agents';
 import Analytics from './pages/Analytics';
 import Approvals from './pages/Approvals';
 import AuditExport from './pages/AuditExport';
@@ -44,7 +44,7 @@ import Webhooks from './pages/Webhooks';
 import WorkflowDetail from './pages/WorkflowDetail';
 import WorkflowStudio from './pages/WorkflowStudio';
 import Workflows from './pages/Workflows';
-import agents from './pages/agents';
+
 import MyConnectorSubmissions from './pages/MyConnectorSubmissions';
 import __Layout from './Layout.jsx';
 
@@ -96,7 +96,6 @@ export const PAGES = {
     "WorkflowDetail": WorkflowDetail,
     "WorkflowStudio": WorkflowStudio,
     "Workflows": Workflows,
-    "agents": agents,
     "MyConnectorSubmissions": MyConnectorSubmissions,
 }
 
