@@ -1,4 +1,3 @@
-
 /**
  * @fileoverview Utils Module Barrel Export
  * @description Central export point for all utility functions.
@@ -137,11 +136,11 @@ export {
 } from './performance';
 
 // =============================================================================
-// WEB VITALS
+// WEB VITALS (REMOVED)
 // =============================================================================
-
-// Placeholder to prevent import errors during cache clearing
-export { default as observeWebVitals } from './web-vitals';
+// Note: Web vitals monitoring removed due to dependency conflicts.
+// Performance monitoring handled directly in PWA service worker and Layout component.
+// The web-vitals v5 library removed onFID in favor of onINP, causing breaking changes.
 
 // =============================================================================
 // COT REASONING
