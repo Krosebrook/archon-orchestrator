@@ -9,7 +9,7 @@ import { adaptAgentBehavior } from '@/functions/adaptAgentBehavior';
 import { toast } from 'sonner';
 import { handleError } from '../utils/api-client';
 
-export default function AdaptiveLearning({ agents, sessions, onRefresh }) {
+export default function AdaptiveLearning({ agents, _sessions, onRefresh }) {
   const [selectedAgent, setSelectedAgent] = useState('');
   const [autoApply, setAutoApply] = useState(false);
   const [feedbackWindow, setFeedbackWindow] = useState(7);

@@ -10,8 +10,8 @@ import { useUserProfile } from '@/components/hooks/useUserProfile';
 import { toast } from 'sonner';
 
 export default function UserProfile() {
-  const { user, organization, role } = useAuth();
-  const { profile, updateProfile, saving } = useUserProfile();
+  const { user, _organization, role } = useAuth();
+  const { _profile, updateProfile, saving } = useUserProfile();
   const [formData, setFormData] = useState({
     fullName: user?.fullName || '',
   });

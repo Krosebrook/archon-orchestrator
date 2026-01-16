@@ -22,7 +22,7 @@ export default function PredictiveAnomalyDetector({ metrics, agents }) {
     // Cost anomalies
     const avgCost = costData.reduce((a, b) => a + b, 0) / costData.length;
     const costStdDev = Math.sqrt(costData.reduce((sum, val) => sum + Math.pow(val - avgCost, 2), 0) / costData.length);
-    metrics.forEach((m, idx) => {
+    metrics.forEach((m, _idx) => {
       if (m.cost_cents > avgCost + 2 * costStdDev) {
         detected.push({
           type: 'cost',
@@ -36,7 +36,7 @@ export default function PredictiveAnomalyDetector({ metrics, agents }) {
 
     // Latency anomalies
     const avgLatency = latencyData.reduce((a, b) => a + b, 0) / latencyData.length;
-    metrics.forEach((m, idx) => {
+    metrics.forEach((m, _idx) => {
       if (m.latency_ms > avgLatency * 2) {
         detected.push({
           type: 'latency',

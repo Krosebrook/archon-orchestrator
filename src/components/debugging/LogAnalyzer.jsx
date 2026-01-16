@@ -9,7 +9,7 @@ import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { handleError } from '../utils/api-client';
 
-export default function LogAnalyzer({ agents, runs, metrics, onRefresh, onInspectRun }) {
+export default function LogAnalyzer({ agents, runs, metrics, _onRefresh, onInspectRun }) {
   const [selectedRun, setSelectedRun] = useState('');
   const [analysis, setAnalysis] = useState(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);

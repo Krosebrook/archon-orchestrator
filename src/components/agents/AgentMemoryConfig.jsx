@@ -9,7 +9,7 @@ import { Brain, Trash2 } from 'lucide-react';
 import { AgentMemory } from '@/entities/all';
 import { toast } from 'sonner';
 
-export default function AgentMemoryConfig({ agent, onUpdate }) {
+export default function AgentMemoryConfig({ agent, _onUpdate }) {
   const [memorySettings, setMemorySettings] = useState({
     enabled: true,
     retention_days: {

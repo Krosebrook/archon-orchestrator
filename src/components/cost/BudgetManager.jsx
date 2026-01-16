@@ -73,7 +73,7 @@ export default function BudgetManager({ budgets, onRefresh }) {
   );
 }
 
-function BudgetCard({ budget, onRefresh }) {
+function BudgetCard({ budget, _onRefresh }) {
   const usagePercent = (budget.current_spend_cents / budget.limit_cents) * 100;
   
   const statusConfig = {

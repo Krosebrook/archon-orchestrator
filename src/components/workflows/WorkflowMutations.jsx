@@ -18,7 +18,7 @@ export function useCreateWorkflow() {
       const result = await base44.entities.Workflow.create(workflowData);
       
       // Audit log
-      const user = await base44.auth.me();
+      const _user = await base44.auth.me();
       await base44.entities.Audit.create(createAuditLog(
         AuditActions.CREATE,
         AuditEntities.WORKFLOW,

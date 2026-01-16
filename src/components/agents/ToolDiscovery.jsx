@@ -11,7 +11,7 @@ export default function ToolDiscovery({ agentId, currentTools = [] }) {
   const [allTools, setAllTools] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTools, setSelectedTools] = useState(new Set(currentTools));
-  const [isLoading, setIsLoading] = useState(false);
+  const [_isLoading, _setIsLoading] = useState(false);
 
   useEffect(() => {
     discoverTools();

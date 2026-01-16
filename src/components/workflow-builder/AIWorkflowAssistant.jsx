@@ -49,7 +49,7 @@ export default function AIWorkflowAssistant({ agents, skills, onWorkflowGenerate
     setInput('');
 
     try {
-      const user = await base44.auth.me();
+      const _user = await base44.auth.me();
       
       const context = {
         available_agents: agents.map(a => ({

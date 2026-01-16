@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle2, Star, Download } from 'lucide-react';
 
-export default function ConnectorCard({ connector, isInstalled, onInstall, onRefresh }) {
+export default function ConnectorCard({ connector, isInstalled, onInstall, _onRefresh }) {
   return (
     <Card className="bg-slate-900 border-slate-800 hover:border-blue-600 transition-colors">
       <CardHeader>

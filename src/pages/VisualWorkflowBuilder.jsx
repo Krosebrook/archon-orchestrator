@@ -40,7 +40,7 @@ import ABTestManager from '../components/workflow-builder/ABTestManager';
 import AdvancedVersioning from '../components/workflow-builder/AdvancedVersioning';
 
 export default function VisualWorkflowBuilder() {
-  const navigate = useNavigate();
+  const _navigate = useNavigate();
   const [workflow, setWorkflow] = useState(null);
   const [nodes, setNodes] = useState([]);
   const [edges, setEdges] = useState([]);
@@ -48,13 +48,13 @@ export default function VisualWorkflowBuilder() {
   const [skills, setSkills] = useState([]);
   const [savedWorkflows, setSavedWorkflows] = useState([]);
   const [selectedNode, setSelectedNode] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [_isLoading, _setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isExecuting, setIsExecuting] = useState(false);
   const [activeTab, setActiveTab] = useState('design');
   const [zoom, setZoom] = useState(1);
   const [showLoadDialog, setShowLoadDialog] = useState(false);
-  const [showVersionDialog, setShowVersionDialog] = useState(false);
+  const [_showVersionDialog, _setShowVersionDialog] = useState(false);
   const [activeRun, setActiveRun] = useState(null);
   const [showAIAssistant, setShowAIAssistant] = useState(false);
   const [showOptimizations, setShowOptimizations] = useState(false);
@@ -357,7 +357,7 @@ export default function VisualWorkflowBuilder() {
         setNodes(data.spec?.nodes || []);
         setEdges(data.spec?.edges || []);
         toast.success('Workflow imported');
-      } catch (error) {
+      } catch (_error) {
         toast.error('Invalid workflow file');
       }
     };
@@ -540,10 +540,10 @@ export default function VisualWorkflowBuilder() {
           <div className="w-96">
             <ABTestManager
               workflow={workflow}
-              onCreateVariant={(variantWorkflow) => {
+              onCreateVariant={(_variantWorkflow) => {
                 toast.info('Switch to variant workflow to edit it');
               }}
-              onSelectWinner={(winnerId) => {
+              onSelectWinner={(_winnerId) => {
                 toast.success('Winner promoted to production');
               }}
             />
@@ -617,7 +617,7 @@ export default function VisualWorkflowBuilder() {
                   setWorkflow({ ...workflow, version: version.version });
                   toast.success(`Loaded version ${version.version}`);
                 }}
-                onCreateBranch={(branchName) => {
+                onCreateBranch={(_branchName) => {
                   toast.info('Branch created');
                 }}
               />

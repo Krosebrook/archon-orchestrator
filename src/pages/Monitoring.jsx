@@ -83,7 +83,7 @@ export default function Monitoring() {
 
   const costData = aggregateByTime(metrics, 'cost_cents');
   const latencyData = aggregateByTime(metrics, 'latency_ms');
-  const runData = aggregateByTime(runs, 'cost_cents');
+  const _runData = aggregateByTime(runs, 'cost_cents');
 
   // Calculate summary stats
   const totalCost = metrics.reduce((sum, m) => sum + (m.cost_cents || 0), 0);

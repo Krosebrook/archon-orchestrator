@@ -17,7 +17,7 @@ import { createPageUrl } from '@/utils';
 export function OnboardingTour({ onComplete, onSkip }) {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { _user } = useAuth();
   const [currentStep, setCurrentStep] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const [targetElement, setTargetElement] = useState(null);

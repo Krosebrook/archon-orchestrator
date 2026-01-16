@@ -592,7 +592,7 @@ function UploadDocumentForm({ knowledgeBase, onSuccess }) {
   );
 }
 
-function KnowledgeBaseConfig({ knowledgeBase, onUpdate }) {
+function KnowledgeBaseConfig({ knowledgeBase, _onUpdate }) {
   return (
     <Card className="bg-slate-900 border-slate-800">
       <CardHeader>

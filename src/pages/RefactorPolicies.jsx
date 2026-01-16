@@ -13,7 +13,7 @@ export default function RefactorPolicies() {
   const [policies, setPolicies] = useState([]);
   const [showEditor, setShowEditor] = useState(false);
   const [editingPolicy, setEditingPolicy] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [_isLoading, _setIsLoading] = useState(true);
 
   useEffect(() => {
     loadPolicies();

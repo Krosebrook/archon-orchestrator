@@ -8,7 +8,7 @@ import { Plus, Bell, Trash2 } from 'lucide-react';
 
 export default function AlertsManager() {
   const [alerts, setAlerts] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [_isLoading, _setIsLoading] = useState(true);
 
   useEffect(() => {
     loadAlerts();

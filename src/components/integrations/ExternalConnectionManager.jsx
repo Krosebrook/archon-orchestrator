@@ -33,7 +33,7 @@ const SERVICE_COLORS = {
 };
 
 export default function ExternalConnectionManager() {
-  const { organization } = useAuth();
+  const { _organization } = useAuth();
   const [connections, setConnections] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -48,8 +48,8 @@ export default function ExternalConnectionManager() {
     try {
       const data = await base44.entities.ExternalConnection.list('-updated_date');
       setConnections(data);
-    } catch (error) {
-      console.error('Failed to load connections:', error);
+    } catch (_error) {
+      console.error('Failed to load connections:', _error);
       toast.error('Failed to load connections');
     } finally {
       setIsLoading(false);
@@ -69,7 +69,7 @@ export default function ExternalConnectionManager() {
       
       toast.success('Connection test successful');
       loadConnections();
-    } catch (error) {
+    } catch (_error) {
       toast.error('Connection test failed');
     }
   };
@@ -83,7 +83,7 @@ export default function ExternalConnectionManager() {
       await base44.entities.ExternalConnection.delete(connection.id);
       toast.success('Connection deleted');
       loadConnections();
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to delete connection');
     }
   };

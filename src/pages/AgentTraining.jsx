@@ -12,7 +12,7 @@ export default function AgentTraining() {
   const [agents, setAgents] = useState([]);
   const [modules, setModules] = useState([]);
   const [sessions, setSessions] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [_isLoading, _setIsLoading] = useState(true);
 
   useEffect(() => {
     loadData();

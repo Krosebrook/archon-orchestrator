@@ -21,7 +21,7 @@ import { format } from 'date-fns';
 import BranchManager from '../workflows/BranchManager';
 import VersionComparison from '../workflows/VersionComparison';
 
-export default function AdvancedVersioning({ workflow, onLoadVersion, onCreateBranch }) {
+export default function AdvancedVersioning({ workflow, onLoadVersion, _onCreateBranch }) {
   const { organization, user } = useAuth();
   const [versions, setVersions] = useState([]);
   const [currentBranch, setCurrentBranch] = useState(null);
@@ -113,7 +113,7 @@ export default function AdvancedVersioning({ workflow, onLoadVersion, onCreateBr
     return parts.join('.');
   };
 
-  const compareVersions = (v1, v2) => {
+  const _compareVersions = (v1, v2) => {
     const diff = {
       nodesAdded: 0,
       nodesRemoved: 0,

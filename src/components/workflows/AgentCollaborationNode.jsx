@@ -132,7 +132,7 @@ export default function AgentCollaborationNode({ node, agents, onUpdate, open, o
               onChange={(e) => {
                 try {
                   setConfig({ ...config, context_mapping: JSON.parse(e.target.value) });
-                } catch (e) {}
+                } catch (_e) {}
               }}
               placeholder='{"input_data": "{{previous_output}}", "user_context": "{{user_id}}"}'
               className="bg-slate-950 border-slate-700 font-mono text-sm"

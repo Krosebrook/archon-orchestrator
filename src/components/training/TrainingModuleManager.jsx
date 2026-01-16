@@ -21,7 +21,7 @@ export default function TrainingModuleManager({ agents, modules, onRefresh }) {
 
     setIsAnalyzing(true);
     try {
-      const { data: result } = await analyzeSuccessfulRuns({
+      const { data: _result } = await analyzeSuccessfulRuns({
         agent_id: selectedAgent,
         run_limit: 50,
         min_success_rate: 0.7

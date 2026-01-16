@@ -76,7 +76,7 @@ export default function DependencyGraph({ workflowId, agents, onExecutionModeCha
     }
   };
 
-  const addDependency = async (agentId, dependsOn) => {
+  const _addDependency = async (agentId, dependsOn) => {
     try {
       const newDeps = [
         ...dependencies,

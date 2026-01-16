@@ -22,7 +22,7 @@ export default function WorkflowAnalyticsDashboard() {
   const [workflows, setWorkflows] = useState([]);
   const [runs, setRuns] = useState([]);
   const [metrics, setMetrics] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [_isLoading, _setIsLoading] = useState(true);
   
   const [selectedWorkflow, setSelectedWorkflow] = useState('all');
   const [selectedStatus, setSelectedStatus] = useState('all');

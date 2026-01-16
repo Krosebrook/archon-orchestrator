@@ -9,6 +9,8 @@ export default [
     files: [
       "src/components/**/*.{js,mjs,cjs,jsx}",
       "src/pages/**/*.{js,mjs,cjs,jsx}",
+      "src/__tests__/**/*.{js,mjs,cjs,jsx}",
+      "src/test/**/*.{js,mjs,cjs,jsx}",
       "src/Layout.jsx",
     ],
     ...pluginJs.configs.recommended,

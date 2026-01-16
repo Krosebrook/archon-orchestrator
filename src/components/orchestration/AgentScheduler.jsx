@@ -23,7 +23,7 @@ const PRIORITY_LEVELS = {
 
 export default function AgentScheduler({ agents, onScheduleUpdate }) {
   const [scheduledTasks, setScheduledTasks] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [_isLoading, _setIsLoading] = useState(true);
 
   useEffect(() => {
     loadScheduledTasks();

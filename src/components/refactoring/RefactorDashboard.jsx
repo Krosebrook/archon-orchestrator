@@ -23,7 +23,7 @@ import { cn } from '@/lib/utils';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 
-const STAGE_CONFIG = {
+const _STAGE_CONFIG = {
   0: {
     name: 'Stage 0: Safeguards & Backup',
     description: 'Backup existing data and run baseline tests',

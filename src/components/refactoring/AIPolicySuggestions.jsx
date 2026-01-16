@@ -37,7 +37,7 @@ export default function AIPolicySuggestions({ onApplySuggestion }) {
     try {
       await onApplySuggestion(policy);
       toast.success('Policy created from suggestion');
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to create policy');
     } finally {
       setIsApplying(null);

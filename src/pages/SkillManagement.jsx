@@ -10,9 +10,9 @@ import DynamicSkillLoader from '../components/skills/DynamicSkillLoader';
 export default function SkillManagement() {
   const [agents, setAgents] = useState([]);
   const [workflows, setWorkflows] = useState([]);
-  const [skills, setSkills] = useState([]);
+  const [_skills, _setSkills] = useState([]);
   const [installations, setInstallations] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [_isLoading, _setIsLoading] = useState(true);
 
   useEffect(() => {
     loadData();

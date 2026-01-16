@@ -39,7 +39,7 @@ export default function PipelineForm({ open, onOpenChange, pipeline, agents, onS
       }
       onOpenChange(false);
       onSave();
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to save pipeline');
     }
   };

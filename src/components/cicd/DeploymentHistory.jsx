@@ -3,7 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { Upload, User, Clock } from 'lucide-react';
 import { format } from 'date-fns';
 
-export default function DeploymentHistory({ environments, pipelines, agents }) {
+export default function DeploymentHistory({ environments, _pipelines, agents }) {
   const sortedEnvs = [...environments].sort((a, b) => 
     new Date(b.deployed_at || 0) - new Date(a.deployed_at || 0)
   );

@@ -10,7 +10,7 @@ import { toast } from 'sonner';
 export default function Approvals() {
   const [requests, setRequests] = useState([]);
   const [workflows, setWorkflows] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [_isLoading, _setIsLoading] = useState(true);
 
   useEffect(() => {
     loadData();

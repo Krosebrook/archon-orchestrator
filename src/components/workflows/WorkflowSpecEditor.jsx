@@ -12,7 +12,7 @@ export default function WorkflowSpecEditor({ spec, onSave }) {
     try {
       setCurrentSpec(JSON.stringify(spec, null, 2));
       setError('');
-    } catch (e) {
+    } catch (_e) {
       setCurrentSpec('{}');
       setError('Invalid initial JSON spec.');
     }
@@ -23,7 +23,7 @@ export default function WorkflowSpecEditor({ spec, onSave }) {
       const parsedSpec = JSON.parse(currentSpec);
       setError('');
       onSave(parsedSpec);
-    } catch (e) {
+    } catch (_e) {
       setError('Invalid JSON format. Please correct it before saving.');
     }
   };

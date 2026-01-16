@@ -9,7 +9,7 @@ import { APIError, ErrorCodes } from '../utils/api-client';
 /**
  * Generates unique span ID (16-char hex).
  */
-function generateSpanId() {
+function _generateSpanId() {
   const bytes = new Uint8Array(8);
   crypto.getRandomValues(bytes);
   return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
@@ -18,7 +18,7 @@ function generateSpanId() {
 /**
  * Generates unique trace ID (32-char hex).
  */
-function generateTraceId() {
+function _generateTraceId() {
   const bytes = new Uint8Array(16);
   crypto.getRandomValues(bytes);
   return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
@@ -35,7 +35,7 @@ export class TraceService {
     try {
       const response = await base44.functions.invoke('createTrace', params);
       return { ok: true, value: response };
-    } catch (error) {
+    } catch (_error) {
       return { 
         ok: false, 
         error: new APIError(
@@ -54,7 +54,7 @@ export class TraceService {
     try {
       const response = await base44.functions.invoke('endTrace', params);
       return { ok: true, value: response };
-    } catch (error) {
+    } catch (_error) {
       return { 
         ok: false, 
         error: new APIError(
@@ -75,7 +75,7 @@ export class TraceService {
         ? await base44.entities.Trace.filter(filters, '-start_time', filters.limit || 100)
         : await base44.entities.Trace.list('-start_time', filters.limit || 100);
       return { ok: true, value: traces };
-    } catch (error) {
+    } catch (_error) {
       return { 
         ok: false, 
         error: new APIError(
@@ -102,7 +102,7 @@ export class TraceService {
 
       const root = spans.find(s => !s.parent_span_id) || spans[0];
       return { ok: true, value: { root, spans } };
-    } catch (error) {
+    } catch (_error) {
       return { 
         ok: false, 
         error: new APIError(

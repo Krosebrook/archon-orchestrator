@@ -8,9 +8,9 @@ import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 import ReactMarkdown from 'react-markdown';
 
-export default function AIAssistant({ agents, workflows, onRefresh }) {
+export default function AIAssistant({ agents, workflows, _onRefresh }) {
   const [query, setQuery] = useState('');
-  const [response, setResponse] = useState(null);
+  const [_response, _setResponse] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [conversationHistory, setConversationHistory] = useState([]);
 

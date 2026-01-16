@@ -87,7 +87,7 @@ describe('useAsync', () => {
       
       try {
         await result.current.execute();
-      } catch (e) {
+      } catch (_e) {
         // Expected to throw
       }
       

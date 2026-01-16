@@ -35,7 +35,7 @@ export default function AIInsightsDashboard({ workflowId }) {
 
       setInsights(insightsData.sort((a, b) => new Date(b.created_date) - new Date(a.created_date)));
       setAnomalies(anomaliesData.sort((a, b) => new Date(b.detected_at) - new Date(a.detected_at)));
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to load insights');
     } finally {
       setLoading(false);
@@ -52,7 +52,7 @@ export default function AIInsightsDashboard({ workflowId }) {
 
       toast.success(`Generated ${response.data.insights.length} new insights`);
       await loadData();
-    } catch (error) {
+    } catch (_error) {
       toast.error('Analysis failed');
     } finally {
       setAnalyzing(false);
@@ -67,7 +67,7 @@ export default function AIInsightsDashboard({ workflowId }) {
       });
       toast.success('Recommendation applied');
       loadData();
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to apply recommendation');
     }
   };

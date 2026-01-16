@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Users, Brain, Eye } from 'lucide-react';
 
-export default function CollaborationControl({ agents, workflows, collaborations, onSelect }) {
+export default function CollaborationControl({ _agents, _workflows, collaborations, onSelect }) {
   return (
     <Card className="bg-slate-900 border-slate-800">
       <CardHeader>

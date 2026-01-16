@@ -11,7 +11,7 @@ import PerformanceInsights from '../components/observability/PerformanceInsights
 export default function Observability() {
   const [metrics, setMetrics] = useState([]);
   const [runs, setRuns] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [_isLoading, _setIsLoading] = useState(true);
 
   useEffect(() => {
     loadData();
