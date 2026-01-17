@@ -1,4 +1,5 @@
 import AdvancedOrchestration from './pages/AdvancedOrchestration';
+import AdvancedTraining from './pages/AdvancedTraining';
 import AgentAnalytics from './pages/AgentAnalytics';
 import AgentCollaboration from './pages/AgentCollaboration';
 import AgentDebugger from './pages/AgentDebugger';
@@ -51,6 +52,7 @@ import __Layout from './Layout.jsx';
 
 export const PAGES = {
     "AdvancedOrchestration": AdvancedOrchestration,
+    "AdvancedTraining": AdvancedTraining,
     "AgentAnalytics": AgentAnalytics,
     "AgentCollaboration": AgentCollaboration,
     "AgentDebugger": AgentDebugger,
