@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import {
   Dialog,
@@ -19,27 +19,61 @@ export default function InstallConnectorDialog({ connector, open, onClose, onSuc
 
   const handleInstall = async (e) => {
     e.preventDefault();
+    
+    if (!formData.name.trim()) {
+      toast.error('Please enter a connection name');
+      return;
+    }
+
+    if (connector.auth_type === 'api_key' && !formData.api_key?.trim()) {
+      toast.error('Please enter an API key');
+      return;
+    }
+
     setIsInstalling(true);
 
     try {
       const user = await base44.auth.me();
       
-      // Create placeholder credentials (in production, handle OAuth flow)
-      const credentials = connector.auth_type === 'oauth2' 
-        ? { access_token: 'PLACEHOLDER_TOKEN', refresh_token: 'PLACEHOLDER_REFRESH' }
-        : connector.auth_type === 'api_key'
-        ? { api_key: formData.api_key || 'PLACEHOLDER_KEY' }
-        : {};
+      // Prepare credentials based on auth type
+      let credentials = {};
+      
+      switch (connector.auth_type) {
+        case 'api_key':
+          credentials = { apiKey: formData.api_key };
+          break;
+        case 'oauth2':
+          // OAuth flow would be handled separately
+          credentials = { accessToken: 'OAUTH_TOKEN_PLACEHOLDER' };
+          break;
+        case 'basic':
+          credentials = { username: formData.username || '', password: formData.password || '' };
+          break;
+        default:
+          credentials = {};
+      }
 
-      const credentialsEncrypted = btoa(JSON.stringify(credentials));
+      // Validate connector credentials
+      const validation = await base44.functions.invoke('validateConnector', {
+        connectorId: connector.id,
+        credentials,
+      });
 
+      if (!validation.data?.valid) {
+        toast.error('Invalid credentials: ' + (validation.data?.error || 'Unknown error'));
+        setIsInstalling(false);
+        return;
+      }
+
+      // Create installation record with encrypted credentials
       await base44.entities.ConnectorInstallation.create({
         connector_id: connector.id,
         name: formData.name,
-        credentials_encrypted: credentialsEncrypted,
+        credentials_encrypted: JSON.stringify(credentials),
         config: {},
         status: 'active',
         installed_by: user.email,
+        last_tested: new Date().toISOString(),
         org_id: user.organization.id,
       });
 
@@ -53,7 +87,7 @@ export default function InstallConnectorDialog({ connector, open, onClose, onSuc
       onClose();
     } catch (error) {
       console.error('Installation failed:', error);
-      toast.error('Failed to install connector');
+      toast.error('Failed to install connector: ' + error.message);
     } finally {
       setIsInstalling(false);
     }

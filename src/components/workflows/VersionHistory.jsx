@@ -9,7 +9,7 @@ import { formatDistanceToNow } from 'date-fns';
 
 export default function VersionHistory({ workflowId }) {
   const [versions, setVersions] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [_isLoading, _setIsLoading] = useState(true);
 
   useEffect(() => {
     const loadVersions = async () => {

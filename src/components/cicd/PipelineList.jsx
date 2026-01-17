@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Play, Pause, Settings, Trash2, Clock, CheckCircle, XCircle } from 'lucide-react';
+import { Play, Settings, Trash2, Clock, CheckCircle, XCircle } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
@@ -27,7 +27,7 @@ export default function PipelineList({ pipelines, agents, isLoading, onEdit, onR
       
       toast.success('Pipeline completed successfully');
       onRefresh();
-    } catch (error) {
+    } catch (_error) {
       toast.error('Pipeline failed');
     } finally {
       setRunningPipeline(null);
@@ -40,7 +40,7 @@ export default function PipelineList({ pipelines, agents, isLoading, onEdit, onR
       await base44.entities.CIPipeline.delete(id);
       toast.success('Pipeline deleted');
       onRefresh();
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to delete pipeline');
     }
   };

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -63,7 +63,7 @@ export default function VersionManager({ workflow, onRestore }) {
     }
   };
 
-  const compareVersion = (version) => {
+  const _compareVersion = (_version) => {
     toast.info('Version comparison coming soon');
   };
 
@@ -95,7 +95,7 @@ export default function VersionManager({ workflow, onRestore }) {
           </div>
         ) : (
           <div className="space-y-3">
-            {versions.map((version, idx) => {
+            {versions.map((version, _idx) => {
               const isCurrent = version.version_number === workflow.version;
               const nodeCount = version.spec?.nodes?.length || 0;
 

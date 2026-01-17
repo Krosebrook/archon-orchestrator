@@ -3,7 +3,7 @@
  * @module shared/ShareDialog
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -70,7 +70,7 @@ export function ShareDialog({
       setCopied(true);
       toast.success('Link copied to clipboard');
       setTimeout(() => setCopied(false), 2000);
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to copy link');
     }
   };

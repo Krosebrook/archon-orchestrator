@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -37,7 +37,7 @@ export default function AIPolicySuggestions({ onApplySuggestion }) {
     try {
       await onApplySuggestion(policy);
       toast.success('Policy created from suggestion');
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to create policy');
     } finally {
       setIsApplying(null);

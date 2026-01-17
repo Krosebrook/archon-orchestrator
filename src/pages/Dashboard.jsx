@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { base44 } from '@/api/base44Client';
 import { Run, Agent, Workflow } from '@/entities/all';
 import { DollarSign, Bot, GitFork, AlertTriangle } from 'lucide-react';
 import { handleError } from '../components/utils/api-client';

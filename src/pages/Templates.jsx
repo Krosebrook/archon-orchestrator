@@ -215,7 +215,7 @@ export default function Templates() {
       <AIWorkflowGenerator
         open={showAIGenerator}
         onOpenChange={setShowAIGenerator}
-        onWorkflowGenerated={(workflow) => {
+        onWorkflowGenerated={(_workflow) => {
           setShowAIGenerator(false);
           refresh();
         }}

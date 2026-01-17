@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -39,7 +39,7 @@ export default function PipelineForm({ open, onOpenChange, pipeline, agents, onS
       }
       onOpenChange(false);
       onSave();
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to save pipeline');
     }
   };

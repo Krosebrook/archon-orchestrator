@@ -1,9 +1,8 @@
-import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart } from 'recharts';
+import { Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart } from 'recharts';
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
 
-export default function CostForecastChart({ forecasts, onRefresh }) {
+export default function CostForecastChart({ forecasts, _onRefresh }) {
   if (forecasts.length === 0) {
     return (
       <Card className="bg-slate-900 border-slate-800">

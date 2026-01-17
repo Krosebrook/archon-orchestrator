@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import {
@@ -19,11 +19,9 @@ import {
   CheckSquare,
   Zap,
   Users,
-  Crown,
   Wrench,
   Eye,
   Menu,
-  Bell,
   Store,
   FileText,
   Brain,
@@ -79,6 +77,7 @@ const navItems = [
   { name: 'Approvals', icon: CheckSquare, path: 'Approvals', permission: 'workflow.run' },
   { name: 'Tool Marketplace', icon: Store, path: 'ToolMarketplace', permission: 'workflow.view' },
   { name: 'Connectors', icon: Plug, path: 'ConnectorMarketplace', permission: 'workflow.view' },
+  { name: 'Submit Connector', icon: Plug, path: 'ConnectorSubmission', permission: 'workflow.edit' },
   { name: 'Skill Marketplace', icon: Zap, path: 'SkillMarketplace', permission: 'workflow.view' },
   { name: 'Skill Management', icon: Sparkles, path: 'SkillManagement', permission: 'workflow.view' },
   { name: 'Integrations', icon: Settings, path: 'IntegrationManagement', permission: 'workflow.edit' },
@@ -200,7 +199,7 @@ const Sidebar = ({ isCollapsed, isMobileOpen, setIsMobileOpen }) => {
 };
 
 const Header = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen, restartTour }) => {
-  const { user, organization, role } = useAuth();
+  const { user, role } = useAuth();  // Removed 'organization' as it's not used in this component
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark');
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
 
@@ -310,10 +309,8 @@ function AppLayout({ children, currentPageName }) {
   const { showTour, completeTour, skipTour, restartTour } = useOnboarding();
 
   useEffect(() => {
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/service-worker.js')
-        .catch((error) => console.log('SW registration failed:', error));
-    }
+    // Service worker registration handled by PWAInstaller component
+    // Web vitals monitoring removed - now handled in PWA service worker
   }, []);
 
   return (

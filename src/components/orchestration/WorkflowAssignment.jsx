@@ -1,9 +1,8 @@
-import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Network } from 'lucide-react';
 
-export default function WorkflowAssignment({ agents, workflows }) {
+export default function WorkflowAssignment({ _agents, workflows }) {
   return (
     <Card className="bg-slate-900 border-slate-800">
       <CardHeader>

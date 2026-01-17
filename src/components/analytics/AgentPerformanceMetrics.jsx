@@ -1,11 +1,10 @@
-import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { CheckCircle, XCircle, Clock, TrendingUp, TrendingDown } from 'lucide-react';
 import { subDays, format, startOfDay } from 'date-fns';
 
-export default function AgentPerformanceMetrics({ agents, metrics, runs, timeRange }) {
+export default function AgentPerformanceMetrics({ agents, _metrics, runs, timeRange }) {
   const daysMap = { '7d': 7, '30d': 30, '90d': 90 };
   const days = daysMap[timeRange] || 30;
 

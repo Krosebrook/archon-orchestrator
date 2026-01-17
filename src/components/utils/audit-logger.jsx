@@ -19,7 +19,6 @@
  * await auditCritical('deploy', 'Workflow', workflowId, { environment: 'production' });
  */
 
-import { base44 } from '@/api/base44Client';
 import { AuditActions, AuditEntities, AuditSeverity } from '../shared/constants';
 
 // Re-export for backwards compatibility

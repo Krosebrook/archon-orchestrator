@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -92,11 +92,11 @@ Return anomaly types with severity and recommended actions.`,
         if (historical.length < 10) continue;
 
         const agent = agents.find(a => a.id === agentId);
-        if (!agent) continue;
+         if (!agent) continue;
 
         // Calculate baselines
         const avgLatency = historical.reduce((s, m) => s + (m.latency_ms || 0), 0) / historical.length;
-        const avgCpu = historical.reduce((s, m) => s + (m.cpu_usage_percent || 0), 0) / historical.length;
+        const _avgCpu = historical.reduce((s, m) => s + (m.cpu_usage_percent || 0), 0) / historical.length;
         const avgMemory = historical.reduce((s, m) => s + (m.memory_mb || 0), 0) / historical.length;
         const baselineErrorRate = historical.filter(m => m.status === 'error').length / historical.length;
 

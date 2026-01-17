@@ -6,8 +6,8 @@ import { Label } from '@/components/ui/label';
 import { Run } from '@/entities/Run';
 import { Play, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
 
-export default function PolicySimulator({ policy, onClose }) {
-  const [testRuns, setTestRuns] = useState([]);
+export default function PolicySimulator({ policy, _onClose }) {
+  const [_testRuns, _setTestRuns] = useState([]);
   const [isSimulating, setIsSimulating] = useState(false);
   const [simulationResults, setSimulationResults] = useState(null);
   const [customRule, setCustomRule] = useState('');
@@ -23,13 +23,13 @@ export default function PolicySimulator({ policy, onClose }) {
     try {
       // Fetch recent runs to simulate against
       const runs = await Run.list('-created_date', 100);
-      setTestRuns(runs);
+      _setTestRuns(runs);
 
       // Parse the policy rule
       let rule;
       try {
         rule = JSON.parse(customRule);
-      } catch (e) {
+      } catch (_e) {
         setSimulationResults({
           error: 'Invalid JSON in policy rule',
           results: []
@@ -97,7 +97,7 @@ export default function PolicySimulator({ policy, onClose }) {
       }
 
       return { blocked: false, reason: 'Policy allows this run' };
-    } catch (e) {
+    } catch (_e) {
       return { blocked: false, reason: 'Policy evaluation error' };
     }
   };

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -41,7 +41,7 @@ export default function AgentPerformanceAnalytics() {
   const [metrics, setMetrics] = useState([]);
   const [selectedAgent, setSelectedAgent] = useState('all');
   const [timeRange, setTimeRange] = useState('7d');
-  const [isLoading, setIsLoading] = useState(true);
+  const [_isLoading, _setIsLoading] = useState(true);
 
   useEffect(() => {
     loadData();

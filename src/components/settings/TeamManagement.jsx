@@ -41,7 +41,7 @@ const statusColors = {
 export default function TeamManagement() {
   const { organization } = useAuth();
   const [teamMembers, setTeamMembers] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [_isLoading, _setIsLoading] = useState(true);
   const [showInviteForm, setShowInviteForm] = useState(false);
   const [inviteForm, setInviteForm] = useState({
     email: '',

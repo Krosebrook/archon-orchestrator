@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -9,7 +9,7 @@ import { adaptAgentBehavior } from '@/functions/adaptAgentBehavior';
 import { toast } from 'sonner';
 import { handleError } from '../utils/api-client';
 
-export default function AdaptiveLearning({ agents, sessions, onRefresh }) {
+export default function AdaptiveLearning({ agents, _sessions, onRefresh }) {
   const [selectedAgent, setSelectedAgent] = useState('');
   const [autoApply, setAutoApply] = useState(false);
   const [feedbackWindow, setFeedbackWindow] = useState(7);

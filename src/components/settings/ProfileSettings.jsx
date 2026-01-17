@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { User, Mail, Briefcase, MapPin, Phone, Save, Upload } from 'lucide-react';
+import { Mail, Briefcase, MapPin, Phone, Save, Upload } from 'lucide-react';
 import { useUserProfile } from '@/components/hooks/useUserProfile';
 import { useAuth } from '@/components/contexts/AuthContext';
 

@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Sparkles, Loader2, ThumbsUp, Plus } from 'lucide-react';
+import { Sparkles, Loader2, Plus } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
@@ -34,7 +34,9 @@ export default function TemplateSuggestions() {
     }
   };
 
-  const useTemplate = async (template) => {
+  // Renamed from useTemplate to avoid React Hook naming conflict
+  // This is not a hook, just a regular async function
+  const handleUseTemplate = async (template) => {
     try {
       const user = await base44.auth.me();
       const workflow = await base44.entities.Workflow.create({
@@ -140,7 +142,7 @@ export default function TemplateSuggestions() {
 
                     <Button
                       size="sm"
-                      onClick={() => useTemplate(rec.template)}
+                      onClick={() => handleUseTemplate(rec.template)}
                       className="w-full bg-green-600 hover:bg-green-700"
                     >
                       <Plus className="w-3 h-3 mr-2" />

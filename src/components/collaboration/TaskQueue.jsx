@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -36,7 +36,7 @@ export default function TaskQueue({ agents, workflows, onRefresh }) {
     setExecuting(task.id);
     try {
       // Call delegation function
-      const result = await base44.functions.invoke('delegateTasks', {
+      const _result = await base44.functions.invoke('delegateTasks', {
         workflow_id: task.workflow_id,
         agent_id: selectedAgent,
         task_description: task.description
@@ -45,7 +45,7 @@ export default function TaskQueue({ agents, workflows, onRefresh }) {
       toast.success('Task executed successfully');
       loadTasks();
       onRefresh();
-    } catch (error) {
+    } catch (_error) {
       toast.error('Task execution failed');
     } finally {
       setExecuting(null);

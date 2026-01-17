@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Switch } from '@/components/ui/switch';
-import { Key, Download } from 'lucide-react';
+import { Download } from 'lucide-react';
 import TeamManagement from '../components/settings/TeamManagement';
 import SecretManager from '../components/settings/SecretManager';
 import ScheduleManager from '../components/scheduling/ScheduleManager';
@@ -29,7 +28,7 @@ export default function Settings() {
       // In production, this would update the organization
       await new Promise(resolve => setTimeout(resolve, 500));
       toast.success('Organization settings saved');
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to save settings');
     } finally {
       setSaving(false);

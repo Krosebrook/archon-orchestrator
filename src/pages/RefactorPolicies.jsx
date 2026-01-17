@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useState, useEffect } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { base44 } from '@/api/base44Client';
-import { Shield, Plus, AlertTriangle } from 'lucide-react';
+import { Shield, Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import PolicyEditor from '../components/refactoring/PolicyEditor';
 import PolicyList from '../components/refactoring/PolicyList';
@@ -14,7 +13,7 @@ export default function RefactorPolicies() {
   const [policies, setPolicies] = useState([]);
   const [showEditor, setShowEditor] = useState(false);
   const [editingPolicy, setEditingPolicy] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [_isLoading, _setIsLoading] = useState(true);
 
   useEffect(() => {
     loadPolicies();

@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Zap, Loader2, CheckCircle2, TrendingUp, Eye, Sparkles, AlertTriangle } from 'lucide-react';
+import { Zap, Loader2, CheckCircle2, TrendingUp, Sparkles, AlertTriangle } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';

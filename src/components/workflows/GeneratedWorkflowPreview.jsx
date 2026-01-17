@@ -4,7 +4,6 @@
  * @version 1.0.0
  */
 
-import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Bot, Settings, GitBranch, Database, Mail, Webhook, Clock, DollarSign, Tag } from 'lucide-react';
@@ -89,7 +88,7 @@ export default function GeneratedWorkflowPreview({ workflow }) {
               {workflow.nodes?.length || 0} Nodes • {workflow.edges?.length || 0} Connections
             </div>
             
-            {workflow.nodes?.map((node, idx) => {
+            {workflow.nodes?.map((node, _idx) => {
               const Icon = getNodeIcon(node.data.type);
               const color = getNodeColor(node.data.type);
               
@@ -118,7 +117,7 @@ export default function GeneratedWorkflowPreview({ workflow }) {
             <div className="mt-4 pt-4 border-t border-slate-800">
               <div className="text-xs text-slate-400 mb-2">Connections:</div>
               <div className="space-y-1">
-                {workflow.edges.map((edge, idx) => {
+                {workflow.edges.map((edge, _idx) => {
                   const sourceNode = workflow.nodes.find(n => n.id === edge.source);
                   const targetNode = workflow.nodes.find(n => n.id === edge.target);
                   

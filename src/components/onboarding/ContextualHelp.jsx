@@ -4,7 +4,6 @@
  * @version 1.0.0
  */
 
-import React from 'react';
 import { HelpCircle } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 

@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
-import { Brain, Trash2, Plus } from 'lucide-react';
+import { Brain, Trash2 } from 'lucide-react';
 import { AgentMemory } from '@/entities/all';
 import { toast } from 'sonner';
 
-export default function AgentMemoryConfig({ agent, onUpdate }) {
+export default function AgentMemoryConfig({ agent, _onUpdate }) {
   const [memorySettings, setMemorySettings] = useState({
     enabled: true,
     retention_days: {

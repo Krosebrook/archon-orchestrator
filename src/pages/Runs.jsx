@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Run, Workflow, Agent } from '@/entities/all';
 import { handleError } from '../components/utils/api-client';
 import RunsTable from '../components/runs/RunsTable';

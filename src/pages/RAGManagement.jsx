@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,7 +8,6 @@ import {
   Database, 
   Plus, 
   Upload, 
-  Search, 
   FileText, 
   CheckCircle2,
   AlertCircle,
@@ -593,7 +592,7 @@ function UploadDocumentForm({ knowledgeBase, onSuccess }) {
   );
 }
 
-function KnowledgeBaseConfig({ knowledgeBase, onUpdate }) {
+function KnowledgeBaseConfig({ knowledgeBase, _onUpdate }) {
   return (
     <Card className="bg-slate-900 border-slate-800">
       <CardHeader>

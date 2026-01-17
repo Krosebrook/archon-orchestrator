@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Shield, FileCheck, AlertTriangle, Eye, Plus, Loader2, CheckCircle2, XCircle } from 'lucide-react';
+import { Shield, FileCheck, AlertTriangle, Eye, Loader2, CheckCircle2, XCircle } from 'lucide-react';
 import { toast } from 'sonner';
-import { Badge } from '@/components/ui/badge';
 import PrivacyPolicyManager from '../components/compliance/PrivacyPolicyManager';
 import ComplianceReports from '../components/compliance/ComplianceReports';
 import RedactionLogs from '../components/compliance/RedactionLogs';

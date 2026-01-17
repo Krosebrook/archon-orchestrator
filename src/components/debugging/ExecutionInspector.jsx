@@ -7,7 +7,7 @@
  * @version 1.0.0
  */
 
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -17,25 +17,24 @@ import {
   Play, Pause, SkipForward, RotateCcw, 
   Brain, Database, Zap, Clock, DollarSign,
   CheckCircle, XCircle, AlertCircle, Loader2,
-  Code, Activity, Eye, Edit
+  Code, Activity, Edit
 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { handleError } from '../utils/api-client';
 import { auditExecute, AuditEntities } from '../utils/audit-logger';
-import { measurePerformance } from '../utils/performance';
 import ExecutionStepViewer from './ExecutionStepViewer';
 
-export default function ExecutionInspector({ run, onClose }) {
+export default function ExecutionInspector({ run, _onClose }) {
   const [executionSteps, setExecutionSteps] = useState([]);
   const [currentStep, setCurrentStep] = useState(0);
   const [isPaused, setIsPaused] = useState(true);
-  const [isLoading, setIsLoading] = useState(true);
+  const [_isLoading, _setIsLoading] = useState(true);
   const [agent, setAgent] = useState(null);
-  const [metrics, setMetrics] = useState([]);
-  const [showThoughts, setShowThoughts] = useState(true);
-  const [modifiedFlow, setModifiedFlow] = useState(null);
+  const [_metrics, _setMetrics] = useState([]);
+  const [_showThoughts, _setShowThoughts] = useState(true);
+  const [_modifiedFlow, _setModifiedFlow] = useState(null);
   const intervalRef = useRef(null);
 
   useEffect(() => {
@@ -193,7 +192,7 @@ export default function ExecutionInspector({ run, onClose }) {
 
   const modifyFlowAtStep = async () => {
     try {
-      const user = await base44.auth.me();
+      const _user = await base44.auth.me();
       toast.info('Flow modification interface coming soon');
       
       // Audit modification attempt

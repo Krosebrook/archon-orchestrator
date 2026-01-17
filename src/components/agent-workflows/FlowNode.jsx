@@ -1,5 +1,4 @@
-import React from 'react';
-import { Brain, Zap, Database, GitBranch, MessageSquare, RotateCw, Trash2, Circle } from 'lucide-react';
+import { Brain, Zap, Database, GitBranch, MessageSquare, RotateCw, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const NODE_ICONS = {

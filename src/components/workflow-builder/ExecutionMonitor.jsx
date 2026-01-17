@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -8,13 +8,11 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   Play,
   Pause,
-  Square,
   RefreshCw,
   CheckCircle2,
   AlertCircle,
   Clock,
   Loader2,
-  ChevronRight,
   Terminal,
   DollarSign,
   Zap
@@ -81,7 +79,7 @@ function NodeExecutionCard({ node, index, isActive }) {
 }
 
 export default function ExecutionMonitor({ run, nodes, workflow }) {
-  const [logs, setLogs] = useState([]);
+  const [_logs, _setLogs] = useState([]);
   const [metrics, setMetrics] = useState(null);
 
   useEffect(() => {
@@ -109,7 +107,7 @@ export default function ExecutionMonitor({ run, nodes, workflow }) {
   const progress = nodes.length > 0 ? (completedNodes / nodes.length) * 100 : 0;
 
   const totalCost = metrics?.reduce((sum, m) => sum + (m.cost_cents || 0), 0) || 0;
-  const totalLatency = metrics?.reduce((sum, m) => sum + (m.latency_ms || 0), 0) || 0;
+  const _totalLatency = metrics?.reduce((sum, m) => sum + (m.latency_ms || 0), 0) || 0;
   const totalTokens = metrics?.reduce((sum, m) => sum + (m.prompt_tokens || 0) + (m.completion_tokens || 0), 0) || 0;
 
   if (!run) {

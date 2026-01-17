@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -21,7 +21,7 @@ export default function EnvironmentManager({ environments, agents, onRefresh }) 
       });
       toast.success(`Deployed to ${env.name}`);
       onRefresh();
-    } catch (error) {
+    } catch (_error) {
       toast.error('Deployment failed');
     } finally {
       setDeploying(null);

@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useState, useEffect } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import TraceViewer from '../components/observability/TraceViewer';
 import { base44 } from '@/api/base44Client';
 import { Eye, Activity, Cpu, Database, AlertCircle } from 'lucide-react';
 import TraceExplorer from '../components/observability/TraceExplorer';
@@ -12,7 +11,7 @@ import PerformanceInsights from '../components/observability/PerformanceInsights
 export default function Observability() {
   const [metrics, setMetrics] = useState([]);
   const [runs, setRuns] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [_isLoading, _setIsLoading] = useState(true);
 
   useEffect(() => {
     loadData();

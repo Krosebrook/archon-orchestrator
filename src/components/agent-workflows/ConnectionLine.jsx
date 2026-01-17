@@ -1,4 +1,3 @@
-import React from 'react';
 
 export default function ConnectionLine({ from, to, isDashed = false }) {
   const midX = (from.x + to.x) / 2;

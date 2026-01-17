@@ -3,11 +3,9 @@
  * @module shared/DetailView
  */
 
-import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
 import { ArrowLeft, Edit, Trash2, Share2 } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 

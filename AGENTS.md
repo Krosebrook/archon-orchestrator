@@ -2,6 +2,9 @@
 
 **Archon Orchestrator - Backend Functions & Agents**
 
+Version: 1.1  
+Last Updated: January 8, 2026
+
 This document provides comprehensive documentation for all backend functions (agents/modules) in the Archon Orchestrator platform.
 
 ---
@@ -26,7 +29,7 @@ This document provides comprehensive documentation for all backend functions (ag
 
 ## Overview
 
-Archon Orchestrator includes 50+ serverless backend functions built with Deno and TypeScript. Each function follows a consistent pattern:
+Archon Orchestrator includes 54 serverless backend functions built with Deno and TypeScript. Each function follows a consistent pattern:
 
 - **Authentication** - All functions require valid Base44 authentication
 - **Authorization** - RBAC checks based on user roles
@@ -71,6 +74,8 @@ Deno.serve(async (req) => {
 | Code Analysis | 5 | Code review, refactoring, and analysis |
 | Debugging | 2 | Debug sessions and decision explanations |
 | Data Operations | 3 | Data export and comparisons |
+
+**Total:** 54 backend functions
 
 ---
 
@@ -1479,5 +1484,5 @@ await base44.asServiceRole.entities.Audit.create({
 
 ---
 
-**Last Updated:** December 30, 2025  
+**Last Updated:** January 8, 2026  
 **Maintained By:** Archon Development Team

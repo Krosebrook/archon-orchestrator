@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -73,7 +73,7 @@ export default function BudgetManager({ budgets, onRefresh }) {
   );
 }
 
-function BudgetCard({ budget, onRefresh }) {
+function BudgetCard({ budget, _onRefresh }) {
   const usagePercent = (budget.current_spend_cents / budget.limit_cents) * 100;
   
   const statusConfig = {

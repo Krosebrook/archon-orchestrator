@@ -6,7 +6,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-export default function ComplianceReports({ reports, onRefresh }) {
+export default function ComplianceReports({ reports, _onRefresh }) {
   if (reports.length === 0) {
     return (
       <Card className="bg-slate-900 border-slate-800">

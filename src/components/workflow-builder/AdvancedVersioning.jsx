@@ -7,16 +7,13 @@
  * @version 1.0.0
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useAuth } from '@/components/contexts/AuthContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  GitBranch, GitCommit, History, 
+import { History, 
   RotateCcw, Tag, GitCompare, Clock
 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -24,7 +21,7 @@ import { format } from 'date-fns';
 import BranchManager from '../workflows/BranchManager';
 import VersionComparison from '../workflows/VersionComparison';
 
-export default function AdvancedVersioning({ workflow, onLoadVersion, onCreateBranch }) {
+export default function AdvancedVersioning({ workflow, onLoadVersion, _onCreateBranch }) {
   const { organization, user } = useAuth();
   const [versions, setVersions] = useState([]);
   const [currentBranch, setCurrentBranch] = useState(null);
@@ -116,7 +113,7 @@ export default function AdvancedVersioning({ workflow, onLoadVersion, onCreateBr
     return parts.join('.');
   };
 
-  const compareVersions = (v1, v2) => {
+  const _compareVersions = (v1, v2) => {
     const diff = {
       nodesAdded: 0,
       nodesRemoved: 0,

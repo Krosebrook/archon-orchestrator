@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import {
   Plug,
@@ -14,14 +14,15 @@ import {
   Star,
   Loader2,
   Settings,
+  Code,
 } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import ConnectorCard from '../components/connectors/ConnectorCard';
 import InstallConnectorDialog from '../components/connectors/InstallConnectorDialog';
 import MyConnectors from '../components/connectors/MyConnectors';
 
 export default function ConnectorMarketplace() {
+  const navigate = useNavigate();
   const [connectors, setConnectors] = useState([]);
   const [installations, setInstallations] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -83,12 +84,22 @@ export default function ConnectorMarketplace() {
             Connect Archon with your favorite tools and services
           </p>
         </div>
-        <Link to={createPageUrl('ConnectorBuilder')}>
-          <Button className="bg-purple-600 hover:bg-purple-700">
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={() => navigate(createPageUrl('ConnectorSubmission'))}
+          >
             <Plus className="w-4 h-4 mr-2" />
+            Submit Connector
+          </Button>
+          <Button
+            className="bg-purple-600 hover:bg-purple-700"
+            onClick={() => navigate(createPageUrl('ConnectorBuilder'))}
+          >
+            <Code className="w-4 h-4 mr-2" />
             Build Custom Connector
           </Button>
-        </Link>
+        </div>
       </div>
 
       {/* Stats */}

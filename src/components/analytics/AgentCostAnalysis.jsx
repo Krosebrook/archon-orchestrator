@@ -1,11 +1,9 @@
-import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { DollarSign, TrendingUp, TrendingDown } from 'lucide-react';
 import { subDays, format, startOfDay } from 'date-fns';
 
-export default function AgentCostAnalysis({ agents, metrics, installations, selectedAgent, timeRange }) {
+export default function AgentCostAnalysis({ agents, metrics, _installations, _selectedAgent, timeRange }) {
   const daysMap = { '7d': 7, '30d': 30, '90d': 90 };
   const days = daysMap[timeRange] || 30;
 

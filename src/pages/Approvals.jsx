@@ -1,18 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { ApprovalRequest, Run, Workflow } from '@/entities/all';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import ApprovalCenter from '../components/cicd/ApprovalCenter';
+import { useState, useEffect } from 'react';
+import { ApprovalRequest, Workflow } from '@/entities/all';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { Check, X, Clock, GitFork } from 'lucide-react';
+import { Check, X, GitFork } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { toast } from 'sonner';
 
 export default function Approvals() {
   const [requests, setRequests] = useState([]);
   const [workflows, setWorkflows] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [_isLoading, _setIsLoading] = useState(true);
 
   useEffect(() => {
     loadData();

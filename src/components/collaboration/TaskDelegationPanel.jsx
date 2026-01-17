@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -100,7 +100,7 @@ export default function TaskDelegationPanel({ collaboration, agents, onUpdate })
     }
   };
 
-  const getAgentName = (agentId) => {
+  const _getAgentName = (agentId) => {
     const agent = agents.find(a => a.id === agentId);
     return agent?.name || agentId;
   };

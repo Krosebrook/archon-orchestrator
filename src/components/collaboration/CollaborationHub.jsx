@@ -1,13 +1,8 @@
-import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Users, Play, Pause, CheckCircle, AlertCircle } from 'lucide-react';
-import { format } from 'date-fns';
-import { base44 } from '@/api/base44Client';
-import { toast } from 'sonner';
 
-export default function CollaborationHub({ collaborations, teams, agents, workflows, onRefresh }) {
+export default function CollaborationHub({ collaborations, _teams, _agents, workflows, _onRefresh }) {
   const statusConfig = {
     active: { icon: Play, color: 'text-green-400', bg: 'bg-green-500/20' },
     paused: { icon: Pause, color: 'text-yellow-400', bg: 'bg-yellow-500/20' },
@@ -27,7 +22,7 @@ export default function CollaborationHub({ collaborations, teams, agents, workfl
       {collaborations.map(collab => {
         const workflow = workflows.find(w => w.id === collab.workflow_id);
         const config = statusConfig[collab.state];
-        const Icon = config.icon;
+        const _Icon = config.icon;
         const participantCount = collab.participant_agents?.length || 0;
 
         return (

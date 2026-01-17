@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Activity, TrendingUp, AlertTriangle, Zap, DollarSign, Clock } from 'lucide-react';
+import { Activity, TrendingUp, AlertTriangle, DollarSign, Clock } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { Line, Bar } from 'recharts';
 import { ResponsiveContainer, LineChart, BarChart, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
@@ -83,7 +83,7 @@ export default function Monitoring() {
 
   const costData = aggregateByTime(metrics, 'cost_cents');
   const latencyData = aggregateByTime(metrics, 'latency_ms');
-  const runData = aggregateByTime(runs, 'cost_cents');
+  const _runData = aggregateByTime(runs, 'cost_cents');
 
   // Calculate summary stats
   const totalCost = metrics.reduce((sum, m) => sum + (m.cost_cents || 0), 0);

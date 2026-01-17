@@ -1,8 +1,6 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
-import { createPageUrl } from '@/utils';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -23,15 +21,9 @@ import {
   Redo,
   ZoomIn,
   ZoomOut,
-  Maximize2,
   GitBranch,
   History,
-  Settings,
-  Trash2,
-  Copy,
-  Download,
   Upload,
-  Eye,
   Activity,
   Sparkles,
   TrendingUp,
@@ -42,14 +34,13 @@ import WorkflowCanvas from '../components/workflow-builder/WorkflowCanvas';
 import NodeLibrary from '../components/workflow-builder/NodeLibrary';
 import WorkflowProperties from '../components/workflow-builder/WorkflowProperties';
 import ExecutionMonitor from '../components/workflow-builder/ExecutionMonitor';
-import VersionHistory from '../components/workflow-builder/VersionHistory';
 import AIWorkflowAssistant from '../components/workflow-builder/AIWorkflowAssistant';
 import OptimizationSuggestions from '../components/workflow-builder/OptimizationSuggestions';
 import ABTestManager from '../components/workflow-builder/ABTestManager';
 import AdvancedVersioning from '../components/workflow-builder/AdvancedVersioning';
 
 export default function VisualWorkflowBuilder() {
-  const navigate = useNavigate();
+  const _navigate = useNavigate();
   const [workflow, setWorkflow] = useState(null);
   const [nodes, setNodes] = useState([]);
   const [edges, setEdges] = useState([]);
@@ -57,13 +48,13 @@ export default function VisualWorkflowBuilder() {
   const [skills, setSkills] = useState([]);
   const [savedWorkflows, setSavedWorkflows] = useState([]);
   const [selectedNode, setSelectedNode] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [_isLoading, _setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isExecuting, setIsExecuting] = useState(false);
   const [activeTab, setActiveTab] = useState('design');
   const [zoom, setZoom] = useState(1);
   const [showLoadDialog, setShowLoadDialog] = useState(false);
-  const [showVersionDialog, setShowVersionDialog] = useState(false);
+  const [_showVersionDialog, _setShowVersionDialog] = useState(false);
   const [activeRun, setActiveRun] = useState(null);
   const [showAIAssistant, setShowAIAssistant] = useState(false);
   const [showOptimizations, setShowOptimizations] = useState(false);
@@ -366,7 +357,7 @@ export default function VisualWorkflowBuilder() {
         setNodes(data.spec?.nodes || []);
         setEdges(data.spec?.edges || []);
         toast.success('Workflow imported');
-      } catch (error) {
+      } catch (_error) {
         toast.error('Invalid workflow file');
       }
     };
@@ -549,10 +540,10 @@ export default function VisualWorkflowBuilder() {
           <div className="w-96">
             <ABTestManager
               workflow={workflow}
-              onCreateVariant={(variantWorkflow) => {
+              onCreateVariant={(_variantWorkflow) => {
                 toast.info('Switch to variant workflow to edit it');
               }}
-              onSelectWinner={(winnerId) => {
+              onSelectWinner={(_winnerId) => {
                 toast.success('Winner promoted to production');
               }}
             />
@@ -626,7 +617,7 @@ export default function VisualWorkflowBuilder() {
                   setWorkflow({ ...workflow, version: version.version });
                   toast.success(`Loaded version ${version.version}`);
                 }}
-                onCreateBranch={(branchName) => {
+                onCreateBranch={(_branchName) => {
                   toast.info('Branch created');
                 }}
               />

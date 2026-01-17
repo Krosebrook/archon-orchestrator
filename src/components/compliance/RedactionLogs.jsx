@@ -1,9 +1,8 @@
-import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Eye, Shield } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
-export default function RedactionLogs({ logs, onRefresh }) {
+export default function RedactionLogs({ logs, _onRefresh }) {
   if (logs.length === 0) {
     return (
       <Card className="bg-slate-900 border-slate-800">

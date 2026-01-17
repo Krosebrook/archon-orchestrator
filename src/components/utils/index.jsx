@@ -130,13 +130,17 @@ export {
   // Metrics
   performanceCollector,
   
-  // Web Vitals
-  observeWebVitals,
-  
   // Idle
   runWhenIdle,
   cancelIdleTask
 } from './performance';
+
+// =============================================================================
+// WEB VITALS (REMOVED)
+// =============================================================================
+// Note: Web vitals monitoring removed due to dependency conflicts.
+// Performance monitoring handled directly in PWA service worker and Layout component.
+// The web-vitals v5 library removed onFID in favor of onINP, causing breaking changes.
 
 // =============================================================================
 // COT REASONING

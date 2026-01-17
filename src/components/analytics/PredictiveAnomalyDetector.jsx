@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { AlertTriangle, TrendingUp, TrendingDown, Zap } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 export default function PredictiveAnomalyDetector({ metrics, agents }) {
   const [anomalies, setAnomalies] = useState([]);
@@ -23,7 +22,7 @@ export default function PredictiveAnomalyDetector({ metrics, agents }) {
     // Cost anomalies
     const avgCost = costData.reduce((a, b) => a + b, 0) / costData.length;
     const costStdDev = Math.sqrt(costData.reduce((sum, val) => sum + Math.pow(val - avgCost, 2), 0) / costData.length);
-    metrics.forEach((m, idx) => {
+    metrics.forEach((m, _idx) => {
       if (m.cost_cents > avgCost + 2 * costStdDev) {
         detected.push({
           type: 'cost',
@@ -37,7 +36,7 @@ export default function PredictiveAnomalyDetector({ metrics, agents }) {
 
     // Latency anomalies
     const avgLatency = latencyData.reduce((a, b) => a + b, 0) / latencyData.length;
-    metrics.forEach((m, idx) => {
+    metrics.forEach((m, _idx) => {
       if (m.latency_ms > avgLatency * 2) {
         detected.push({
           type: 'latency',

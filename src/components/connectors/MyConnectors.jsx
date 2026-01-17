@@ -1,22 +1,70 @@
-import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { CheckCircle2, XCircle, AlertTriangle, Settings, Trash2 } from 'lucide-react';
+import { CheckCircle2, XCircle, AlertTriangle, Settings, Trash2, RefreshCw } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 
 export default function MyConnectors({ installations, connectors, onRefresh }) {
   const handleDelete = async (installationId) => {
-    if (!confirm('Are you sure you want to remove this connector?')) return;
+    if (!confirm('Are you sure you want to uninstall this connector? This action cannot be undone.')) return;
 
     try {
+      // Mark as revoked first
+      await base44.entities.ConnectorInstallation.update(installationId, {
+        status: 'revoked',
+      });
+
+      // Then delete
       await base44.entities.ConnectorInstallation.delete(installationId);
-      toast.success('Connector removed');
+      
+      toast.success('Connector uninstalled successfully');
       onRefresh();
     } catch (error) {
-      console.error('Failed to delete connector:', error);
-      toast.error('Failed to remove connector');
+      console.error('Failed to uninstall connector:', error);
+      toast.error('Failed to uninstall connector: ' + error.message);
+    }
+  };
+
+  const handleTest = async (installation) => {
+    try {
+      toast.info('Testing connector connection...');
+      
+      // Get connector definition
+      const connectorList = await base44.entities.ConnectorDefinition.filter({
+        id: installation.connector_id,
+      });
+
+      if (!connectorList || connectorList.length === 0) {
+        toast.error('Connector definition not found');
+        return;
+      }
+
+      const connector = connectorList[0];
+      const credentials = JSON.parse(installation.credentials_encrypted);
+
+      const validation = await base44.functions.invoke('validateConnector', {
+        connectorId: connector.id,
+        credentials,
+      });
+
+      if (validation.data?.valid) {
+        await base44.entities.ConnectorInstallation.update(installation.id, {
+          status: 'active',
+          last_tested: new Date().toISOString(),
+          error_message: null,
+        });
+        toast.success('Connection test successful!');
+        onRefresh();
+      } else {
+        await base44.entities.ConnectorInstallation.update(installation.id, {
+          status: 'error',
+          error_message: validation.data?.error || 'Connection test failed',
+        });
+        toast.error('Connection test failed: ' + (validation.data?.error || 'Unknown error'));
+        onRefresh();
+      }
+    } catch (error) {
+      toast.error('Failed to test connector: ' + error.message);
     }
   };
 
@@ -64,14 +112,26 @@ export default function MyConnectors({ installations, connectors, onRefresh }) {
                     <p className="text-sm text-slate-400">{connector.name}</p>
                   </div>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => handleDelete(installation.id)}
-                  className="text-red-400 hover:text-red-300"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
+                <div className="flex gap-2">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleTest(installation)}
+                    className="text-blue-400 hover:text-blue-300"
+                    title="Test connection"
+                  >
+                    <RefreshCw className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleDelete(installation.id)}
+                    className="text-red-400 hover:text-red-300"
+                    title="Uninstall connector"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </div>
               </div>
             </CardHeader>
             <CardContent>

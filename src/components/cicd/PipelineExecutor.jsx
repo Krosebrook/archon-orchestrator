@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -24,7 +24,7 @@ const STAGE_ICONS = {
 export default function PipelineExecutor({ pipeline, workflow, onComplete }) {
   const [isExecuting, setIsExecuting] = useState(false);
   const [execution, setExecution] = useState(null);
-  const [currentStage, setCurrentStage] = useState(0);
+  const [_currentStage, _setCurrentStage] = useState(0);
 
   const handleExecute = async () => {
     setIsExecuting(true);
@@ -131,7 +131,7 @@ export default function PipelineExecutor({ pipeline, workflow, onComplete }) {
         )}
 
         <div className="space-y-3">
-          {sortedStages.map((stage, idx) => {
+          {sortedStages.map((stage, _idx) => {
             const status = getStageStatus(stage);
             const result = execution?.stages?.find(s => s.stage === stage.name);
 

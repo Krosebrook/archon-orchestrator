@@ -4,7 +4,7 @@
  * @version 1.0.0
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -22,7 +22,7 @@ export default function PerformanceMonitor({ agentId, onAlertCreated }) {
     error_rate: 10,
     cost_per_hour: 5.0,
   });
-  const [isLoading, setIsLoading] = useState(true);
+  const [_isLoading, _setIsLoading] = useState(true);
 
   useEffect(() => {
     loadMetrics();

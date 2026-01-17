@@ -32,7 +32,7 @@ export class ApprovalService {
       });
 
       return { ok: true, value: request };
-    } catch (error) {
+    } catch (_error) {
       return { 
         ok: false, 
         error: new APIError(
@@ -61,7 +61,7 @@ export class ApprovalService {
       );
 
       return { ok: true, value: requests };
-    } catch (error) {
+    } catch (_error) {
       return { 
         ok: false, 
         error: new APIError(
@@ -88,7 +88,7 @@ export class ApprovalService {
       }
 
       return { ok: true, value: request };
-    } catch (error) {
+    } catch (_error) {
       return { 
         ok: false, 
         error: new APIError(

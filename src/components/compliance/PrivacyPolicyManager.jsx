@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -74,7 +74,7 @@ export default function PrivacyPolicyManager({ policies, onRefresh }) {
   );
 }
 
-function PolicyCard({ policy, onRefresh }) {
+function PolicyCard({ policy, _onRefresh }) {
   const statusConfig = {
     active: { color: 'text-green-400', icon: CheckCircle2, bg: 'bg-green-900/20' },
     draft: { color: 'text-slate-400', icon: XCircle, bg: 'bg-slate-800' },

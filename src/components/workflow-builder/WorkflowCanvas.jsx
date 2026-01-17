@@ -1,5 +1,4 @@
-import React, { useRef, useState, useCallback, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
+import { useRef, useState, useCallback, useEffect } from 'react';
 import { 
   Bot, 
   Zap, 
@@ -9,8 +8,6 @@ import {
   RotateCw,
   Play,
   Pause,
-  Trash2,
-  GripHorizontal,
   Circle,
   CheckCircle2,
   AlertCircle,
@@ -141,7 +138,7 @@ function ConnectionPath({ from, to, isTemp = false }) {
 
   // Calculate bezier curve control points
   const dx = to.x - from.x;
-  const dy = to.y - from.y;
+  const _dy = to.y - from.y;
   const controlOffset = Math.min(Math.abs(dx) * 0.5, 100);
 
   const path = `
@@ -186,8 +183,8 @@ function ConnectionPath({ from, to, isTemp = false }) {
 export default function WorkflowCanvas({
   nodes,
   edges,
-  agents,
-  skills,
+  _agents,
+  _skills,
   zoom,
   selectedNode,
   onNodesChange,

@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { TrendingUp, TrendingDown, Activity, DollarSign, Zap } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
-import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 export default function SkillAnalyticsDashboard({ skillId }) {
   const [usage, setUsage] = useState([]);
@@ -69,7 +68,7 @@ Provide:
     executions: u.execution_count
   }));
 
-  const COLORS = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981'];
+  const _COLORS = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981'];
 
   if (isLoading) {
     return <div className="text-slate-400 text-center py-12">Loading analytics...</div>;

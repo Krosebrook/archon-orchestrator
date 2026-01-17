@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Code, Play, Save, TestTube, Zap } from 'lucide-react';
+import { Code, Save, Zap } from 'lucide-react';
 import { toast } from 'sonner';
 import ConnectorDevTools from './ConnectorDevTools';
 
@@ -39,7 +39,7 @@ export default function ConnectorBuilder() {
     description: '',
   });
 
-  const [testResult, setTestResult] = useState(null);
+  const [_testResult, _setTestResult] = useState(null);
   const [generatedCode, setGeneratedCode] = useState('');
 
   const addOperation = () => {
@@ -139,12 +139,12 @@ async function ${op.id}(client, params = {}) {
     toast.success('Code generated');
   };
 
-  const testConnector = async () => {
-    setTestResult({ status: 'testing' });
+  const _testConnector = async () => {
+    _setTestResult({ status: 'testing' });
     
     // Simulate test
     setTimeout(() => {
-      setTestResult({
+      _setTestResult({
         status: 'success',
         tests: [
           { name: 'Connection Test', passed: true, duration: 123 },

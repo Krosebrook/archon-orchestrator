@@ -7,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 
 export default function SecretManager() {
   const [secrets, setSecrets] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [_isLoading, _setIsLoading] = useState(true);
   const [revealedSecrets, setRevealedSecrets] = useState({});
 
   useEffect(() => {

@@ -1,10 +1,10 @@
 /**
- * @fileoverview Error Boundary Component
+ * @fileoverview Error Boundary Component with Sentry Integration
  * @description React error boundary that catches JavaScript errors anywhere in the child
- * component tree and displays a fallback UI with error reporting.
+ * component tree, reports them to Sentry, and displays a fallback UI.
  * 
  * @module shared/ErrorBoundary
- * @version 2.0.0
+ * @version 2.1.0
  * 
  * @example
  * <ErrorBoundary>
@@ -13,6 +13,7 @@
  */
 
 import React from 'react';
+import * as Sentry from '@sentry/react';
 import { AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -21,6 +22,7 @@ import { auditCritical, AuditEntities, AuditActions } from '../utils/audit-logge
 
 /**
  * Error Boundary component that catches and handles React errors.
+ * Integrates with Sentry for error tracking and monitoring.
  * @extends React.Component
  */
 export class ErrorBoundary extends React.Component {
@@ -30,7 +32,8 @@ export class ErrorBoundary extends React.Component {
       hasError: false, 
       error: null, 
       errorInfo: null,
-      errorCode: null
+      errorCode: null,
+      eventId: null
     };
   }
 
@@ -54,9 +57,25 @@ export class ErrorBoundary extends React.Component {
     
     console.error('[ErrorBoundary] Caught error:', errorData);
 
+    // Report to Sentry with additional context
+    const eventId = Sentry.captureException(error, {
+      contexts: {
+        react: {
+          componentStack: errorInfo?.componentStack,
+        },
+      },
+      tags: {
+        errorCode,
+      },
+      extra: {
+        errorInfo,
+      },
+    });
+
     this.setState({ 
       errorInfo, 
-      errorCode 
+      errorCode,
+      eventId
     });
 
     // Audit critical error
@@ -67,6 +86,7 @@ export class ErrorBoundary extends React.Component {
       {
         error_code: errorCode,
         error_message: error?.message,
+        sentry_event_id: eventId,
         component_stack: errorInfo?.componentStack?.slice(0, 500)
       }
     ).catch(() => {
@@ -79,8 +99,28 @@ export class ErrorBoundary extends React.Component {
       hasError: false, 
       error: null, 
       errorInfo: null,
-      errorCode: null
+      errorCode: null,
+      eventId: null
     });
+  };
+
+  handleReportFeedback = () => {
+    if (this.state.eventId) {
+      Sentry.showReportDialog({ 
+        eventId: this.state.eventId,
+        title: 'It looks like we\'re having issues.',
+        subtitle: 'Our team has been notified. If you\'d like to help, tell us what happened below.',
+        subtitle2: '',
+        labelName: 'Name',
+        labelEmail: 'Email',
+        labelComments: 'What happened?',
+        labelClose: 'Close',
+        labelSubmit: 'Submit',
+        errorGeneric: 'An unknown error occurred while submitting your report. Please try again.',
+        errorFormEntry: 'Some fields were invalid. Please correct the errors and try again.',
+        successMessage: 'Your feedback has been sent. Thank you!',
+      });
+    }
   };
 
   render() {
@@ -99,7 +139,7 @@ export class ErrorBoundary extends React.Component {
                     Something went wrong
                   </h2>
                   <p className="text-slate-400 text-sm">
-                    We're sorry for the inconvenience. The error has been logged.
+                    We're sorry for the inconvenience. The error has been logged and our team has been notified.
                   </p>
                 </div>
 
@@ -139,6 +179,17 @@ export class ErrorBoundary extends React.Component {
                     Go to Dashboard
                   </Button>
                 </div>
+                
+                {this.state.eventId && (
+                  <Button
+                    onClick={this.handleReportFeedback}
+                    variant="ghost"
+                    size="sm"
+                    className="text-slate-400 hover:text-slate-300"
+                  >
+                    Report Feedback
+                  </Button>
+                )}
               </div>
             </CardContent>
           </Card>

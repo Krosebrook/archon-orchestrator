@@ -6,7 +6,7 @@ import AgentDebugger from './pages/AgentDebugger';
 import AgentDetail from './pages/AgentDetail';
 import AgentTraining from './pages/AgentTraining';
 import AgentWorkflowDesigner from './pages/AgentWorkflowDesigner';
-import Agents from './pages/Agents';
+import Agents from './pages/agents';
 import Analytics from './pages/Analytics';
 import Approvals from './pages/Approvals';
 import AuditExport from './pages/AuditExport';
@@ -14,6 +14,7 @@ import CICD from './pages/CICD';
 import ComplianceDashboard from './pages/ComplianceDashboard';
 import ConnectorBuilder from './pages/ConnectorBuilder';
 import ConnectorMarketplace from './pages/ConnectorMarketplace';
+import ConnectorSubmission from './pages/ConnectorSubmission';
 import CostManagement from './pages/CostManagement';
 import Dashboard from './pages/Dashboard';
 import Documentation from './pages/Documentation';
@@ -44,7 +45,8 @@ import Webhooks from './pages/Webhooks';
 import WorkflowDetail from './pages/WorkflowDetail';
 import WorkflowStudio from './pages/WorkflowStudio';
 import Workflows from './pages/Workflows';
-import agents from './pages/agents';
+
+import MyConnectorSubmissions from './pages/MyConnectorSubmissions';
 import __Layout from './Layout.jsx';
 
 
@@ -65,6 +67,7 @@ export const PAGES = {
     "ComplianceDashboard": ComplianceDashboard,
     "ConnectorBuilder": ConnectorBuilder,
     "ConnectorMarketplace": ConnectorMarketplace,
+    "ConnectorSubmission": ConnectorSubmission,
     "CostManagement": CostManagement,
     "Dashboard": Dashboard,
     "Documentation": Documentation,
@@ -95,7 +98,7 @@ export const PAGES = {
     "WorkflowDetail": WorkflowDetail,
     "WorkflowStudio": WorkflowStudio,
     "Workflows": Workflows,
-    "agents": agents,
+    "MyConnectorSubmissions": MyConnectorSubmissions,
 }
 
 export const pagesConfig = {

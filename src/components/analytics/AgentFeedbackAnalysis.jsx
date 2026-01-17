@@ -1,10 +1,9 @@
-import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Star, TrendingUp, MessageSquare, AlertCircle } from 'lucide-react';
 
-export default function AgentFeedbackAnalysis({ agents, reviews, installations, selectedAgent }) {
+export default function AgentFeedbackAnalysis({ agents, reviews, installations, _selectedAgent }) {
   const getAverageRating = () => {
     if (reviews.length === 0) return 0;
     const total = reviews.reduce((sum, r) => sum + r.rating, 0);
@@ -44,7 +43,7 @@ export default function AgentFeedbackAnalysis({ agents, reviews, installations, 
   };
 
   const getCommonIssues = () => {
-    const issues = [];
+    const _issues = [];
     const negativeReviews = reviews.filter(r => r.rating <= 2 && r.review_text);
     
     // Simple keyword extraction for common issues

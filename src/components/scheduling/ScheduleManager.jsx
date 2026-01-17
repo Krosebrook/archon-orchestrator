@@ -31,7 +31,7 @@ export default function ScheduleManager() {
   const [schedules, setSchedules] = useState([]);
   const [workflows, setWorkflows] = useState([]);
   const [agents, setAgents] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [_isLoading, _setIsLoading] = useState(true);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [newSchedule, setNewSchedule] = useState({
     name: '',
@@ -99,7 +99,7 @@ export default function ScheduleManager() {
     }
   };
 
-  const calculateNextRun = (cronExpression) => {
+  const calculateNextRun = (_cronExpression) => {
     // Simple implementation - in real app would use a proper cron library
     const now = new Date();
     now.setMinutes(now.getMinutes() + 5); // Next run in 5 minutes for demo

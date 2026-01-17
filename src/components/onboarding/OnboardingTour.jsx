@@ -4,7 +4,7 @@
  * @version 1.0.0
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
@@ -17,7 +17,7 @@ import { createPageUrl } from '@/utils';
 export function OnboardingTour({ onComplete, onSkip }) {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { _user } = useAuth();
   const [currentStep, setCurrentStep] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const [targetElement, setTargetElement] = useState(null);

@@ -9,7 +9,7 @@ import { Switch } from '@/components/ui/switch';
 
 export default function ToolManager() {
   const [tools, setTools] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [_isLoading, _setIsLoading] = useState(true);
 
   useEffect(() => {
     const loadTools = async () => {

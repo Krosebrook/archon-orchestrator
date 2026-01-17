@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Agent, Workflow, AgentCollaboration } from '@/entities/all';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -25,7 +25,7 @@ export default function OrchestrationHub() {
   const [collaborations, setCollaborations] = useState([]);
   const [selectedCollaboration, setSelectedCollaboration] = useState(null);
   const [selectedWorkflow, setSelectedWorkflow] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [_isLoading, _setIsLoading] = useState(true);
 
   useEffect(() => {
     loadData();

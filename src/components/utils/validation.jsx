@@ -19,7 +19,6 @@
  * const result = validate(Schema.string({ email: true }), email);
  */
 
-import { ValidationPatterns, RateLimitConfig } from '../shared/constants';
 
 // =============================================================================
 // BASIC VALIDATORS
@@ -173,7 +172,7 @@ export function detectPromptInjection(input) {
   if (typeof input !== 'string') return { safe: true, threats: [] };
   
   const threats = [];
-  const lowerInput = input.toLowerCase();
+  const _lowerInput = input.toLowerCase();
   
   for (const pattern of PROMPT_INJECTION_PATTERNS) {
     if (pattern.test(input)) {

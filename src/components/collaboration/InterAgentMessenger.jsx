@@ -1,15 +1,14 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
 import { Send, Bot, ArrowRight } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 
-export default function InterAgentMessenger({ agents, collaborations }) {
+export default function InterAgentMessenger({ agents, _collaborations }) {
   const [messages, setMessages] = useState([]);
   const [fromAgent, setFromAgent] = useState('');
   const [toAgent, setToAgent] = useState('');
@@ -25,7 +24,7 @@ export default function InterAgentMessenger({ agents, collaborations }) {
 
     setSending(true);
     try {
-      const user = await base44.auth.me();
+      const _user = await base44.auth.me();
       const newMessage = {
         id: Date.now().toString(),
         from_agent_id: fromAgent,
@@ -37,7 +36,7 @@ export default function InterAgentMessenger({ agents, collaborations }) {
 
       // Store in agent memory
       const fromAgentData = agents.find(a => a.id === fromAgent);
-      const toAgentData = agents.find(a => a.id === toAgent);
+      const _toAgentData = agents.find(a => a.id === toAgent);
       
       await base44.entities.AgentMemory.create({
         agent_id: toAgent,
@@ -50,13 +49,13 @@ export default function InterAgentMessenger({ agents, collaborations }) {
         context: `Message from ${fromAgentData?.name}`,
         importance: 70,
         tags: ['communication', 'collaboration'],
-        org_id: user.organization.id
+        org_id: _user.organization.id
       });
 
       setMessages([...messages, newMessage]);
       setMessage('');
       toast.success('Message sent');
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to send message');
     } finally {
       setSending(false);

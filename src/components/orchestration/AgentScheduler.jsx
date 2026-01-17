@@ -4,7 +4,7 @@
  * @version 1.0.0
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -23,7 +23,7 @@ const PRIORITY_LEVELS = {
 
 export default function AgentScheduler({ agents, onScheduleUpdate }) {
   const [scheduledTasks, setScheduledTasks] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [_isLoading, _setIsLoading] = useState(true);
 
   useEffect(() => {
     loadScheduledTasks();

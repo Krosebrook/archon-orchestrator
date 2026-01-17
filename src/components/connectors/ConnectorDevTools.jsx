@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -9,8 +9,6 @@ import { Textarea } from '@/components/ui/textarea';
 import {
   Bug,
   Play,
-  FileJson,
-  Code,
   Activity,
   Download,
   RefreshCw,
@@ -24,7 +22,7 @@ import { toast } from 'sonner';
  * Connector Development Tools
  * Local testing and debugging interface
  */
-export default function ConnectorDevTools({ connector }) {
+export default function ConnectorDevTools({ _connector }) {
   const [testRequest, setTestRequest] = useState({
     operation: '',
     params: '{}',
@@ -40,8 +38,8 @@ export default function ConnectorDevTools({ connector }) {
     setTestResult(null);
     
     try {
-      const params = JSON.parse(testRequest.params);
-      const credentials = JSON.parse(testRequest.credentials);
+      const _params = JSON.parse(testRequest.params);
+      const _credentials = JSON.parse(testRequest.credentials);
 
       const startTime = performance.now();
       

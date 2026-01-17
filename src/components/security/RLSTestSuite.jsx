@@ -92,7 +92,7 @@ export class RLSTestSuite {
             'SECURITY ISSUE: Cross-org access allowed'
           ));
         }
-      } catch (error) {
+      } catch (_error) {
         this.results.push(new TestResult(
           'Workflow Isolation',
           true,
@@ -102,11 +102,11 @@ export class RLSTestSuite {
 
       // Cleanup
       await base44.entities.Workflow.delete(workflow.id);
-    } catch (error) {
+    } catch (_error) {
       this.results.push(new TestResult(
         'Workflow Isolation',
         false,
-        `Test failed: ${error.message}`
+        `Test failed: ${_error.message}`
       ));
     }
   }
@@ -163,7 +163,7 @@ export class RLSTestSuite {
    */
   async testAuditIsolation() {
     try {
-      const audits = await base44.entities.Audit.list();
+      const _audits = await base44.entities.Audit.list();
       
       // Try to create audit (should fail for non-admins)
       try {
@@ -179,7 +179,7 @@ export class RLSTestSuite {
           false,
           'SECURITY ISSUE: Manual audit creation allowed'
         ));
-      } catch (error) {
+      } catch (_error) {
         this.results.push(new TestResult(
           'Audit Write Protection',
           true,
@@ -200,7 +200,7 @@ export class RLSTestSuite {
    */
   async testCrossOrgCreateBlocked() {
     try {
-      const currentUser = await base44.auth.me();
+      const _currentUser = await base44.auth.me();
       const differentOrgId = 'malicious-org-' + Date.now();
 
       try {
@@ -217,7 +217,7 @@ export class RLSTestSuite {
           false,
           'SECURITY ISSUE: Created resource for different org'
         ));
-      } catch (error) {
+      } catch (_error) {
         this.results.push(new TestResult(
           'Cross-Org Create Prevention',
           true,

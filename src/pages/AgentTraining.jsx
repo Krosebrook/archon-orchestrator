@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { GraduationCap, Target, Zap, TrendingUp } from 'lucide-react';
@@ -12,7 +12,7 @@ export default function AgentTraining() {
   const [agents, setAgents] = useState([]);
   const [modules, setModules] = useState([]);
   const [sessions, setSessions] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [_isLoading, _setIsLoading] = useState(true);
 
   useEffect(() => {
     loadData();

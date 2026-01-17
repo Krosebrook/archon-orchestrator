@@ -24,7 +24,6 @@ import {
   ErrorCodes,
   ErrorSeverity,
   DefaultRetryConfig,
-  DefaultCircuitBreakerConfig,
   HttpStatusToError
 } from '../shared/constants';
 

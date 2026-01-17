@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Users, ArrowRightLeft, Share2, MessageSquare } from 'lucide-react';
 
@@ -133,7 +132,7 @@ export default function AgentCollaborationNode({ node, agents, onUpdate, open, o
               onChange={(e) => {
                 try {
                   setConfig({ ...config, context_mapping: JSON.parse(e.target.value) });
-                } catch (e) {}
+                } catch (_e) {}
               }}
               placeholder='{"input_data": "{{previous_output}}", "user_context": "{{user_id}}"}'
               className="bg-slate-950 border-slate-700 font-mono text-sm"
