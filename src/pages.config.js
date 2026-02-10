@@ -1,3 +1,52 @@
+/**
+ * pages.config.js - Page routing configuration
+ * 
+ * This file is AUTO-GENERATED. Do not add imports or modify PAGES manually.
+ * Pages are auto-registered when you create files in the ./pages/ folder.
+ * 
+ * THE ONLY EDITABLE VALUE: mainPage
+ * This controls which page is the landing page (shown when users visit the app).
+ * 
+ * Example file structure:
+ * 
+ *   import HomePage from './pages/HomePage';
+ *   import Dashboard from './pages/Dashboard';
+ *   import Settings from './pages/Settings';
+ *   
+ *   export const PAGES = {
+ *       "HomePage": HomePage,
+ *       "Dashboard": Dashboard,
+ *       "Settings": Settings,
+ *   }
+ *   
+ *   export const pagesConfig = {
+ *       mainPage: "HomePage",
+ *       Pages: PAGES,
+ *   };
+ * 
+ * Example with Layout (wraps all pages):
+ *
+ *   import Home from './pages/Home';
+ *   import Settings from './pages/Settings';
+ *   import __Layout from './Layout.jsx';
+ *
+ *   export const PAGES = {
+ *       "Home": Home,
+ *       "Settings": Settings,
+ *   }
+ *
+ *   export const pagesConfig = {
+ *       mainPage: "Home",
+ *       Pages: PAGES,
+ *       Layout: __Layout,
+ *   };
+ *
+ * To change the main page from HomePage to Dashboard, use find_replace:
+ *   Old: mainPage: "HomePage",
+ *   New: mainPage: "Dashboard",
+ *
+ * The mainPage value must match a key in the PAGES object exactly.
+ */
 import AdvancedOrchestration from './pages/AdvancedOrchestration';
 import AdvancedTraining from './pages/AdvancedTraining';
 import AgentAnalytics from './pages/AgentAnalytics';
@@ -6,7 +55,6 @@ import AgentDebugger from './pages/AgentDebugger';
 import AgentDetail from './pages/AgentDetail';
 import AgentTraining from './pages/AgentTraining';
 import AgentWorkflowDesigner from './pages/AgentWorkflowDesigner';
-import Agents from './pages/agents';
 import Analytics from './pages/Analytics';
 import Approvals from './pages/Approvals';
 import AuditExport from './pages/AuditExport';
@@ -24,6 +72,7 @@ import IntegrationManagement from './pages/IntegrationManagement';
 import Integrations from './pages/Integrations';
 import KnowledgeBase from './pages/KnowledgeBase';
 import Monitoring from './pages/Monitoring';
+import MyConnectorSubmissions from './pages/MyConnectorSubmissions';
 import Observability from './pages/Observability';
 import OrchestrationHub from './pages/OrchestrationHub';
 import RAGManagement from './pages/RAGManagement';
@@ -45,8 +94,7 @@ import Webhooks from './pages/Webhooks';
 import WorkflowDetail from './pages/WorkflowDetail';
 import WorkflowStudio from './pages/WorkflowStudio';
 import Workflows from './pages/Workflows';
-
-import MyConnectorSubmissions from './pages/MyConnectorSubmissions';
+import agents from './pages/agents';
 import __Layout from './Layout.jsx';
 
 
@@ -59,7 +107,6 @@ export const PAGES = {
     "AgentDetail": AgentDetail,
     "AgentTraining": AgentTraining,
     "AgentWorkflowDesigner": AgentWorkflowDesigner,
-    "Agents": Agents,
     "Analytics": Analytics,
     "Approvals": Approvals,
     "AuditExport": AuditExport,
@@ -77,6 +124,7 @@ export const PAGES = {
     "Integrations": Integrations,
     "KnowledgeBase": KnowledgeBase,
     "Monitoring": Monitoring,
+    "MyConnectorSubmissions": MyConnectorSubmissions,
     "Observability": Observability,
     "OrchestrationHub": OrchestrationHub,
     "RAGManagement": RAGManagement,
@@ -98,7 +146,7 @@ export const PAGES = {
     "WorkflowDetail": WorkflowDetail,
     "WorkflowStudio": WorkflowStudio,
     "Workflows": Workflows,
-    "MyConnectorSubmissions": MyConnectorSubmissions,
+    "agents": agents,
 }
 
 export const pagesConfig = {

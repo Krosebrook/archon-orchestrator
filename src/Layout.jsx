@@ -308,10 +308,7 @@ function AppLayout({ children, currentPageName }) {
   const location = useLocation();
   const { showTour, completeTour, skipTour, restartTour } = useOnboarding();
 
-  useEffect(() => {
-    // Service worker registration handled by PWAInstaller component
-    // Web vitals monitoring removed - now handled in PWA service worker
-  }, []);
+  // Service worker and performance monitoring handled by PWAInstaller component
 
   return (
     <div className="flex h-screen bg-slate-950 overflow-hidden">
