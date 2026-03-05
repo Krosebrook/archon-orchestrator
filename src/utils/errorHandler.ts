@@ -102,6 +102,18 @@ function generateTraceId(): string {
   return `trace_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
 }
 
+type ResponseLike = Pick<Response, 'status' | 'statusText' | 'json'>;
+
+/**
+ * Type guard for Response or Response-like objects (e.g. mocks in tests)
+ */
+function isResponseLike(error: unknown): error is ResponseLike {
+  if (error instanceof Response) return true;
+  if (error === null || typeof error !== 'object') return false;
+  const e = error as Record<string, unknown>;
+  return typeof e.status === 'number' && typeof e.statusText === 'string' && typeof e.json === 'function';
+}
+
 /**
  * Parse API error responses into standardized AppError format
  * @param error - The error to parse
@@ -113,25 +125,26 @@ export async function parseApiError(error: unknown): Promise<AppError> {
     return error;
   }
 
-  // Handle Response objects from fetch
-  if (error instanceof Response) {
+  // Handle Response objects from fetch (or Response-like objects with status, statusText, and json())
+  if (isResponseLike(error)) {
+    const responseError = error;
     let errorData: any;
     try {
-      errorData = await error.json();
+      errorData = await responseError.json();
     } catch {
-      errorData = { message: error.statusText };
+      errorData = { message: responseError.statusText };
     }
 
-    const category = categorizeByStatusCode(error.status);
-    const severity = getSeverityByStatusCode(error.status);
+    const category = categorizeByStatusCode(responseError.status);
+    const severity = getSeverityByStatusCode(responseError.status);
 
     return new AppError(
-      errorData.message || `HTTP ${error.status}: ${error.statusText}`,
+      errorData.message || `HTTP ${responseError.status}: ${responseError.statusText}`,
       {
-        code: errorData.code || `HTTP_${error.status}`,
+        code: errorData.code || `HTTP_${responseError.status}`,
         category,
         severity,
-        statusCode: error.status,
+        statusCode: responseError.status,
         details: errorData,
         traceId: errorData.trace_id
       }

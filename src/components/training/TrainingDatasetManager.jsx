@@ -7,7 +7,6 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import { Progress } from '@/components/ui/progress';
 import {
   Database,
   Upload,
@@ -18,7 +17,6 @@ import {
   CheckCircle,
   AlertTriangle,
   Loader2,
-  Eye,
   Filter,
   Shuffle
 } from 'lucide-react';

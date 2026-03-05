@@ -403,7 +403,7 @@ export function useTraining(options = {}) {
   /**
    * Check if can start training
    */
-  const canStart = status === TRAINING_STATUS.IDLE && agentId && !isLoading;
+  const canStart = status === TRAINING_STATUS.IDLE && Boolean(agentId) && !isLoading;
 
   return {
     // State

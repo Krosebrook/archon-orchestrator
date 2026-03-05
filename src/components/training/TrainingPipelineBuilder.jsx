@@ -12,7 +12,6 @@ import {
   Trash2,
   GripVertical,
   Play,
-  Save,
   ChevronRight,
   Database,
   Cog,
