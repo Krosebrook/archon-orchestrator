@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Award,
-  TrendingUp,
   FileText,
   Download,
   RefreshCw,
@@ -21,8 +20,6 @@ import { generateTrainingReport } from '@/functions/generateTrainingReport';
 import { toast } from 'sonner';
 import { handleError } from '../utils/api-client';
 import {
-  LineChart,
-  Line,
   BarChart,
   Bar,
   XAxis,
@@ -30,10 +27,6 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  Legend,
   RadialBarChart,
   RadialBar
 } from 'recharts';
