@@ -1,9 +1,11 @@
 /**
  * @fileoverview Web Vitals Reporting
- * @description Reports Core Web Vitals using web-vitals v5+ (onFID removed, onINP added).
- * No Sentry getCurrentHub dependency - uses only stable web-vitals and Sentry v8 APIs.
+ * @description Reports Core Web Vitals using web-vitals v4+ APIs.
+ * onFID was removed in web-vitals v4; onINP is the replacement.
+ * @version 2.0.0
  */
 
+// web-vitals v4+: onFID removed, onINP replaces it
 import { onCLS, onINP, onFCP, onLCP, onTTFB } from 'web-vitals';
 
 function sendToConsole(metric) {
