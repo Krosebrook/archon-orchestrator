@@ -56,25 +56,10 @@ export class ErrorBoundary extends React.Component {
     
     console.error('[ErrorBoundary] Caught error:', errorData);
 
-    // Report to Sentry with additional context
-    const eventId = Sentry.captureException(error, {
-      contexts: {
-        react: {
-          componentStack: errorInfo?.componentStack,
-        },
-      },
-      tags: {
-        errorCode,
-      },
-      extra: {
-        errorInfo,
-      },
-    });
-
     this.setState({ 
       errorInfo, 
       errorCode,
-      eventId
+      eventId: errorCode
     });
 
     // Audit critical error
