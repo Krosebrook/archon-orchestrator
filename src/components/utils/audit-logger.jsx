@@ -21,6 +21,7 @@
 
 import { AuditActions, AuditEntities, AuditSeverity } from '../shared/constants';
 import { base44 } from '@/api/base44Client';
+import { getCorrelationId as _getSharedCorrelationId, setCorrelationId as _setSharedCorrelationId, resetCorrelationId as _resetSharedCorrelationId } from './correlation';
 
 // Re-export for backwards compatibility
 export { AuditActions, AuditEntities, AuditSeverity };
