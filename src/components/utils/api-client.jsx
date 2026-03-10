@@ -222,7 +222,9 @@ export async function withRetry(fn, config = {}) {
       }
 
       const delay = calculateBackoff(attempt, retryConfig);
-      console.log(`[Retry] Attempt ${attempt + 1}/${retryConfig.maxRetries}, waiting ${delay}ms`);
+      if (import.meta.env.DEV) {
+        console.log(`[Retry] Attempt ${attempt + 1}/${retryConfig.maxRetries}, waiting ${delay}ms`);
+      }
       await new Promise(resolve => setTimeout(resolve, delay));
     }
   }
