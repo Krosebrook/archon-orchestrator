@@ -20,6 +20,7 @@
  */
 
 import { AuditActions, AuditEntities, AuditSeverity } from '../shared/constants';
+import { base44 } from '@/api/base44Client';
 
 // Re-export for backwards compatibility
 export { AuditActions, AuditEntities, AuditSeverity };
