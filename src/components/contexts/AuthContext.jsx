@@ -71,13 +71,12 @@ export function AuthProvider({ children }) {
   }, [currentUser?.role]);
   
   /**
-   * Switch to a different role (development only).
+   * Switch to a different role — DEV ONLY, removed from production context value.
    * @param {string} newRole - Role to switch to
    */
-  const switchRole = useCallback((newRole) => {
-    if (MOCK_USER_DATA[newRole]) {
-      setIsLoading(true);
-      setRole(newRole);
+  const _devSwitchRole = useCallback((newRole) => {
+    if (import.meta.env.DEV) {
+      setCurrentUser((prev) => prev ? { ...prev, role: newRole } : prev);
     }
   }, []);
 
