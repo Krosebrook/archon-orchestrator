@@ -239,8 +239,10 @@ const Header = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen, re
         </Button>
         
         <div className="relative hidden md:block">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" aria-hidden="true" />
           <Input
+            id="global-search"
+            aria-label="Search everything"
             placeholder="Search everything..."
             className="bg-slate-800 border-slate-700 pl-9 w-64 text-sm focus:w-80 transition-all"
           />
