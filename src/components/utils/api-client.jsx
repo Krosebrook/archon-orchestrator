@@ -305,7 +305,9 @@ class CircuitBreaker {
       this.state = 'OPEN';
     } else if (this.failureCount >= this.failureThreshold) {
       this.state = 'OPEN';
-      console.warn(`[CircuitBreaker] ${this.name} opened after ${this.failureCount} failures`);
+      if (import.meta.env.DEV) {
+        console.warn(`[CircuitBreaker] ${this.name} opened after ${this.failureCount} failures`);
+      }
     }
   }
 
