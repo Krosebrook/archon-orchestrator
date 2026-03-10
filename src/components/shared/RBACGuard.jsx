@@ -20,6 +20,45 @@ import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Lock } from 'lucide-react';
 import { useAuth } from '@/components/contexts/AuthContext';
+import { getRoleDisplayName } from '@/components/shared/constants/rbac';
+
+/** Maps permission strings to human-readable labels */
+const PERMISSION_LABELS = {
+  'agent.create': 'Agent creation access',
+  'agent.view': 'Agent view access',
+  'agent.edit': 'Agent editing access',
+  'agent.delete': 'Agent deletion access',
+  'agent.run': 'Agent execution access',
+  'workflow.create': 'Workflow creation access',
+  'workflow.view': 'Workflow view access',
+  'workflow.edit': 'Workflow editing access',
+  'workflow.delete': 'Workflow deletion access',
+  'workflow.run': 'Workflow execution access',
+  'policy.create': 'Policy creation access',
+  'policy.view': 'Policy view access',
+  'policy.edit': 'Policy editing access',
+  'policy.delete': 'Policy deletion access',
+  'approval.view': 'Approval view access',
+  'approval.approve': 'Approval authority',
+  'team.view': 'Team view access',
+  'team.invite': 'Team invite access',
+  'team.remove': 'Team management access',
+  'team.edit': 'Team editing access',
+  'settings.view': 'Settings view access',
+  'settings.edit': 'Settings management access',
+  'audit.view': 'Audit log access',
+  'audit.export': 'Audit export access',
+  'billing.view': 'Billing view access',
+  'billing.manage': 'Billing management access',
+  'skill.view': 'Skill marketplace access',
+  'skill.install': 'Skill installation access',
+  'skill.publish': 'Skill publishing access',
+  'skill.purchase': 'Skill purchase access',
+  'integration.view': 'Integration view access',
+  'integration.install': 'Integration installation access',
+  'integration.configure': 'Integration configuration access',
+  'integration.delete': 'Integration deletion access',
+};
 
 /**
  * Guard component that renders children only if user has required permission.
