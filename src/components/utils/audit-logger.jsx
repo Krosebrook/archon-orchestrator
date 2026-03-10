@@ -335,10 +335,11 @@ export async function auditCritical(action, entity, entityId, metadata = {}) {
   
   // Critical events are sent immediately, not batched
   try {
-    console.warn('[Audit] Critical event:', entry);
-    // await base44.entities.Audit.create(entry);
+    await base44.entities.Audit.create(entry);
   } catch (error) {
-    console.error('[Audit] Failed to log critical event:', error);
+    if (import.meta.env.DEV) {
+      console.error('[Audit] Failed to log critical event:', error);
+    }
   }
   
   return entry;
