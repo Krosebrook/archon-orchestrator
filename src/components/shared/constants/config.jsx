@@ -161,9 +161,9 @@ export const SecurityConfig = Object.freeze({
  * @throws {Error} If required variables are missing
  */
 export function validateEnvironment() {
-  const required = ['BASE44_APP_ID'];
-  const missing = required.filter(key => !process.env[key] && !import.meta.env?.[key]);
-  
+  const required = ['VITE_APP_ID'];
+  const missing = required.filter(key => !import.meta.env[key]);
+
   if (missing.length > 0) {
     throw new Error(
       `Missing required environment variables: ${missing.join(', ')}\n` +
@@ -177,15 +177,13 @@ export function validateEnvironment() {
  * @returns {Object} Environment config
  */
 export function getEnvironmentConfig() {
-  const env = process.env.NODE_ENV || 'development';
-  
   return {
-    environment: env,
-    isDevelopment: env === 'development',
-    isProduction: env === 'production',
-    isTest: env === 'test',
-    apiUrl: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000',
-    wsUrl: process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:3000',
-    version: process.env.NEXT_PUBLIC_APP_VERSION || '1.0.0'
+    environment: import.meta.env.MODE,
+    isDevelopment: import.meta.env.DEV,
+    isProduction: import.meta.env.PROD,
+    isTest: import.meta.env.MODE === 'test',
+    apiUrl: import.meta.env.VITE_API_URL || '',
+    wsUrl: import.meta.env.VITE_WS_URL || '',
+    version: import.meta.env.VITE_APP_VERSION || '1.0.0'
   };
 }
