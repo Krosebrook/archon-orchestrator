@@ -89,22 +89,8 @@ export class ErrorBoundary extends React.Component {
   };
 
   handleReportFeedback = () => {
-    if (this.state.eventId) {
-      Sentry.showReportDialog({ 
-        eventId: this.state.eventId,
-        title: 'It looks like we\'re having issues.',
-        subtitle: 'Our team has been notified. If you\'d like to help, tell us what happened below.',
-        subtitle2: '',
-        labelName: 'Name',
-        labelEmail: 'Email',
-        labelComments: 'What happened?',
-        labelClose: 'Close',
-        labelSubmit: 'Submit',
-        errorGeneric: 'An unknown error occurred while submitting your report. Please try again.',
-        errorFormEntry: 'Some fields were invalid. Please correct the errors and try again.',
-        successMessage: 'Your feedback has been sent. Thank you!',
-      });
-    }
+    // Feedback reporting available via support channels
+    console.log('[ErrorBoundary] Error ID for support:', this.state.eventId);
   };
 
   render() {
