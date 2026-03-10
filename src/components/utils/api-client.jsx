@@ -26,6 +26,9 @@ import {
   DefaultRetryConfig,
   HttpStatusToError
 } from '../shared/constants';
+import { getCorrelationId, resetCorrelationId } from './correlation';
+
+export { getCorrelationId, resetCorrelationId };
 
 // Re-export for backwards compatibility
 export { ErrorCodes, ErrorSeverity };
