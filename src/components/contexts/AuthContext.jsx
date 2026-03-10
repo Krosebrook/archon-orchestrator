@@ -96,13 +96,14 @@ export function AuthProvider({ children }) {
     ...currentUser,
     isLoading,
     hasPermission,
-    switchRole,
     guard,
     // Convenience flags
     isOwner: currentUser?.role === 'owner',
     isAdmin: ['owner', 'admin'].includes(currentUser?.role),
     canMutate: currentUser?.role !== 'viewer',
-  }), [currentUser, isLoading, hasPermission, switchRole, guard]);
+    // DEV ONLY — not exposed in production bundle via direct use
+    ...(import.meta.env.DEV ? { _devSwitchRole } : {}),
+  }), [currentUser, isLoading, hasPermission, guard, _devSwitchRole]);
 
   if (isLoading) {
     return (
