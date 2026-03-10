@@ -346,24 +346,6 @@ export async function deduplicateRequest(key, fn, ttlMs = 5000) {
 }
 
 // =============================================================================
-// CORRELATION ID
-// =============================================================================
-
-let correlationId = null;
-
-export function getCorrelationId() {
-  if (!correlationId) {
-    correlationId = `cid_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-  }
-  return correlationId;
-}
-
-export function resetCorrelationId() {
-  correlationId = `cid_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-  return correlationId;
-}
-
-// =============================================================================
 // REQUEST WRAPPER WITH ALL FEATURES
 // =============================================================================
 
