@@ -187,7 +187,7 @@ export async function createAuditLog(action, entity, entityId, changes = {}, opt
     after: sanitizedChanges.after,
     timestamp,
     session_id: sessionId,
-    correlation_id: correlationId,
+    correlation_id: _getSharedCorrelationId(),
     hash,
     severity: options.severity || AuditSeverity.INFO,
     metadata: options.metadata || {},
