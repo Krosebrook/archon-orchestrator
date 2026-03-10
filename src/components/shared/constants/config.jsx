@@ -106,11 +106,11 @@ export const ObservabilityConfig = Object.freeze({
  * @readonly
  */
 export const FeatureFlags = Object.freeze({
-  ENABLE_ANALYTICS: process.env.NEXT_PUBLIC_ENABLE_ANALYTICS === 'true',
-  ENABLE_AI_DEBUGGER: process.env.NEXT_PUBLIC_ENABLE_AI_DEBUGGER === 'true',
-  ENABLE_SKILL_MARKETPLACE: process.env.NEXT_PUBLIC_ENABLE_SKILL_MARKETPLACE === 'true',
-  ENABLE_REALTIME: process.env.NEXT_PUBLIC_ENABLE_REALTIME === 'true',
-  ENABLE_TELEMETRY: process.env.NEXT_PUBLIC_ENABLE_TELEMETRY !== 'false'
+  ENABLE_ANALYTICS: import.meta.env.VITE_ENABLE_ANALYTICS === 'true',
+  ENABLE_AI_DEBUGGER: import.meta.env.VITE_ENABLE_AI_DEBUGGER === 'true',
+  ENABLE_SKILL_MARKETPLACE: import.meta.env.VITE_ENABLE_SKILL_MARKETPLACE === 'true',
+  ENABLE_REALTIME: import.meta.env.VITE_ENABLE_REALTIME === 'true',
+  ENABLE_TELEMETRY: import.meta.env.VITE_ENABLE_TELEMETRY !== 'false'
 });
 
 /**
