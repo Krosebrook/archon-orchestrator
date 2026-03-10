@@ -93,6 +93,7 @@ const navItems = [
   { name: 'Audit Export', icon: FileText, path: 'AuditExport', permission: 'audit.export' },
   { name: 'Documentation', icon: FileText, path: 'Documentation', permission: null },
   { name: 'Knowledge Base', icon: FileText, path: 'KnowledgeBase', permission: null },
+  { name: 'Org Dashboard', icon: LayoutDashboard, path: 'OrgDashboard', permission: 'audit.view' },
   ];
 
 const Sidebar = ({ isCollapsed, isMobileOpen, setIsMobileOpen }) => {
