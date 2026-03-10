@@ -240,13 +240,17 @@ class AuditBatchProcessor {
     const batch = this.queue.splice(0, this.batchSize);
     
     try {
-      // In production, this would batch insert to the Audit entity
-      console.log('[Audit] Flushing batch:', batch.length, 'entries');
-      // await base44.entities.Audit.bulkCreate(batch);
+      const cleanBatch = batch.map(({ _retryCount, ...entry }) => entry);
+      await base44.entities.Audit.bulkCreate(cleanBatch);
     } catch (error) {
-      console.error('[Audit] Batch flush failed:', error);
-      // Re-queue failed entries
-      this.queue.unshift(...batch);
+      if (import.meta.env.DEV) {
+        console.error('[Audit] Batch flush failed:', error);
+      }
+      // Re-queue entries that haven't exceeded max retries (dead-letter after 3 attempts)
+      const MAX_RETRIES = 3;
+      const retryable = batch.filter(e => (e._retryCount || 0) < MAX_RETRIES)
+        .map(e => ({ ...e, _retryCount: (e._retryCount || 0) + 1 }));
+      this.queue.unshift(...retryable);
     } finally {
       this.isFlushing = false;
       
