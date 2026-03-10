@@ -10,7 +10,16 @@ import { Component } from 'react';
 import { AlertCircle, RefreshCcw, Home } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
-import { formatReactError } from '../../utils/errorHandler';
+// errorHandler removed - formatReactError inlined below
+function formatReactError(error, errorInfo) {
+  return {
+    message: error?.message || String(error),
+    stack: error?.stack,
+    componentStack: errorInfo?.componentStack,
+    traceId: `err_${Date.now().toString(36)}`,
+    timestamp: new Date().toISOString(),
+  };
+}
 
 class ErrorBoundary extends Component {
   constructor(props) {
