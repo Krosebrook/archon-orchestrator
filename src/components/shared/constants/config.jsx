@@ -153,7 +153,7 @@ export const SecurityConfig = Object.freeze({
   MAX_LOGIN_ATTEMPTS: 5,
   PASSWORD_MIN_LENGTH: 12,
   REQUIRE_MFA_FOR_ADMIN: true,
-  ALLOWED_ORIGINS: process.env.ALLOWED_ORIGINS?.split(',') || []
+  ALLOWED_ORIGINS: import.meta.env.VITE_ALLOWED_ORIGINS?.split(',') || []
 });
 
 /**
