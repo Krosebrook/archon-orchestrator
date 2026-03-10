@@ -18,36 +18,10 @@
 import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import { Loader2 } from 'lucide-react';
 import { Permissions } from '../shared/constants';
+import { base44 } from '@/api/base44Client';
 
 /** @type {React.Context<AuthContextValue|null>} */
 const AuthContext = createContext(null);
-
-/**
- * Mock user data for development. In production, this comes from JWT/API.
- * @readonly
- */
-const MOCK_USER_DATA = Object.freeze({
-  'owner': {
-    user: { fullName: 'Alex Williams', email: 'alex@acme.com' },
-    organization: { id: 'org_acme', name: 'Acme Inc.' },
-    role: 'owner',
-  },
-  'admin': {
-    user: { fullName: 'Sam Rivera', email: 'sam@acme.com' },
-    organization: { id: 'org_acme', name: 'Acme Inc.' },
-    role: 'admin',
-  },
-  'operator': {
-    user: { fullName: 'Casey Jordan', email: 'casey@acme.com' },
-    organization: { id: 'org_acme', name: 'Acme Inc.' },
-    role: 'operator',
-  },
-  'viewer': {
-    user: { fullName: 'Jamie Bell', email: 'jamie@acme.com' },
-    organization: { id: 'org_acme', name: 'Acme Inc.' },
-    role: 'viewer',
-  },
-});
 
 // Use centralized permissions from constants
 const RBAC_PERMISSIONS = Permissions;
@@ -61,18 +35,25 @@ const RBAC_PERMISSIONS = Permissions;
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [role, setRole] = useState('operator');
 
   useEffect(() => {
-    // Simulate fetching user data on app load
-    // In production: integrate with Clerk/Auth0/etc.
-    const timer = setTimeout(() => {
-      setCurrentUser(MOCK_USER_DATA[role]);
-      setIsLoading(false);
-    }, 500);
-    
-    return () => clearTimeout(timer);
-  }, [role]);
+    base44.auth.me()
+      .then((user) => {
+        if (user) {
+          setCurrentUser({
+            user: { fullName: user.full_name, email: user.email },
+            organization: { id: user.organization?.id || null, name: user.organization?.name || null },
+            role: user.role || 'viewer',
+          });
+        }
+      })
+      .catch(() => {
+        // Not authenticated — leave currentUser null; app will show restricted views
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }, []);
 
   /**
    * Check if current user has a specific permission.
