@@ -221,7 +221,7 @@ class AuditBatchProcessor {
   }
   
   add(entry) {
-    this.queue.push(entry);
+    this.queue.push({ ...entry, _retryCount: 0 });
     
     if (this.queue.length >= this.batchSize) {
       this.flush();
