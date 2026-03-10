@@ -90,10 +90,10 @@ export function RBACGuard({
             You do not have permission to view this page or perform this action.
           </p>
           <Badge variant="outline" className="text-md bg-red-900/50 border-red-500/30 text-red-300">
-            Required: {permission || 'elevated privileges'}
+            Required: {PERMISSION_LABELS[permission] || 'Elevated privileges'}
           </Badge>
           <Badge variant="outline" className="text-md mt-2 bg-green-900/50 border-green-500/30 text-green-300">
-            Your Role: {role}
+            Your Role: {getRoleDisplayName(role)}
           </Badge>
         </div>
       );
