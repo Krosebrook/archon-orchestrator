@@ -31,9 +31,9 @@ export default function Dashboard() {
       try {
         const [runData, agentData, workflowData, metricData] = await Promise.all([
           Run.list('-started_at', 20),
-          Agent.list(),
-          Workflow.list(),
-          base44.entities.AgentMetric.list('-timestamp', 200)
+          Agent.list('-created_date', 50),
+          Workflow.list('-created_date', 50),
+          base44.entities.AgentMetric.list('-timestamp', 50)
         ]);
         setRuns(runData);
         setAgents(agentData);
