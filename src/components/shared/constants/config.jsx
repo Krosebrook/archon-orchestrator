@@ -98,7 +98,7 @@ export const WebSocketConfig = Object.freeze({
 export const ObservabilityConfig = Object.freeze({
   TRACE_SAMPLING_RATE: 0.1,     // Sample 10% of traces
   METRICS_FLUSH_INTERVAL: 60000, // 1 minute
-  LOG_LEVEL: process.env.NODE_ENV === 'production' ? 'info' : 'debug'
+  LOG_LEVEL: import.meta.env.PROD ? 'info' : 'debug'
 });
 
 /**
