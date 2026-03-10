@@ -393,6 +393,7 @@ export async function apiRequest(fn, options = {}) {
   try {
     return await executor();
   } catch (error) {
-    return handleError(error, { silent });
+    handleError(error, { silent });
+    throw error;
   }
 }
