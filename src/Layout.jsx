@@ -99,6 +99,7 @@ const Sidebar = ({ isCollapsed, isMobileOpen, setIsMobileOpen }) => {
   const location = useLocation();
   const { role: userRole } = useAuth();
   const sidebarRef = useRef(null);
+  const memoNavItems = React.useMemo(() => navItems, []);
 
   // Close mobile sidebar when clicking outside
   useEffect(() => {
