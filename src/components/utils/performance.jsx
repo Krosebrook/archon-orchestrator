@@ -4,8 +4,6 @@
  * Uses web-vitals v4+ APIs (onFID removed; onINP is the replacement).
  */
 
-import { onCLS, onINP, onFCP, onLCP, onTTFB } from 'web-vitals';
-
 // =============================================================================
 // PERFORMANCE BUDGETS
 // =============================================================================
@@ -19,21 +17,26 @@ export const PerformanceBudgets = Object.freeze({
 });
 
 // =============================================================================
-// WEB VITALS COLLECTOR
+// WEB VITALS COLLECTOR (lazy - avoids stale Vite cache issues)
 // =============================================================================
 
 class PerformanceCollector {
   constructor() {
     this.metrics = {};
-    this._init();
+    this._initAsync();
   }
 
-  _init() {
-    onCLS((m) => { this.metrics.CLS = m; });
-    onINP((m) => { this.metrics.INP = m; }); // Replaces deprecated onFID
-    onFCP((m) => { this.metrics.FCP = m; });
-    onLCP((m) => { this.metrics.LCP = m; });
-    onTTFB((m) => { this.metrics.TTFB = m; });
+  async _initAsync() {
+    try {
+      const { onCLS, onINP, onFCP, onLCP, onTTFB } = await import('web-vitals');
+      onCLS((m) => { this.metrics.CLS = m; });
+      onINP((m) => { this.metrics.INP = m; });
+      onFCP((m) => { this.metrics.FCP = m; });
+      onLCP((m) => { this.metrics.LCP = m; });
+      onTTFB((m) => { this.metrics.TTFB = m; });
+    } catch (e) {
+      // web-vitals not available - continue without metrics
+    }
   }
 
   getMetrics() {
