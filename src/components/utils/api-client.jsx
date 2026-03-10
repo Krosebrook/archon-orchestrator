@@ -335,10 +335,17 @@ export function getCircuitBreaker(name, options) {
 // =============================================================================
 
 const pendingRequests = new Map();
+const MAX_PENDING_REQUESTS = 100;
 
 export async function deduplicateRequest(key, fn, ttlMs = 5000) {
   if (pendingRequests.has(key)) {
     return pendingRequests.get(key);
+  }
+
+  // Guard against unbounded growth
+  if (pendingRequests.size >= MAX_PENDING_REQUESTS) {
+    const firstKey = pendingRequests.keys().next().value;
+    pendingRequests.delete(firstKey);
   }
 
   const promise = fn().finally(() => {
