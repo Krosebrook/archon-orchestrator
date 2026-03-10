@@ -151,7 +151,7 @@ const Sidebar = ({ isCollapsed, isMobileOpen, setIsMobileOpen }) => {
           </Link>
         </div>
 
-        <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+        <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto" role="navigation" aria-label="Main navigation">
           {navItems.map((item) => (
             <RBACGuard key={item.name} permission={item.permission} userRole={userRole} showLockMessage={false}>
               <Link
@@ -165,10 +165,11 @@ const Sidebar = ({ isCollapsed, isMobileOpen, setIsMobileOpen }) => {
                       : 'text-slate-400 hover:bg-slate-800/50 hover:text-white'
                   }
                 `}
-                title={isCollapsed ? item.name : ''}
+                aria-label={item.name}
+                title={isCollapsed ? item.name : undefined}
                 data-tour={item.dataTour}
                 >
-                <item.icon className="w-5 h-5 flex-shrink-0" />
+                <item.icon className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
                 {!isCollapsed && <span>{item.name}</span>}
                 </Link>
             </RBACGuard>
