@@ -109,7 +109,11 @@ export function redactSensitiveData(data, options = {}) {
 // =============================================================================
 
 let sessionId = null;
-let correlationId = null;
+
+// Delegate correlation ID management to the shared singleton
+export const getCorrelationId = _getSharedCorrelationId;
+export const setCorrelationId = _setSharedCorrelationId;
+export const generateCorrelationId = _resetSharedCorrelationId;
 
 function getSessionId() {
   if (!sessionId) {
@@ -120,24 +124,10 @@ function getSessionId() {
         sessionStorage.setItem('audit_session_id', sessionId);
       }
     } catch {
-      // Fallback for SSR or no sessionStorage
       sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 12)}`;
     }
   }
   return sessionId;
-}
-
-export function getCorrelationId() {
-  return correlationId;
-}
-
-export function setCorrelationId(id) {
-  correlationId = id;
-}
-
-export function generateCorrelationId() {
-  correlationId = `cid_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-  return correlationId;
 }
 
 // =============================================================================
