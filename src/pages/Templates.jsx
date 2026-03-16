@@ -3,7 +3,7 @@ import { base44 } from '@/api/base44Client';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Search, Sparkles, Filter, Wrench, Clock, TrendingUp, Zap, Wand2 } from 'lucide-react';
+import { Search, Sparkles, Filter, Wrench, Clock, TrendingUp, Zap, Wand2, Plus, GitBranch, Share2 } from 'lucide-react';
 import AIWorkflowGenerator from '../components/workflows/AIWorkflowGenerator';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -12,12 +12,19 @@ import { TemplateErrorBoundary } from '../components/templates/TemplateErrorBoun
 import { TemplateGridSkeleton } from '../components/templates/TemplateLoadingSkeleton';
 import { useTemplates } from '../components/hooks/useTemplates';
 import { toast } from 'sonner';
+import TemplateSaveDialog from '../components/templates/TemplateSaveDialog';
+import TemplateVersionHistory from '../components/templates/TemplateVersionHistory';
+import TemplateShareDialog from '../components/templates/TemplateShareDialog';
 
 export default function Templates() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [showAIGenerator, setShowAIGenerator] = useState(false);
+  const [showSaveDialog, setShowSaveDialog] = useState(false);
+  const [showVersionHistory, setShowVersionHistory] = useState(false);
+  const [showShareDialog, setShowShareDialog] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState(null);
 
   const {
     templates,
@@ -97,30 +104,22 @@ export default function Templates() {
           </h1>
           <p className="text-slate-400">Pre-built workflow patterns ready to customize</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           {templates.length === 0 && (
-            <Button 
-              onClick={handleSeedTemplates}
-              className="bg-purple-600 hover:bg-purple-700"
-            >
-              <Zap className="w-4 h-4 mr-2" />
-              Load Templates
+            <Button onClick={handleSeedTemplates} className="bg-purple-600 hover:bg-purple-700">
+              <Zap className="w-4 h-4 mr-2" />Load Templates
             </Button>
           )}
-          <Button 
-            onClick={() => navigate(createPageUrl('TemplateCustomizer'))}
-            variant="outline"
-            className="border-slate-700"
-          >
-            <Wrench className="w-4 h-4 mr-2" />
-            Customization Hub
+          <Button onClick={() => { setSelectedTemplate(null); setShowSaveDialog(true); }}
+            className="bg-green-600 hover:bg-green-700">
+            <Plus className="w-4 h-4 mr-2" />Save New
           </Button>
-          <Button 
-            onClick={() => setShowAIGenerator(true)}
-            className="bg-purple-600 hover:bg-purple-700"
-          >
-            <Wand2 className="w-4 h-4 mr-2" />
-            Generate with AI
+          <Button onClick={() => navigate(createPageUrl('TemplateCustomizer'))}
+            variant="outline" className="border-slate-700">
+            <Wrench className="w-4 h-4 mr-2" />Customization Hub
+          </Button>
+          <Button onClick={() => setShowAIGenerator(true)} className="bg-purple-600 hover:bg-purple-700">
+            <Wand2 className="w-4 h-4 mr-2" />Generate with AI
           </Button>
         </div>
       </div>
@@ -215,11 +214,29 @@ export default function Templates() {
       <AIWorkflowGenerator
         open={showAIGenerator}
         onOpenChange={setShowAIGenerator}
-        onWorkflowGenerated={(_workflow) => {
-          setShowAIGenerator(false);
-          refresh();
-        }}
+        onWorkflowGenerated={(_workflow) => { setShowAIGenerator(false); refresh(); }}
         onSaveAsTemplate={refresh}
+      />
+
+      <TemplateSaveDialog
+        open={showSaveDialog}
+        onOpenChange={setShowSaveDialog}
+        initialData={selectedTemplate}
+        onSaved={refresh}
+      />
+
+      <TemplateVersionHistory
+        open={showVersionHistory}
+        onOpenChange={setShowVersionHistory}
+        template={selectedTemplate}
+        onRestore={refresh}
+      />
+
+      <TemplateShareDialog
+        open={showShareDialog}
+        onOpenChange={setShowShareDialog}
+        template={selectedTemplate}
+        onUpdated={refresh}
       />
       </div>
     </TemplateErrorBoundary>
