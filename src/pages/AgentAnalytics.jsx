@@ -3,7 +3,7 @@ import { Agent, AgentMetric, SkillInstallation, SkillReview, Run } from '@/entit
 import { base44 } from '@/api/base44Client';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { BarChart3, DollarSign, MessageSquare, TrendingUp } from 'lucide-react';
+import { BarChart3, DollarSign, MessageSquare, TrendingUp, Trophy } from 'lucide-react';
 import AgentPerformanceMetrics from '../components/analytics/AgentPerformanceMetrics';
 import AgentCostAnalysis from '../components/analytics/AgentCostAnalysis';
 import AgentFeedbackAnalysis from '../components/analytics/AgentFeedbackAnalysis';
@@ -11,6 +11,7 @@ import AgentOptimizationPredictions from '../components/analytics/AgentOptimizat
 import AIInsightsAssistant from '../components/analytics/AIInsightsAssistant';
 import PredictiveAnomalyDetector from '../components/analytics/PredictiveAnomalyDetector';
 import AIOptimizationSuggestions from '../components/analytics/AIOptimizationSuggestions';
+import AgentLeaderboard from '../components/analytics/AgentLeaderboard';
 
 export default function AgentAnalytics() {
   const [agents, setAgents] = useState([]);
@@ -98,8 +99,12 @@ export default function AgentAnalytics() {
         </div>
       </div>
 
-      <Tabs defaultValue="performance" className="w-full">
-        <TabsList className="bg-slate-800 grid grid-cols-5 w-full">
+      <Tabs defaultValue="leaderboard" className="w-full">
+        <TabsList className="bg-slate-800 grid grid-cols-6 w-full">
+          <TabsTrigger value="leaderboard" className="flex items-center gap-2">
+            <Trophy className="w-4 h-4" />
+            Leaderboard
+          </TabsTrigger>
           <TabsTrigger value="performance" className="flex items-center gap-2">
             <BarChart3 className="w-4 h-4" />
             Performance
@@ -121,6 +126,10 @@ export default function AgentAnalytics() {
             AI Insights
           </TabsTrigger>
         </TabsList>
+
+        <TabsContent value="leaderboard" className="mt-6">
+          <AgentLeaderboard agents={agents} metrics={metrics} runs={runs} />
+        </TabsContent>
 
         <TabsContent value="performance" className="mt-6">
           <AgentPerformanceMetrics 
