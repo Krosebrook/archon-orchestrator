@@ -28,12 +28,13 @@ class PerformanceCollector {
 
   async _initAsync() {
     try {
-      const { onCLS, onINP, onFCP, onLCP, onTTFB } = await import('web-vitals');
-      onCLS((m) => { this.metrics.CLS = m; });
-      onINP((m) => { this.metrics.INP = m; });
-      onFCP((m) => { this.metrics.FCP = m; });
-      onLCP((m) => { this.metrics.LCP = m; });
-      onTTFB((m) => { this.metrics.TTFB = m; });
+      // web-vitals v5+: onFID removed, onINP is the replacement
+      const wv = await import('web-vitals');
+      if (wv.onCLS) wv.onCLS((m) => { this.metrics.CLS = m; });
+      if (wv.onINP) wv.onINP((m) => { this.metrics.INP = m; });
+      if (wv.onFCP) wv.onFCP((m) => { this.metrics.FCP = m; });
+      if (wv.onLCP) wv.onLCP((m) => { this.metrics.LCP = m; });
+      if (wv.onTTFB) wv.onTTFB((m) => { this.metrics.TTFB = m; });
     } catch (e) {
       // web-vitals not available - continue without metrics
     }
