@@ -14,7 +14,6 @@ import {
   ChevronsRight,
   User,
   LogOut,
-  Search,
   BarChart3,
   CheckSquare,
   Zap,
