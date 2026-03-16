@@ -44,6 +44,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { CommandPalette } from './components/shared/CommandPalette';
+import GlobalSearch from './components/shared/GlobalSearch';
 import NotificationCenter from './components/shared/NotificationCenter';
 import { AnimatePresence, motion } from 'framer-motion';
 import { RBACGuard } from './components/shared/RBACGuard';
