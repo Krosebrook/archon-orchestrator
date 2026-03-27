@@ -1,0 +1,193 @@
+name: PR Governance
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+    branches: [main, develop]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  security-label:
+    name: Auto-label Security-Sensitive PRs
+    runs-on: ubuntu-latest
+    outputs:
+      needs_security_review: ${{ steps.detect.outputs.needs_security_review }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect security-sensitive file changes
+        id: detect
+        run: |
+          # Get list of changed files in this PR
+          git fetch origin ${{ github.base_ref }} --depth=1
+          CHANGED=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
+          echo "Changed files:"
+          echo "$CHANGED"
+
+          NEEDS_REVIEW=false
+          while IFS= read -r file; do
+            case "$file" in
+              src/auth/*|infra/*|secrets/*|middleware/*|*.env|.env*|terraform/*|helm/*)
+                echo "⚠️  Security-sensitive file detected: $file"
+                NEEDS_REVIEW=true
+                ;;
+            esac
+          done <<< "$CHANGED"
+
+          echo "needs_security_review=$NEEDS_REVIEW" >> "$GITHUB_OUTPUT"
+
+      - name: Apply security-review label
+        if: steps.detect.outputs.needs_security_review == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            // Ensure the label exists (create if missing)
+            try {
+              await github.rest.issues.getLabel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                name: 'security-review',
+              });
+            } catch (e) {
+              if (e.status === 404) {
+                await github.rest.issues.createLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  name: 'security-review',
+                  color: 'e11d48',
+                  description: 'PR touches security-sensitive paths and requires AppSec review',
+                });
+              }
+            }
+
+            // Apply the label
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              labels: ['security-review'],
+            });
+
+            // Post a warning comment
+            const body = [
+              '## 🔒 Security Review Required',
+              '',
+              'This PR modifies one or more security-sensitive paths:',
+              '`src/auth/`, `infra/`, `secrets/`, `middleware/`, `.env`, `terraform/`, or `helm/`',
+              '',
+              'The **`security-review`** label has been applied automatically.',
+              '',
+              '**Before this PR can be merged:**',
+              '- A member of the `@security-team` or designated AppSec reviewer must approve.',
+              '- The _Security Impact_ section of the PR description must be completed.',
+              '',
+              '_This comment was posted automatically by the PR Governance workflow._',
+            ].join('\n');
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              body,
+            });
+
+  enforce-security-label:
+    name: Fail CI if security-review label is missing (security-sensitive PR)
+    runs-on: ubuntu-latest
+    needs: security-label
+    if: needs.security-label.outputs.needs_security_review == 'true'
+    steps:
+      - name: Check for security-review label on PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: pr } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+            });
+
+            const labels = pr.labels.map(l => l.name);
+            console.log('PR labels:', labels);
+
+            if (!labels.includes('security-review')) {
+              core.setFailed(
+                'This PR touches security-sensitive paths but is missing the ' +
+                '"security-review" label. Please ensure an AppSec reviewer has been ' +
+                'notified and the label is applied before merging.'
+              );
+            } else {
+              console.log('✅ security-review label is present — check passed.');
+            }
+
+  pr-size-check:
+    name: Warn on Large PRs (> 800 lines changed)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Count lines changed
+        id: size
+        run: |
+          git fetch origin ${{ github.base_ref }} --depth=1
+          SHORTSTAT=$(git diff --shortstat origin/${{ github.base_ref }}...HEAD)
+          echo "shortstat: $SHORTSTAT"
+          # Extract insertion and deletion counts (handles both singular and plural forms)
+          LINES=$(echo "$SHORTSTAT" | grep -oE '[0-9]+ insertion' | grep -oE '[0-9]+' || echo 0)
+          DELETIONS=$(echo "$SHORTSTAT" | grep -oE '[0-9]+ deletion' | grep -oE '[0-9]+' || echo 0)
+          LINES=${LINES:-0}
+          DELETIONS=${DELETIONS:-0}
+          TOTAL=$((LINES + DELETIONS))
+          echo "lines_changed=$TOTAL" >> "$GITHUB_OUTPUT"
+          echo "Total lines changed: $TOTAL"
+
+      - name: Post large-PR warning comment
+        if: ${{ fromJSON(steps.size.outputs.lines_changed) > 800 }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const lines = parseInt('${{ steps.size.outputs.lines_changed }}', 10);
+            const body = [
+              '## ⚠️ Large PR Warning',
+              '',
+              `This PR changes **${lines} lines** (insertions + deletions), which exceeds the recommended limit of **800 lines**.`,
+              '',
+              'Large PRs are harder to review thoroughly and increase the risk of introducing bugs or security issues.',
+              '',
+              '**Please consider:**',
+              '- Breaking this PR into smaller, focused changes',
+              '- Ensuring reviewers have adequate time to review carefully',
+              '- Adding extra context in the PR description to guide reviewers',
+              '',
+              '_This warning was posted automatically by the PR Governance workflow._',
+            ].join('\n');
+
+            // Only post once — check for existing comment
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+            });
+
+            const alreadyPosted = comments.some(
+              c => c.body.includes('Large PR Warning') && c.user.login === 'github-actions[bot]'
+            );
+
+            if (!alreadyPosted) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.pull_request.number,
+                body,
+              });
+            }
